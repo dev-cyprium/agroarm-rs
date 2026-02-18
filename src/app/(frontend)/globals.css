@@ -242,31 +242,63 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-.header-glass-menu {
-  border-radius: 1.25rem;
-  border: 1px solid rgba(255, 255, 255, 0.42);
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.26) 0%,
-    rgba(255, 255, 255, 0.14) 100%
-  );
+.header-glass-surface-mobile-open {
+  min-height: calc(100dvh - max(0.75rem, env(safe-area-inset-top, 0px)) - 0.7rem);
+  max-height: calc(100dvh - max(0.75rem, env(safe-area-inset-top, 0px)) - 0.7rem);
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0.875rem;
+  padding: 0.9rem;
+  padding-bottom: calc(0.9rem + env(safe-area-inset-bottom, 0px));
+  overflow: hidden;
+  transform-origin: calc(100% - 1.75rem) 1.3rem;
   box-shadow:
-    0 12px 30px rgba(15, 23, 42, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.45);
-  backdrop-filter: saturate(120%) blur(6px);
-  -webkit-backdrop-filter: saturate(120%) blur(6px);
+    0 22px 60px rgba(15, 23, 42, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
-.header-glass[data-theme='dark'] .header-glass-menu {
-  border-color: rgba(255, 255, 255, 0.24);
-  background: linear-gradient(
-    180deg,
-    rgba(18, 22, 31, 0.42) 0%,
-    rgba(18, 22, 31, 0.24) 100%
+.header-glass-mobile-nav {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    rgb(0 0 0) 1rem,
+    rgb(0 0 0) calc(100% - 1rem),
+    transparent 100%
   );
+}
+
+.header-glass-mobile-nav::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.header-glass[data-theme='dark'] .header-glass-surface-mobile-open {
   box-shadow:
-    0 12px 30px rgba(0, 0, 0, 0.35),
+    0 22px 60px rgba(0, 0, 0, 0.44),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+@media (min-width: 48rem) {
+  .header-glass-surface-mobile-open {
+    min-height: 0;
+    max-height: none;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 0.75rem 1.5rem;
+    overflow: visible;
+    transform-origin: center;
+  }
+
+  .header-glass-mobile-nav {
+    display: none;
+  }
 }
 
 /* Firefox / old-browser fallback if backdrop-filter is unavailable */
@@ -275,16 +307,8 @@
     background: rgba(243, 246, 250, 0.78);
   }
 
-  .header-glass-menu {
-    background: rgba(243, 246, 250, 0.84);
-  }
-
   .header-glass[data-theme='dark'] .header-glass-surface {
     background: rgba(18, 22, 31, 0.68);
-  }
-
-  .header-glass[data-theme='dark'] .header-glass-menu {
-    background: rgba(18, 22, 31, 0.72);
   }
 }
 

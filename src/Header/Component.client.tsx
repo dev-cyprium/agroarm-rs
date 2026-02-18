@@ -6,7 +6,11 @@ import React, { useEffect, useState } from 'react'
 
 import type { Header } from '@/payload-types'
 
+import { CMSLink } from '@/components/Link'
 import { Logo } from '@/components/Logo/Logo'
+import { cn } from '@/utilities/ui'
+import { AnimatePresence, motion } from 'framer-motion'
+import { SearchIcon } from 'lucide-react'
 import { HeaderNav } from './Nav'
 
 interface HeaderClientProps {
@@ -16,18 +20,74 @@ interface HeaderClientProps {
 export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
   /* Storing the value in a useState to avoid hydration errors */
   const [theme, setTheme] = useState<string | null>(null)
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [mobileSurfaceExpanded, setMobileSurfaceExpanded] = useState(false)
+  const [surfaceMorphing, setSurfaceMorphing] = useState(false)
   const { headerTheme, setHeaderTheme } = useHeaderTheme()
   const pathname = usePathname()
+  const navItems = data?.navItems || []
 
   useEffect(() => {
     setHeaderTheme(null)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname])
+    setMobileOpen(false)
+    setMobileSurfaceExpanded(false)
+    setSurfaceMorphing(false)
+  }, [pathname, setHeaderTheme])
 
   useEffect(() => {
     if (headerTheme && headerTheme !== theme) setTheme(headerTheme)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [headerTheme])
+  }, [headerTheme, theme])
+
+  useEffect(() => {
+    const desktopMedia = window.matchMedia('(min-width: 48rem)')
+    const closeOnDesktop = () => {
+      if (desktopMedia.matches) {
+        setMobileOpen(false)
+        setMobileSurfaceExpanded(false)
+      }
+    }
+
+    closeOnDesktop()
+    desktopMedia.addEventListener('change', closeOnDesktop)
+
+    return () => {
+      desktopMedia.removeEventListener('change', closeOnDesktop)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!mobileSurfaceExpanded) return
+
+    const previousOverflow = document.body.style.overflow
+    const previousTouchAction = document.body.style.touchAction
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMobileOpen(false)
+    }
+
+    document.body.style.overflow = 'hidden'
+    document.body.style.touchAction = 'none'
+    window.addEventListener('keydown', onEscape)
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      document.body.style.touchAction = previousTouchAction
+      window.removeEventListener('keydown', onEscape)
+    }
+  }, [mobileSurfaceExpanded])
+
+  const handleToggleMobileMenu = React.useCallback(() => {
+    setMobileOpen((previouslyOpen) => {
+      const nextOpen = !previouslyOpen
+
+      if (nextOpen) setMobileSurfaceExpanded(true)
+
+      return nextOpen
+    })
+  }, [])
+
+  const handleCloseMobileMenu = React.useCallback(() => {
+    setMobileOpen(false)
+  }, [])
 
   return (
     <header
@@ -35,17 +95,132 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
       {...(theme ? { 'data-theme': theme } : {})}
     >
       <div className="container pt-[max(0.75rem,env(safe-area-inset-top,0px))]">
-        <div className="header-glass-surface relative flex items-center justify-between gap-6 px-5 py-3 md:px-6">
-          <Link href="/" className="shrink-0">
-          <Logo
-            loading="eager"
-            priority="high"
-            src={pathname === '/' ? '/beli.svg' : undefined}
-            className={pathname === '/' ? 'invert dark:invert-0' : undefined}
-          />
-          </Link>
-          <HeaderNav data={data} />
-        </div>
+        <motion.div
+          layout
+          initial={false}
+          onLayoutAnimationStart={() => setSurfaceMorphing(true)}
+          onLayoutAnimationComplete={() => setSurfaceMorphing(false)}
+          animate={
+            mobileSurfaceExpanded
+              ? {
+                  borderRadius: 18,
+                  scaleX: [1, 1.012, 0.998, 1],
+                  scaleY: [1, 0.99, 1.004, 1],
+                }
+              : {
+                  borderRadius: 9999,
+                  scaleX: 1,
+                  scaleY: 1,
+                }
+          }
+          transition={
+            mobileSurfaceExpanded
+              ? {
+                  borderRadius: { duration: 0.3, ease: [0.22, 1, 0.36, 1] },
+                  scaleX: { duration: 0.36, ease: [0.22, 1, 0.36, 1], times: [0, 0.38, 0.72, 1] },
+                  scaleY: { duration: 0.36, ease: [0.22, 1, 0.36, 1], times: [0, 0.35, 0.7, 1] },
+                  layout: { type: 'spring', stiffness: 340, damping: 36, mass: 0.85 },
+                }
+              : {
+                  type: 'spring',
+                  stiffness: 420,
+                  damping: 42,
+                  mass: 0.72,
+                }
+          }
+          className={cn(
+            'header-glass-surface relative z-10 flex items-center justify-between gap-6 px-5 py-3 md:px-6',
+            mobileSurfaceExpanded && 'header-glass-surface-mobile-open',
+          )}
+        >
+          <div className="flex w-full items-center justify-between gap-4">
+            <Link
+              href="/"
+              className={cn(
+                'shrink-0 transition-opacity duration-150',
+                surfaceMorphing ? 'pointer-events-none opacity-0 md:pointer-events-auto md:opacity-100' : 'opacity-100',
+              )}
+              onClick={handleCloseMobileMenu}
+            >
+              <Logo
+                loading="eager"
+                priority="high"
+                src={pathname === '/' ? '/beli.svg' : undefined}
+                className={pathname === '/' ? 'invert dark:invert-0' : undefined}
+              />
+            </Link>
+            <HeaderNav
+              data={data}
+              mobileOpen={mobileOpen}
+              onToggleMobileMenu={handleToggleMobileMenu}
+            />
+          </div>
+
+          <AnimatePresence
+            initial={false}
+            onExitComplete={() => {
+              if (!mobileOpen) setMobileSurfaceExpanded(false)
+            }}
+          >
+            {mobileOpen && (
+              <motion.nav
+                id="mobile-nav-panel"
+                className="header-glass-mobile-nav md:hidden"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 12 }}
+                transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <motion.ul
+                  className="flex flex-col gap-2 p-1"
+                  initial="hidden"
+                  animate="visible"
+                  exit="hidden"
+                  variants={{
+                    hidden: { transition: { staggerChildren: 0.025, staggerDirection: -1 } },
+                    visible: { transition: { delayChildren: 0.04, staggerChildren: 0.045 } },
+                  }}
+                >
+                  {navItems.map(({ link }, i) => {
+                    return (
+                      <motion.li
+                        key={i}
+                        onClick={handleCloseMobileMenu}
+                        variants={{
+                          hidden: { opacity: 0, y: 8, scale: 0.98 },
+                          visible: { opacity: 1, y: 0, scale: 1 },
+                        }}
+                        transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                      >
+                        <CMSLink
+                          {...link}
+                          appearance="link"
+                          className="w-full justify-start rounded-2xl px-4 py-3 text-base font-medium text-white/95 hover:text-white hover:bg-white/20 dark:hover:bg-white/10 no-underline hover:no-underline transition-colors"
+                        />
+                      </motion.li>
+                    )
+                  })}
+                  <motion.li
+                    variants={{
+                      hidden: { opacity: 0, y: 8, scale: 0.98 },
+                      visible: { opacity: 1, y: 0, scale: 1 },
+                    }}
+                    transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <Link
+                      href="/search"
+                      className="inline-flex w-full items-center gap-2 rounded-2xl px-4 py-3 text-base font-medium text-white/95 hover:text-white hover:bg-white/20 dark:hover:bg-white/10 transition-colors"
+                      onClick={handleCloseMobileMenu}
+                    >
+                      <SearchIcon className="h-4 w-4" />
+                      Search
+                    </Link>
+                  </motion.li>
+                </motion.ul>
+              </motion.nav>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </div>
     </header>
   )
