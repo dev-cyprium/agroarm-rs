@@ -9,7 +9,13 @@ import { CMSLink } from '@/components/Link'
 import { Logo } from '@/components/Logo/Logo'
 
 export async function Footer() {
-  const footerData: Footer = await getCachedGlobal('footer', 1)()
+  let footerData: Footer = { navItems: [] } as unknown as Footer
+
+  try {
+    footerData = await getCachedGlobal('footer', 1)()
+  } catch (error) {
+    console.warn('Failed to load footer global from Payload.', error)
+  }
 
   const navItems = footerData?.navItems || []
 

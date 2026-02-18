@@ -24,8 +24,8 @@ const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
   return doc?.slug ? `${url}/${doc.slug}` : url
 }
 
-const r2Bucket = process.env.R2_BUCKET || process.env.S3_BUCKET
-const r2Enabled = Boolean(r2Bucket)
+const r2Bucket = process.env.R2_BUCKET || process.env.S3_BUCKET || ''
+const r2Enabled = r2Bucket.length > 0
 
 // Build R2 endpoint: use R2_ENDPOINT if set, otherwise construct from R2_ACCOUNT_ID
 // If getting AccessDenied, try switching jurisdiction (bucket must match endpoint)
@@ -50,8 +50,8 @@ export const plugins: Plugin[] = [
                   process.env.R2_CUSTOM_DOMAIN ||
                   ''
                 ).replace(/\/$/, '')
-                if (!baseUrl) return undefined
                 const path = [prefix, filename].filter(Boolean).join('/')
+                if (!baseUrl) return `/${path}`
                 return `${baseUrl}/${path}`
               },
             },
