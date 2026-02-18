@@ -214,6 +214,80 @@
   }
 }
 
+/* Floating "Liquid Glass" navigation surface */
+.header-glass-surface {
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.28) 0%,
+    rgba(255, 255, 255, 0.14) 100%
+  );
+  box-shadow:
+    0 10px 30px rgba(15, 23, 42, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  backdrop-filter: saturate(120%) blur(6px);
+  -webkit-backdrop-filter: saturate(120%) blur(6px);
+}
+
+.header-glass[data-theme='dark'] .header-glass-surface {
+  border-color: rgba(255, 255, 255, 0.24);
+  background: linear-gradient(
+    180deg,
+    rgba(18, 22, 31, 0.36) 0%,
+    rgba(18, 22, 31, 0.22) 100%
+  );
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.header-glass-menu {
+  border-radius: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.26) 0%,
+    rgba(255, 255, 255, 0.14) 100%
+  );
+  box-shadow:
+    0 12px 30px rgba(15, 23, 42, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  backdrop-filter: saturate(120%) blur(6px);
+  -webkit-backdrop-filter: saturate(120%) blur(6px);
+}
+
+.header-glass[data-theme='dark'] .header-glass-menu {
+  border-color: rgba(255, 255, 255, 0.24);
+  background: linear-gradient(
+    180deg,
+    rgba(18, 22, 31, 0.42) 0%,
+    rgba(18, 22, 31, 0.24) 100%
+  );
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Firefox / old-browser fallback if backdrop-filter is unavailable */
+@supports not (backdrop-filter: blur(1px)) {
+  .header-glass-surface {
+    background: rgba(243, 246, 250, 0.78);
+  }
+
+  .header-glass-menu {
+    background: rgba(243, 246, 250, 0.84);
+  }
+
+  .header-glass[data-theme='dark'] .header-glass-surface {
+    background: rgba(18, 22, 31, 0.68);
+  }
+
+  .header-glass[data-theme='dark'] .header-glass-menu {
+    background: rgba(18, 22, 31, 0.72);
+  }
+}
+
 html {
   opacity: 0;
 }

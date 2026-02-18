@@ -3,6 +3,7 @@ import { nestedDocsPlugin } from '@payloadcms/plugin-nested-docs'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { searchPlugin } from '@payloadcms/plugin-search'
+import { s3Storage } from '@payloadcms/storage-s3'
 import { Plugin } from 'payload'
 import { revalidateRedirects } from '@/hooks/revalidateRedirects'
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
@@ -23,7 +24,52 @@ const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
   return doc?.slug ? `${url}/${doc.slug}` : url
 }
 
+const r2Bucket = process.env.R2_BUCKET || process.env.S3_BUCKET
+const r2Enabled = Boolean(r2Bucket)
+
+// Build R2 endpoint: use R2_ENDPOINT if set, otherwise construct from R2_ACCOUNT_ID
+// If getting AccessDenied, try switching jurisdiction (bucket must match endpoint)
+const r2Endpoint =
+  process.env.R2_ENDPOINT ||
+  process.env.S3_ENDPOINT ||
+  (process.env.R2_ACCOUNT_ID
+    ? `https://${process.env.R2_ACCOUNT_ID}${process.env.R2_JURISDICTION === 'eu' ? '.eu' : ''}.r2.cloudflarestorage.com`
+    : '')
+
 export const plugins: Plugin[] = [
+  ...(r2Enabled
+    ? [
+        s3Storage({
+          collections: {
+            media: {
+              prefix: 'media',
+              disablePayloadAccessControl: true,
+              generateFileURL: ({ filename, prefix }) => {
+                const baseUrl = (
+                  process.env.R2_PUBLIC_URL ||
+                  process.env.R2_CUSTOM_DOMAIN ||
+                  ''
+                ).replace(/\/$/, '')
+                if (!baseUrl) return undefined
+                const path = [prefix, filename].filter(Boolean).join('/')
+                return `${baseUrl}/${path}`
+              },
+            },
+          },
+          bucket: r2Bucket,
+          config: {
+            credentials: {
+              accessKeyId: process.env.R2_ACCESS_KEY_ID || process.env.S3_ACCESS_KEY_ID || '',
+              secretAccessKey:
+                process.env.R2_SECRET_ACCESS_KEY || process.env.S3_SECRET_ACCESS_KEY || '',
+            },
+            region: 'auto',
+            endpoint: r2Endpoint,
+            forcePathStyle: true,
+          },
+        }),
+      ]
+    : []),
   redirectsPlugin({
     collections: ['pages', 'posts'],
     overrides: {

@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Herbicidi - Agroarm</title>
+  <style>
+    /* ========== RESET & BASE ========== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color: #1F2A24;
+      background: #F4F8F6;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+    ul { list-style: none; }
+
+    /* ========== CSS VARIABLES ========== */
+    :root {
+      --green-primary: #007D41;
+      --green-dark: #024E29;
+      --green-hover: #009F54;
+      --bg: #F4F8F6;
+      --white: #FFFFFF;
+      --gray-light: #E6EFEA;
+      --text: #1F2A24;
+      --text-muted: #5A6B61;
+
+      --herbicidi: #2E7D32;
+      --herbicidi-light: #E8F5E9;
+      --herbicidi-dark: #1B5E20;
+      --herbicidi-mid: #43A047;
+      --fungicidi: #1565C0;
+      --fungicidi-light: #E3F2FD;
+      --fungicidi-dark: #0D47A1;
+      --insekticidi: #C62828;
+      --insekticidi-light: #FFEBEE;
+      --insekticidi-dark: #B71C1C;
+
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+      --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    /* ========== HEADER / NAV ========== */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: var(--white);
+      box-shadow: var(--shadow-sm);
+    }
+    .header-top {
+      background: var(--herbicidi-dark);
+      color: var(--white);
+      font-size: 0.8rem;
+      padding: 6px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header-top a { color: var(--white); opacity: 0.9; }
+    .header-top a:hover { opacity: 1; }
+
+    .header-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--green-primary);
+      letter-spacing: -0.5px;
+    }
+    .logo span { color: var(--green-dark); }
+
+    .nav-toggle {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+    }
+    .nav-toggle span {
+      display: block;
+      width: 24px;
+      height: 2.5px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    .nav-toggle.active span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+    .nav-toggle.active span:nth-child(2) { opacity: 0; }
+    .nav-toggle.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+    .nav-desktop { display: none; }
+
+    .nav-mobile {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--white);
+      z-index: 999;
+      padding: 80px 24px 24px;
+      overflow-y: auto;
+    }
+    .nav-mobile.open { display: block; animation: slideIn 0.3s ease; }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .nav-mobile-list { display: flex; flex-direction: column; gap: 4px; }
+    .nav-mobile-item { border-bottom: 1px solid var(--gray-light); }
+    .nav-mobile-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 8px;
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: var(--text);
+      transition: color 0.2s;
+    }
+    .nav-mobile-link:hover { color: var(--herbicidi); }
+    .nav-mobile-link.active-link { color: var(--herbicidi); font-weight: 700; }
+    .nav-mobile-sub { display: none; padding: 0 8px 12px 20px; }
+    .nav-mobile-sub.open { display: block; }
+    .nav-mobile-sub a {
+      display: block;
+      padding: 8px 0;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+    .nav-mobile-sub a:hover { color: var(--herbicidi); }
+    .nav-mobile-cta {
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ========== BUTTONS ========== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary { background: var(--herbicidi); color: var(--white); }
+    .btn-primary:hover { background: var(--herbicidi-mid); }
+    .btn-outline {
+      background: transparent;
+      color: var(--herbicidi);
+      border: 2px solid var(--herbicidi);
+    }
+    .btn-outline:hover { background: var(--herbicidi); color: var(--white); }
+
+    /* ========== BREADCRUMB ========== */
+    .breadcrumb {
+      padding: 12px 16px;
+      max-width: 1200px;
+      margin: 0 auto;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .breadcrumb a { color: var(--text-muted); transition: color 0.2s; }
+    .breadcrumb a:hover { color: var(--herbicidi); }
+    .breadcrumb .sep { opacity: 0.4; }
+    .breadcrumb .current { color: var(--herbicidi); font-weight: 600; }
+
+    /* ========== PAGE HERO ========== */
+    .page-hero {
+      background: linear-gradient(135deg, var(--herbicidi) 0%, var(--herbicidi-dark) 100%);
+      color: var(--white);
+      padding: 32px 16px 36px;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-hero::before {
+      content: '';
+      position: absolute;
+      top: -60%;
+      right: -25%;
+      width: 400px;
+      height: 400px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 50%;
+    }
+    .page-hero::after {
+      content: '';
+      position: absolute;
+      bottom: -50%;
+      left: -15%;
+      width: 300px;
+      height: 300px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 50%;
+    }
+    .page-hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .page-hero-icon {
+      font-size: 2.2rem;
+      margin-bottom: 12px;
+    }
+    .page-hero h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    .page-hero p {
+      font-size: 1rem;
+      opacity: 0.9;
+      max-width: 550px;
+    }
+    .page-hero-stats {
+      display: flex;
+      gap: 24px;
+      margin-top: 20px;
+    }
+    .page-hero-stat {
+      text-align: center;
+    }
+    .page-hero-stat strong {
+      font-size: 1.6rem;
+      display: block;
+    }
+    .page-hero-stat span {
+      font-size: 0.8rem;
+      opacity: 0.8;
+    }
+
+    /* ========== TOOLBAR ========== */
+    .toolbar {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-light);
+      padding: 12px 16px;
+      position: sticky;
+      top: 73px; /* below header */
+      z-index: 50;
+    }
+    .toolbar-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .toolbar-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .search-box {
+      flex: 1;
+      position: relative;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 10px 14px 10px 40px;
+      border: 2px solid var(--gray-light);
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      background: var(--bg);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-box input:focus { border-color: var(--herbicidi); }
+    .search-box input::placeholder { color: var(--text-muted); }
+    .search-box svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .result-count {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .result-count strong { color: var(--text); }
+
+    /* ========== CROP FILTERS ========== */
+    .filters {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .filters::-webkit-scrollbar { display: none; }
+
+    .filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      border: 1.5px solid var(--gray-light);
+      background: var(--white);
+      color: var(--text-muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .filter-chip:hover {
+      border-color: var(--herbicidi);
+      color: var(--herbicidi);
+    }
+    .filter-chip.active {
+      background: var(--herbicidi);
+      border-color: var(--herbicidi);
+      color: var(--white);
+    }
+
+    /* ========== PRODUCT GRID ========== */
+    .products-section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 16px 48px;
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .product-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.3s, transform 0.2s;
+      cursor: pointer;
+      border-left: 4px solid var(--herbicidi);
+    }
+    .product-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
+    }
+    .product-card.hidden { display: none; }
+
+    .product-card-inner {
+      padding: 16px 16px 16px 16px;
+    }
+
+    .product-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .product-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+    }
+    .product-formulation {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: var(--herbicidi-light);
+      color: var(--herbicidi);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .product-ingredient {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+    .product-ingredient strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .product-crops {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .product-crop {
+      font-size: 0.78rem;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: var(--bg);
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .product-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 10px;
+      border-top: 1px solid var(--gray-light);
+    }
+    .product-type {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .product-type-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--herbicidi);
+    }
+    .product-link {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--herbicidi);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: gap 0.2s;
+    }
+    .product-link:hover { gap: 8px; }
+
+    /* ========== EMPTY STATE ========== */
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      display: none;
+    }
+    .empty-state.visible { display: block; }
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: 12px;
+      opacity: 0.4;
+    }
+    .empty-state h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .empty-state p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* ========== CTA BANNER ========== */
+    .cta-banner {
+      background: linear-gradient(135deg, var(--herbicidi-dark) 0%, var(--herbicidi) 100%);
+      color: var(--white);
+      text-align: center;
+      padding: 40px 16px;
+    }
+    .cta-banner h2 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+    .cta-banner p {
+      opacity: 0.9;
+      margin-bottom: 20px;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+      font-size: 0.95rem;
+    }
+    .cta-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn-white { background: var(--white); color: var(--herbicidi-dark); }
+    .btn-white:hover { background: var(--gray-light); }
+
+    /* ========== RELATED CATEGORIES ========== */
+    .related {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 16px 48px;
+    }
+    .related h2 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+    .related-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .related-card {
+      border-radius: var(--radius);
+      padding: 20px;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .related-card:hover { transform: translateY(-2px); }
+    .related-card::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -30%;
+      width: 120px;
+      height: 120px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+    }
+    .related-card--fungicidi {
+      background: linear-gradient(135deg, var(--fungicidi), var(--fungicidi-dark));
+    }
+    .related-card--insekticidi {
+      background: linear-gradient(135deg, var(--insekticidi), var(--insekticidi-dark));
+    }
+    .related-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; position: relative; }
+    .related-card p { font-size: 0.8rem; opacity: 0.85; position: relative; }
+    .related-card .r-icon { font-size: 1.5rem; margin-bottom: 8px; position: relative; }
+
+    /* ========== FOOTER ========== */
+    .footer {
+      background: var(--green-dark);
+      color: var(--white);
+      padding: 40px 16px 24px;
+    }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+      margin-bottom: 32px;
+    }
+    .footer h4 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+      opacity: 0.7;
+    }
+    .footer a {
+      display: block;
+      padding: 4px 0;
+      font-size: 0.9rem;
+      opacity: 0.85;
+      transition: opacity 0.2s;
+    }
+    .footer a:hover { opacity: 1; }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.15);
+      padding-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+      text-align: center;
+      font-size: 0.8rem;
+      opacity: 0.6;
+    }
+
+    /* ========== DESKTOP ========== */
+    @media (min-width: 768px) {
+      .header-main { padding: 12px 32px; }
+      .nav-toggle { display: none; }
+      .nav-desktop {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .nav-desktop a {
+        padding: 8px 14px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        border-radius: var(--radius-sm);
+        transition: background 0.2s, color 0.2s;
+      }
+      .nav-desktop a:hover { background: var(--gray-light); color: var(--herbicidi); }
+      .nav-desktop a.active-nav {
+        background: var(--herbicidi-light);
+        color: var(--herbicidi);
+        font-weight: 600;
+      }
+      .nav-desktop .nav-cat-dot {
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 4px;
+      }
+
+      .breadcrumb { padding: 12px 32px; }
+
+      .page-hero { padding: 40px 32px 44px; }
+      .page-hero h1 { font-size: 2.4rem; }
+      .page-hero p { font-size: 1.1rem; }
+
+      .toolbar { padding: 12px 32px; top: 73px; }
+      .toolbar-top { flex-direction: row; }
+
+      .products-section { padding: 24px 32px 64px; }
+      .products-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+
+      .related { padding: 48px 32px 64px; }
+      .related-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+
+      .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; }
+      .footer-bottom { flex-direction: row; justify-content: space-between; }
+    }
+
+    @media (min-width: 1024px) {
+      .header-main { padding: 14px 48px; }
+      .breadcrumb { padding: 12px 48px; }
+      .page-hero { padding: 48px 48px 52px; }
+      .toolbar { padding: 14px 48px; }
+      .products-section { padding: 28px 48px 72px; }
+      .products-grid { grid-template-columns: repeat(3, 1fr); }
+      .related { padding: 56px 48px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="header">
+    <div class="header-top">
+      <span>Agroarm d.o.o. - Vaš partner u zaštiti bilja</span>
+      <a href="tel:+381000000000">Pozovite nas</a>
+    </div>
+    <div class="header-main">
+      <a href="index.html" class="logo">AGRO<span>ARM</span></a>
+      <nav class="nav-desktop">
+        <a href="herbicidi.html" class="active-nav"><span class="nav-cat-dot" style="background:var(--herbicidi)"></span>Herbicidi</a>
+        <a href="#"><span class="nav-cat-dot" style="background:var(--fungicidi)"></span>Fungicidi</a>
+        <a href="#"><span class="nav-cat-dot" style="background:var(--insekticidi)"></span>Insekticidi</a>
+        <a href="index.html#programi">Programi</a>
+        <a href="index.html#o-nama">O nama</a>
+        <a href="index.html#kontakt">Kontakt</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Navigacija">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== MOBILE NAV ===== -->
+  <div class="nav-mobile" id="navMobile">
+    <ul class="nav-mobile-list">
+      <li class="nav-mobile-item">
+        <a class="nav-mobile-link" href="#" onclick="toggleSub(event, 'sub-zastita')">
+          Zaštita bilja
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </a>
+        <div class="nav-mobile-sub open" id="sub-zastita">
+          <a href="herbicidi.html" style="color:var(--herbicidi);font-weight:600"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--herbicidi);margin-right:8px"></span>Herbicidi</a>
+          <a href="#"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--fungicidi);margin-right:8px"></span>Fungicidi</a>
+          <a href="#"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--insekticidi);margin-right:8px"></span>Insekticidi</a>
+          <a href="#">Akaricidi</a>
+          <a href="#">Biopesticidi</a>
+          <a href="#">Okvašivači</a>
+        </div>
+      </li>
+      <li class="nav-mobile-item">
+        <a class="nav-mobile-link" href="index.html#programi">Programi</a>
+      </li>
+      <li class="nav-mobile-item">
+        <a class="nav-mobile-link" href="index.html#o-nama">O nama</a>
+      </li>
+      <li class="nav-mobile-item">
+        <a class="nav-mobile-link" href="index.html#kontakt">Kontakt</a>
+      </li>
+    </ul>
+    <div class="nav-mobile-cta">
+      <a href="index.html#kontakt" class="btn btn-primary" onclick="closeMobileNav()">Kontaktirajte nas</a>
+    </div>
+  </div>
+
+  <!-- ===== BREADCRUMB ===== -->
+  <nav class="breadcrumb">
+    <a href="index.html">Početna</a>
+    <span class="sep">/</span>
+    <a href="index.html#zastita">Zaštita bilja</a>
+    <span class="sep">/</span>
+    <span class="current">Herbicidi</span>
+  </nav>
+
+  <!-- ===== PAGE HERO ===== -->
+  <section class="page-hero">
+    <div class="page-hero-inner">
+      <div class="page-hero-icon">&#x1F33E;</div>
+      <h1>Herbicidi</h1>
+      <p>Efikasna sredstva za suzbijanje korova u ratarskim, povrtarskim i voćarskim kulturama.</p>
+      <div class="page-hero-stats">
+        <div class="page-hero-stat">
+          <strong>20</strong>
+          <span>proizvoda</span>
+        </div>
+        <div class="page-hero-stat">
+          <strong>8+</strong>
+          <span>kultura</span>
+        </div>
+        <div class="page-hero-stat">
+          <strong>15+</strong>
+          <span>aktivnih materija</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TOOLBAR (Search + Filters) ===== -->
+  <div class="toolbar">
+    <div class="toolbar-inner">
+      <div class="toolbar-top">
+        <div class="search-box">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="searchInput" placeholder="Pretražite herbicide po nazivu ili aktivnoj materiji...">
+        </div>
+        <div class="result-count" id="resultCount"><strong>20</strong> proizvoda</div>
+      </div>
+      <div class="filters" id="cropFilters">
+        <button class="filter-chip active" data-crop="all">Sve kulture</button>
+        <button class="filter-chip" data-crop="kukuruz">Kukuruz</button>
+        <button class="filter-chip" data-crop="soja">Soja</button>
+        <button class="filter-chip" data-crop="pšenica">Pšenica</button>
+        <button class="filter-chip" data-crop="suncokret">Suncokret</button>
+        <button class="filter-chip" data-crop="krompir">Krompir</button>
+        <button class="filter-chip" data-crop="uljana repica">Uljana repica</button>
+        <button class="filter-chip" data-crop="kupus">Kupus</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PRODUCT LISTING ===== -->
+  <div class="products-section">
+    <div class="products-grid" id="productsGrid">
+
+      <!-- 1. Aquila -->
+      <div class="product-card" data-crops="kukuruz" data-name="aquila" data-ingredient="tembotrion izoksadifen-etil">
+        <div class="product-card-inner">
+          <div class="product-header">
+            <div class="product-name">Aquila</div>
+            <span class="product-formulation">SC</span>
+          </div>
+          <div class="product-ingredient"><strong>Tembotrion</strong> 44 g/l + <strong>Izoksadifen-etil</strong> 22 g/l</div>
+          <div class="product-crops">
+            <span class="product-crop">Kukuruz</span>
+          </div>
+          <div class="product-footer">
+            <span class="product-type"><span class="product-type-dot"></span>Selektivni sistemik</span>
+            <a href="#" class="product-link">Detaljnije &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Azin 500 SC -->
+      <div class="product-card" data-crops="kukuruz" data-name="azin 500 sc" data-ingredient="terbutilazin">
+        <div class="product-card-inner">
+          <div class="product-header">
+            <div class="product-name">Azin 500 SC</div>
+            <span class="product-formulation">SC</span>
+          </div>
+          <div class="product-ingredient"><strong>Terbutilazin</strong> 500 g/l</div>
+          <div class="product-crops">
+            <span class="product-crop">Kukuruz</span>
+          </div>
+          <div class="product-footer">
+            <span class="product-type"><span class="product-type-dot"></span>Selektivni sistemik</span>
+            <a href="#" class="product-link">Detaljnije &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Boston 480 SL -->
+      <div class="product-card" data-crops="kukuruz soja krompir" data-name="boston 480 sl" data-ingredient="bentazon">
+        <div class="product-card-inner">
+          <div class="product-header">
+            <div class="product-name">Boston 480 SL</div>
+            <span class="product-formulation">SL</span>
+          </div>
+          <div class="product-ingredient"><strong>Bentazon</strong> 480 g/l</div>
+          <div class="product-crops">
+            <span class="product-crop">Kukuruz</span>
+            <span class="product-crop">Soja</span>
+            <span class="product-crop">Krompir</span>
+            <span class="product-crop">Pasulj</span>
+            <span class="product-crop">Grašak</span>
+            <span class="product-crop">Lucerka</span>
+          </div>
+          <div class="product-footer">
+            <span class="product-type"><span class="product-type-dot"></span>Selektivni kontaktni</span>
+            <a href="#" class="product-link">Detaljnije &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Conzorcio -->
+      <div class="product-card" data-crops="kukuruz" data-name="conzorcio" data-ingredient="mezotrion">
+        <div class="product-card-inner">
+          <div class="product-header">
+            <div class="product-name">Conzorcio</div>
+            <span class="product-formulation">SC</span>
+          </div>
+          <div class="product-ingredient"><strong>Mezotrion</strong> 480 g/l</div>
+          <div class="product-crops">
+            <span class="product-crop">Kukuruz</span>
+          </div>
+          <div class="product-footer">
+            <span class="product-type"><span class="product-type-dot"></span>Selektivni sistemik</span>
+            <a href="#" class="product-link">Detaljnije &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Cortado -->
+      <div class="product-card" data-crops="soja" data-name="cortado" data-ingredient="bentazon imazamoks">
+        <div class="product-card-inner">
+          <div class="product-header">
+            <div class="product-name">Cortado</div>
+            <span class="product-formulation">SL</span>
+          </div>
+          <div class="product-ingredient"><strong>Bentazon</strong> 480 g/l + <strong>Imazamoks</strong> 22,4 g/l</div>
+          <div class="product-crops">
+            <span class="product-crop">Soja</span>
+          </div>
+          <div class="product-footer">
+            <span class="product-type"><span class="product-type-dot"></span>Selektivni sistemik</span>
+            <a href="#" class="product-link">Detaljnije &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Dragon 480 SL -->
+      <div class="product-card" data-crops="kukuruz" data-name="dragon 480 sl" data-ingredient="dikamba">
+        <div class="product-card-inner">
+          <div class="product-header">
+            <div class="product-name">Dragon 480 SL</div>
+            <span class="product-formulation">SL</span>
+          </div>
+          <div class="product-ingredient"><strong>Dikamba</strong> 480 g/l</div>
+          <div class="product-crops">
+            <span class="product-crop">Kukuruz</span>
+          </div>
+          <div class="product-footer">
+            <span class="product-type"><span class="product-type-dot"></span>Selektivni sistemik</span>
+            <a href="#" class="product-link">Detaljnije &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. Gringo -->
+      <div class="product-card" data-crops="suncokret pšenica" data-name="gringo" data-ingredient="tribenuron-metil">
+        <div class="product-card-inner">
+          <div class="product-header">
+            <div class="product-name">Gringo</div>
+            <span class="product-formulation">WG</span>
+          </div>
+          <div class="product-ingredient"><strong>Tribenuron-metil</strong> 750 g/kg</div>
+          <div class="product-crops">
+            <span class="product-crop">Suncokret</span>
+            <span class="product-crop">Pšenica</span>
+          </div>
+          <div class="product-footer">
+            <span class="product-type"><span class="product-type-dot"></span>Selektivni sistemik</span>
+            <a href="#" class="product-link">Detaljnije &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. Imazar 40 -->
+      <div class="product-card" data-crops="soja suncokret" data-name="imazar 40" data-ingredient="imazamoks">
+        <div class="product-card-inner">
+          <div class="product-header">
+            <div class="product-name">Imazar 40</div>
+            <span class="product-formulation">SL</span>
+          </div>
+          <div class="product-ingredient"><strong>Imazamoks</strong> 40 g/l</div>
+          <div class="product-crops">
+            <span class="product-crop">Soja</span>
+            <span class="product-crop">Suncokret</span>
+          </div>
+          <div class="product-footer">
+            <span class="product-type"><span class="product-type-dot"></span>Selektivni sistemik</span>
+            <a href="#" class="product-link">Detaljnije &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9. Klaster SL -->
+      <div class="product-card" data-crops="" data-name="klaster sl" data-ingredient="glifosat">
+        <div class="product-card-inner">
+          <div class="product-header">
+            <div class="product-name">Klaster SL</div>
+            <span class="product-formulation">SL</span>
+          </div>
+          <div class="product-ingredient"><strong>Glifosat-IPA so</strong> 480 g/l</div>
+          <div class="product-crops">
+            <span class="product-crop">Strništa</span>
+            <span class="product-crop">Voćnjaci</span>
+          </div>
+          <div class="product-footer">
+            <span class="product-type"><span class="product-type-dot"></span>Totalni sistemik</span>
+            <a href="#" class="product-link">Detaljnije &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 10. Komersant 4-E -->
+      <div class="product-card" data-crops="soja" data-name="komersant 4-e" data-ingredient="klomazon">
+        <div class="product-card-inner">
+          <div class="product-header">
+            <div class="product-name">Komersant 4-E</div>
+            <span class="product-formulation">EC</span>
+          </div>
+          <div class="product-ingredient"><strong>Klomazon</strong> 480 g/l</div>
+          <div class="product-crops">
+            <span class="product-crop">Soja</span>
+          </div>
+          <div class="product-footer">
+            <span class="product-type"><span class="product-type-dot"></span>Selektivni</span>
+            <a href="#" class="product-link">Detaljnije &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 11. Lector Super -->
+      <div class="product-card" data-crops="soja" data-name="lector super" data-ingredient="kletodim">
+        <div class="product-card-inner">
+          <div class="product-header">
+            <div class="product-name">Lector Super</div>
+            <span class="product-formulation">EC</span>
+          </div>
+          <div class="product-ingredient"><strong>Kletodim</strong> 120 g/l</div>
+          <div class="product-crops">
+            <span class="product-crop">Soja</span>
+          </div>
+          <div class="product-footer">
+            <span class="product-type"><span class="product-type-dot"></span>Selektivni sistemik</span>
+            <a href="#" class="product-link">Detaljnije &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 12. Messi 60 WG -->
+      <div class="product-card" data-crops="pšenica" data-name="messi 60 wg" data-ingredient="metsulfuron-metil">
+        <div class="product-card-inner">
+          <div class="product-header">
+            <div class="product-name">Messi 60 WG</div>
+            <span class="product-formulation">WG</span>
+          </div>
+          <div class="product-ingredient"><strong>Metsulfuron-metil</strong> 600 g/kg</div>
+          <div class="product-crops">
+            <span class="product-crop">Pšenica</span>
+          </div>
+          <div class="product-footer">
+            <span class="product-type"><span class="product-type-dot"></span>Selektivni sistemik</span>
+            <a href="#" class="product-link">Detaljnije &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 13. Montana 40-EC -->
+      <div class="product-card" data-crops="soja" data-name="montana 40-ec" data-ingredient="kvizalofop-p-tefuril">
+        <div class="product-card-inner">
+          <div class="product-header">
+            <div class="product-name">Montana 40-EC</div>
+            <span class="product-formulation">EC</span>
+          </div>
+          <div class="product-ingredient"><strong>Kvizalofop-P-Tefuril</strong> 40 g/l</div>
+          <div class="product-crops">
+            <span class="product-crop">Soja</span>
+          </div>
+          <div class="product-footer">
+            <span class="product-type"><span class="product-type-dot"></span>Selektivni sistemik</span>
+            <a href="#" class="product-link">Detaljnije &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 14. Oktagon 960 EC -->
+      <div class="product-card" data-crops="suncokret" data-name="oktagon 960 ec" data-ingredient="s-metolahlor">
+        <div class="product-card-inner">
+          <div class="product-header">
+            <div class="product-name">Oktagon 960 EC</div>
+            <span class="product-formulation">EC</span>
+          </div>
+          <div class="product-ingredient"><strong>S-metolahlor</strong> 960 g/l</div>
+          <div class="product-crops">
+            <span class="product-crop">Suncokret</span>
+          </div>
+          <div class="product-footer">
+            <span class="product-type"><span class="product-type-dot"></span>Selektivni</span>
+            <a href="#" class="product-link">Detaljnije &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 15. Ranger -->
+      <div class="product-card" data-crops="kukuruz" data-name="ranger" data-ingredient="rimsulfuron">
+        <div class="product-card-inner">
+          <div class="product-header">
+            <div class="product-name">Ranger</div>
+            <span class="product-formulation">WG</span>
+          </div>
+          <div class="product-ingredient"><strong>Rimsulfuron</strong> 250 g/kg</div>
+          <div class="product-crops">
+            <span class="product-crop">Kukuruz</span>
+          </div>
+          <div class="product-footer">
+            <span class="product-type"><span class="product-type-dot"></span>Selektivni sistemik</span>
+            <a href="#" class="product-link">Detaljnije &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 16. Revit 330 EC -->
+      <div class="product-card" data-crops="kukuruz" data-name="revit 330 ec" data-ingredient="pendimetalin">
+        <div class="product-card-inner">
+          <div class="product-header">
+            <div class="product-name">Revit 330 EC</div>
+            <span class="product-formulation">EC</span>
+          </div>
+          <div class="product-ingredient"><strong>Pendimetalin</strong> 330 g/l</div>
+          <div class="product-crops">
+            <span class="product-crop">Kukuruz</span>
+          </div>
+          <div class="product-footer">
+            <span class="product-type"><span class="product-type-dot"></span>Selektivni</span>
+            <a href="#" class="product-link">Detaljnije &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 17. Speed 400 SC -->
+      <div class="product-card" data-crops="kupus uljana repica" data-name="speed 400 sc" data-ingredient="metazahlor">
+        <div class="product-card-inner">
+          <div class="product-header">
+            <div class="product-name">Speed 400 SC</div>
+            <span class="product-formulation">SC</span>
+          </div>
+          <div class="product-ingredient"><strong>Metazahlor</strong> 400 g/l</div>
+          <div class="product-crops">
+            <span class="product-crop">Kupus</span>
+            <span class="product-crop">Uljana repica</span>
+          </div>
+          <div class="product-footer">
+            <span class="product-type"><span class="product-type-dot"></span>Selektivni</span>
+            <a href="#" class="product-link">Detaljnije &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 18. Tiffany 75 WG -->
+      <div class="product-card" data-crops="soja" data-name="tiffany 75 wg" data-ingredient="tifensulfuron-metil">
+        <div class="product-card-inner">
+          <div class="product-header">
+            <div class="product-name">Tiffany 75 WG</div>
+            <span class="product-formulation">WG</span>
+          </div>
+          <div class="product-ingredient"><strong>Tifensulfuron-metil</strong> 750 g/kg</div>
+          <div class="product-crops">
+            <span class="product-crop">Soja</span>
+          </div>
+          <div class="product-footer">
+            <span class="product-type"><span class="product-type-dot"></span>Selektivni sistemik</span>
+            <a href="#" class="product-link">Detaljnije &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 19. Vertesam 700 WG -->
+      <div class="product-card" data-crops="krompir soja" data-name="vertesam 700 wg" data-ingredient="metribuzin">
+        <div class="product-card-inner">
+          <div class="product-header">
+            <div class="product-name">Vertesam 700 WG</div>
+            <span class="product-formulation">WG</span>
+          </div>
+          <div class="product-ingredient"><strong>Metribuzin</strong> 700 g/kg</div>
+          <div class="product-crops">
+            <span class="product-crop">Krompir</span>
+            <span class="product-crop">Soja</span>
+          </div>
+          <div class="product-footer">
+            <span class="product-type"><span class="product-type-dot"></span>Selektivni sistemik</span>
+            <a href="#" class="product-link">Detaljnije &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 20. Vesticor 40 OD -->
+      <div class="product-card" data-crops="kukuruz" data-name="vesticor 40 od" data-ingredient="nikosulfuron">
+        <div class="product-card-inner">
+          <div class="product-header">
+            <div class="product-name">Vesticor 40 OD</div>
+            <span class="product-formulation">OD</span>
+          </div>
+          <div class="product-ingredient"><strong>Nikosulfuron</strong> 40 g/l</div>
+          <div class="product-crops">
+            <span class="product-crop">Kukuruz</span>
+          </div>
+          <div class="product-footer">
+            <span class="product-type"><span class="product-type-dot"></span>Selektivni sistemik</span>
+            <a href="#" class="product-link">Detaljnije &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Empty state -->
+    <div class="empty-state" id="emptyState">
+      <div class="empty-state-icon">&#x1F50D;</div>
+      <h3>Nema rezultata</h3>
+      <p>Pokušajte sa drugim terminom pretrage ili promenite filter kulture.</p>
+    </div>
+  </div>
+
+  <!-- ===== CTA BANNER ===== -->
+  <section class="cta-banner">
+    <h2>Ne možete da pronađete pravi herbicid?</h2>
+    <p>Naš tim agronoma može vam pomoći da odaberete optimalno rešenje za vaše useve i tip korova.</p>
+    <div class="cta-actions">
+      <a href="index.html#kontakt" class="btn btn-white">Kontaktirajte agronoma</a>
+      <a href="#" class="btn btn-outline" style="color:var(--white);border-color:rgba(255,255,255,0.4)">Plan zaštite ratarstva (PDF)</a>
+    </div>
+  </section>
+
+  <!-- ===== RELATED CATEGORIES ===== -->
+  <div class="related">
+    <h2>Ostale kategorije zaštite</h2>
+    <div class="related-grid">
+      <a href="#" class="related-card related-card--fungicidi">
+        <div class="r-icon">&#x1F6E1;</div>
+        <h3>Fungicidi</h3>
+        <p>21+ proizvod za zaštitu od gljivičnih bolesti</p>
+      </a>
+      <a href="#" class="related-card related-card--insekticidi">
+        <div class="r-icon">&#x1F41B;</div>
+        <h3>Insekticidi</h3>
+        <p>10+ proizvoda za suzbijanje štetnih insekata</p>
+      </a>
+    </div>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <div>
+          <div class="logo" style="color:var(--white);margin-bottom:12px">AGRO<span style="opacity:0.7">ARM</span></div>
+          <p style="font-size:0.9rem;opacity:0.7;line-height:1.6">Kompletna ponuda sredstava za zaštitu bilja, semenskog materijala i đubriva za profesionalne poljoprivrednike.</p>
+        </div>
+        <div>
+          <h4>Zaštita bilja</h4>
+          <a href="herbicidi.html" style="opacity:1;font-weight:600">Herbicidi</a>
+          <a href="#">Fungicidi</a>
+          <a href="#">Insekticidi</a>
+          <a href="#">Akaricidi</a>
+          <a href="#">Biopesticidi</a>
+          <a href="#">Okvašivači</a>
+        </div>
+        <div>
+          <h4>Programi</h4>
+          <a href="#">Semenski program</a>
+          <a href="#">Ishrana bilja</a>
+          <a href="#">Mikrobiol. preparati</a>
+          <a href="#">Floragard supstrati</a>
+          <a href="#">Planovi zaštite</a>
+        </div>
+        <div>
+          <h4>Kompanija</h4>
+          <a href="index.html#o-nama">O nama</a>
+          <a href="#">Filijale</a>
+          <a href="#">Tehnička podrška</a>
+          <a href="index.html#kontakt">Kontakt</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2025 Agroarm d.o.o. Sva prava zadržana.</span>
+        <span>Zaštitni znakovi su vlasništvo njihovih vlasnika.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ===== Mobile nav =====
+    const toggle = document.getElementById('navToggle');
+    const mobileNav = document.getElementById('navMobile');
+
+    toggle.addEventListener('click', () => {
+      toggle.classList.toggle('active');
+      mobileNav.classList.toggle('open');
+      document.body.style.overflow = mobileNav.classList.contains('open') ? 'hidden' : '';
+    });
+
+    function closeMobileNav() {
+      toggle.classList.remove('active');
+      mobileNav.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function toggleSub(e, id) {
+      e.preventDefault();
+      document.getElementById(id).classList.toggle('open');
+    }
+
+    // ===== Filter & Search =====
+    const searchInput = document.getElementById('searchInput');
+    const cropFilters = document.getElementById('cropFilters');
+    const productsGrid = document.getElementById('productsGrid');
+    const resultCount = document.getElementById('resultCount');
+    const emptyState = document.getElementById('emptyState');
+    const cards = productsGrid.querySelectorAll('.product-card');
+
+    let activeCrop = 'all';
+
+    // Crop filter chips
+    cropFilters.addEventListener('click', (e) => {
+      const chip = e.target.closest('.filter-chip');
+      if (!chip) return;
+
+      cropFilters.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      activeCrop = chip.dataset.crop;
+      filterProducts();
+    });
+
+    // Search input
+    searchInput.addEventListener('input', filterProducts);
+
+    function filterProducts() {
+      const query = searchInput.value.toLowerCase().trim();
+      let visible = 0;
+
+      cards.forEach(card => {
+        const name = card.dataset.name;
+        const ingredient = card.dataset.ingredient;
+        const crops = card.dataset.crops;
+
+        const matchesSearch = !query || name.includes(query) || ingredient.includes(query);
+        const matchesCrop = activeCrop === 'all' || crops.includes(activeCrop);
+
+        if (matchesSearch && matchesCrop) {
+          card.classList.remove('hidden');
+          visible++;
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      resultCount.innerHTML = `<strong>${visible}</strong> proizvod${visible === 1 ? '' : 'a'}`;
+      emptyState.classList.toggle('visible', visible === 0);
+    }
+  </script>
+
+</body>
+</html>

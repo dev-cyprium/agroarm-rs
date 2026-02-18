@@ -40,8 +40,11 @@ export const Media: CollectionConfig = {
     },
   ],
   upload: {
-    // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload
-    staticDir: path.resolve(dirname, '../../public/media'),
+    // When R2 is configured, storage is handled by @payloadcms/storage-s3 plugin.
+    // Otherwise fall back to local public/media directory.
+    ...(!(process.env.R2_BUCKET || process.env.S3_BUCKET) && {
+      staticDir: path.resolve(dirname, '../../public/media'),
+    }),
     adminThumbnail: 'thumbnail',
     focalPoint: true,
     imageSizes: [

@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agroarm - Zaštita i ishrana bilja</title>
+  <style>
+    /* ========== RESET & BASE ========== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color: #1F2A24;
+      background: #F4F8F6;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+    ul { list-style: none; }
+
+    /* ========== CSS VARIABLES ========== */
+    :root {
+      --green-primary: #007D41;
+      --green-dark: #024E29;
+      --green-hover: #009F54;
+      --bg: #F4F8F6;
+      --white: #FFFFFF;
+      --gray-light: #E6EFEA;
+      --text: #1F2A24;
+      --text-muted: #5A6B61;
+
+      /* Category colors */
+      --herbicidi: #2E7D32;
+      --herbicidi-light: #E8F5E9;
+      --herbicidi-dark: #1B5E20;
+      --fungicidi: #1565C0;
+      --fungicidi-light: #E3F2FD;
+      --fungicidi-dark: #0D47A1;
+      --insekticidi: #C62828;
+      --insekticidi-light: #FFEBEE;
+      --insekticidi-dark: #B71C1C;
+
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+      --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    /* ========== HEADER / NAV ========== */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: var(--white);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-top {
+      background: var(--green-dark);
+      color: var(--white);
+      font-size: 0.8rem;
+      padding: 6px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-top a {
+      color: var(--white);
+      opacity: 0.9;
+    }
+    .header-top a:hover { opacity: 1; }
+
+    .header-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--green-primary);
+      letter-spacing: -0.5px;
+    }
+    .logo span { color: var(--green-dark); }
+
+    .nav-toggle {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+    }
+    .nav-toggle span {
+      display: block;
+      width: 24px;
+      height: 2.5px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    .nav-toggle.active span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+    .nav-toggle.active span:nth-child(2) { opacity: 0; }
+    .nav-toggle.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+    /* Desktop nav hidden on mobile */
+    .nav-desktop { display: none; }
+
+    /* Mobile nav overlay */
+    .nav-mobile {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--white);
+      z-index: 999;
+      padding: 80px 24px 24px;
+      overflow-y: auto;
+    }
+    .nav-mobile.open { display: block; animation: slideIn 0.3s ease; }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .nav-mobile-list { display: flex; flex-direction: column; gap: 4px; }
+
+    .nav-mobile-item {
+      border-bottom: 1px solid var(--gray-light);
+    }
+    .nav-mobile-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 8px;
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: var(--text);
+      transition: color 0.2s;
+    }
+    .nav-mobile-link:hover { color: var(--green-primary); }
+
+    .nav-mobile-link .cat-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .nav-mobile-sub {
+      display: none;
+      padding: 0 8px 12px 20px;
+    }
+    .nav-mobile-sub.open { display: block; }
+    .nav-mobile-sub a {
+      display: block;
+      padding: 8px 0;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+    .nav-mobile-sub a:hover { color: var(--green-primary); }
+
+    .nav-mobile-cta {
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ========== BUTTONS ========== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: var(--green-primary);
+      color: var(--white);
+    }
+    .btn-primary:hover { background: var(--green-hover); }
+    .btn-outline {
+      background: transparent;
+      color: var(--green-primary);
+      border: 2px solid var(--green-primary);
+    }
+    .btn-outline:hover {
+      background: var(--green-primary);
+      color: var(--white);
+    }
+    .btn-white {
+      background: var(--white);
+      color: var(--green-dark);
+    }
+    .btn-white:hover { background: var(--gray-light); }
+
+    /* ========== HERO ========== */
+    .hero {
+      background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-primary) 100%);
+      color: var(--white);
+      padding: 48px 16px 56px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -30%;
+      width: 500px;
+      height: 500px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 50%;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -40%;
+      left: -20%;
+      width: 400px;
+      height: 400px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 50%;
+    }
+    .hero-content { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .hero p {
+      font-size: 1.05rem;
+      opacity: 0.9;
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* ========== SECTION ========== */
+    .section {
+      padding: 48px 16px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .section-label {
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--green-primary);
+      margin-bottom: 8px;
+    }
+    .section-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.3;
+    }
+    .section-subtitle {
+      color: var(--text-muted);
+      margin-top: 8px;
+      font-size: 1rem;
+    }
+
+    /* ========== PRODUCT CATEGORIES (3 main) ========== */
+    .categories-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .category-card {
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--white);
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.3s, transform 0.3s;
+      cursor: pointer;
+    }
+    .category-card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+
+    .category-card-header {
+      padding: 28px 24px 20px;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+    .category-card-header::before {
+      content: '';
+      position: absolute;
+      top: -30%;
+      right: -20%;
+      width: 150px;
+      height: 150px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+    }
+
+    .category-card--herbicidi .category-card-header {
+      background: linear-gradient(135deg, var(--herbicidi) 0%, var(--herbicidi-dark) 100%);
+    }
+    .category-card--fungicidi .category-card-header {
+      background: linear-gradient(135deg, var(--fungicidi) 0%, var(--fungicidi-dark) 100%);
+    }
+    .category-card--insekticidi .category-card-header {
+      background: linear-gradient(135deg, var(--insekticidi) 0%, var(--insekticidi-dark) 100%);
+    }
+
+    .category-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+    }
+    .category-card-header h3 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .category-card-header p {
+      font-size: 0.9rem;
+      opacity: 0.85;
+    }
+
+    .category-card-body {
+      padding: 20px 24px 24px;
+    }
+    .category-stats {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .category-stat {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .category-stat strong {
+      color: var(--text);
+      font-size: 1.1rem;
+      display: block;
+    }
+
+    .category-crops {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+    .crop-tag {
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+    .category-card--herbicidi .crop-tag {
+      background: var(--herbicidi-light);
+      color: var(--herbicidi);
+    }
+    .category-card--fungicidi .crop-tag {
+      background: var(--fungicidi-light);
+      color: var(--fungicidi);
+    }
+    .category-card--insekticidi .crop-tag {
+      background: var(--insekticidi-light);
+      color: var(--insekticidi);
+    }
+
+    .category-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+    .category-card--herbicidi .category-link { color: var(--herbicidi); }
+    .category-card--fungicidi .category-link { color: var(--fungicidi); }
+    .category-card--insekticidi .category-link { color: var(--insekticidi); }
+    .category-link:hover { gap: 10px; }
+
+    /* ========== OTHER PROGRAMS ========== */
+    .programs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .program-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.3s, transform 0.3s;
+      cursor: pointer;
+      text-align: center;
+    }
+    .program-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .program-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin: 0 auto 12px;
+      background: var(--gray-light);
+    }
+    .program-card h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .program-card p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* ========== PROTECTION PLANS ========== */
+    .plans-section {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 28px 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .plans-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .plan-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .plan-card:hover { background: var(--gray-light); }
+    .plan-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      background: var(--green-primary);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .plan-info h4 { font-size: 0.95rem; font-weight: 600; }
+    .plan-info p { font-size: 0.8rem; color: var(--text-muted); }
+    .plan-badge {
+      margin-left: auto;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: var(--herbicidi-light);
+      color: var(--herbicidi);
+      padding: 4px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    /* ========== ABOUT / TRUST ========== */
+    .trust-section {
+      background: var(--white);
+    }
+    .trust-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 48px 16px;
+    }
+    .trust-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    .trust-card {
+      text-align: center;
+      padding: 20px;
+    }
+    .trust-number {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--green-primary);
+      margin-bottom: 4px;
+    }
+    .trust-label {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* ========== PARTNERS ========== */
+    .partners-strip {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+      padding: 12px 0;
+    }
+    .partner-logo {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      opacity: 0.5;
+      transition: opacity 0.2s;
+    }
+    .partner-logo:hover { opacity: 1; }
+
+    /* ========== CTA BANNER ========== */
+    .cta-banner {
+      background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-primary) 100%);
+      color: var(--white);
+      text-align: center;
+      padding: 48px 16px;
+    }
+    .cta-banner h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+    .cta-banner p {
+      opacity: 0.9;
+      margin-bottom: 24px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .cta-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* ========== CONTACT PREVIEW ========== */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .contact-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .contact-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--herbicidi-light);
+      color: var(--green-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .contact-info h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; }
+    .contact-info p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+    .contact-info a { color: var(--green-primary); font-weight: 500; }
+
+    /* ========== FOOTER ========== */
+    .footer {
+      background: var(--green-dark);
+      color: var(--white);
+      padding: 40px 16px 24px;
+    }
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+      margin-bottom: 32px;
+    }
+    .footer h4 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+      opacity: 0.7;
+    }
+    .footer a {
+      display: block;
+      padding: 4px 0;
+      font-size: 0.9rem;
+      opacity: 0.85;
+      transition: opacity 0.2s;
+    }
+    .footer a:hover { opacity: 1; }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.15);
+      padding-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+      text-align: center;
+      font-size: 0.8rem;
+      opacity: 0.6;
+    }
+
+    /* ========== DESKTOP (768px+) ========== */
+    @media (min-width: 768px) {
+      .header-main { padding: 12px 32px; }
+      .nav-toggle { display: none; }
+      .nav-desktop {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .nav-desktop a {
+        padding: 8px 14px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        border-radius: var(--radius-sm);
+        transition: background 0.2s, color 0.2s;
+      }
+      .nav-desktop a:hover {
+        background: var(--gray-light);
+        color: var(--green-primary);
+      }
+      .nav-desktop .nav-cat-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 4px;
+      }
+
+      .hero { padding: 72px 32px 80px; }
+      .hero h1 { font-size: 2.8rem; }
+      .hero p { font-size: 1.15rem; }
+
+      .section { padding: 64px 32px; }
+      .section-title { font-size: 2rem; }
+
+      .categories-grid { grid-template-columns: repeat(3, 1fr); }
+
+      .category-card-header { padding: 32px 28px 24px; }
+
+      .programs-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+      .plans-grid { grid-template-columns: repeat(3, 1fr); }
+
+      .trust-grid { grid-template-columns: repeat(4, 1fr); }
+
+      .contact-grid { grid-template-columns: repeat(3, 1fr); }
+
+      .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; }
+      .footer-bottom { flex-direction: row; justify-content: space-between; }
+    }
+
+    /* ========== LARGE DESKTOP (1024px+) ========== */
+    @media (min-width: 1024px) {
+      .header-main { padding: 14px 48px; }
+      .hero { padding: 80px 48px 96px; }
+      .hero h1 { font-size: 3.2rem; }
+      .section { padding: 72px 48px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="header">
+    <div class="header-top">
+      <span>Agroarm d.o.o. - Vaš partner u zaštiti bilja</span>
+      <a href="tel:+381000000000">Pozovite nas</a>
+    </div>
+    <div class="header-main">
+      <a href="/" class="logo">AGRO<span>ARM</span></a>
+
+      <!-- Desktop Nav -->
+      <nav class="nav-desktop">
+        <a href="#zastita"><span class="nav-cat-dot" style="background:var(--herbicidi)"></span>Herbicidi</a>
+        <a href="#zastita"><span class="nav-cat-dot" style="background:var(--fungicidi)"></span>Fungicidi</a>
+        <a href="#zastita"><span class="nav-cat-dot" style="background:var(--insekticidi)"></span>Insekticidi</a>
+        <a href="#programi">Programi</a>
+        <a href="#o-nama">O nama</a>
+        <a href="#kontakt">Kontakt</a>
+      </nav>
+
+      <!-- Mobile hamburger -->
+      <button class="nav-toggle" id="navToggle" aria-label="Navigacija">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== MOBILE NAV ===== -->
+  <div class="nav-mobile" id="navMobile">
+    <ul class="nav-mobile-list">
+      <li class="nav-mobile-item">
+        <a class="nav-mobile-link" href="#" onclick="toggleSub(event, 'sub-zastita')">
+          Zaštita bilja
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </a>
+        <div class="nav-mobile-sub" id="sub-zastita">
+          <a href="#zastita"><span class="cat-dot" style="background:var(--herbicidi);display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px"></span>Herbicidi</a>
+          <a href="#zastita"><span class="cat-dot" style="background:var(--fungicidi);display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px"></span>Fungicidi</a>
+          <a href="#zastita"><span class="cat-dot" style="background:var(--insekticidi);display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px"></span>Insekticidi</a>
+          <a href="#">Akaricidi</a>
+          <a href="#">Biopesticidi</a>
+          <a href="#">Okvašivači</a>
+          <a href="#">Planovi zaštite</a>
+        </div>
+      </li>
+      <li class="nav-mobile-item">
+        <a class="nav-mobile-link" href="#" onclick="toggleSub(event, 'sub-seme')">
+          Semenski program
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </a>
+        <div class="nav-mobile-sub" id="sub-seme">
+          <a href="#">Seminis hibridno povrće</a>
+          <a href="#">Maurizio pšenica</a>
+        </div>
+      </li>
+      <li class="nav-mobile-item">
+        <a class="nav-mobile-link" href="#programi">Ishrana bilja</a>
+      </li>
+      <li class="nav-mobile-item">
+        <a class="nav-mobile-link" href="#programi">Mikrobiološki preparati</a>
+      </li>
+      <li class="nav-mobile-item">
+        <a class="nav-mobile-link" href="#programi">Floragard supstrati</a>
+      </li>
+      <li class="nav-mobile-item">
+        <a class="nav-mobile-link" href="#o-nama">O nama</a>
+      </li>
+      <li class="nav-mobile-item">
+        <a class="nav-mobile-link" href="#kontakt">Kontakt</a>
+      </li>
+    </ul>
+    <div class="nav-mobile-cta">
+      <a href="#kontakt" class="btn btn-primary" onclick="closeMobileNav()">Kontaktirajte nas</a>
+      <a href="#" class="btn btn-outline" onclick="closeMobileNav()">Preuzmite katalog</a>
+    </div>
+  </div>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">Pouzdani u zaštiti useva od 2006.</div>
+      <h1>Zaštita bilja za siguran i zdrav prinos</h1>
+      <p>Kompletna ponuda herbicida, fungicida, insekticida, semena i đubriva za profesionalne poljoprivrednike u Srbiji.</p>
+      <div class="hero-actions">
+        <a href="#zastita" class="btn btn-white">Pregledajte proizvode</a>
+        <a href="#kontakt" class="btn btn-outline" style="color:var(--white);border-color:rgba(255,255,255,0.4)">Kontaktirajte nas</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PRODUCT CATEGORIES ===== -->
+  <section class="section" id="zastita">
+    <div class="section-header">
+      <div class="section-label">Zaštita bilja</div>
+      <h2 class="section-title">Proizvodi za zaštitu useva</h2>
+      <p class="section-subtitle">Širok asortiman sredstava za zaštitu svih vrsta kultura</p>
+    </div>
+
+    <div class="categories-grid">
+      <!-- HERBICIDI (Green) -->
+      <div class="category-card category-card--herbicidi">
+        <div class="category-card-header">
+          <div class="category-icon">&#x1F33E;</div>
+          <h3>Herbicidi</h3>
+          <p>Suzbijanje korova u usevima</p>
+        </div>
+        <div class="category-card-body">
+          <div class="category-stats">
+            <div class="category-stat">
+              <strong>30+</strong>proizvoda
+            </div>
+            <div class="category-stat">
+              <strong>8+</strong>kultura
+            </div>
+          </div>
+          <div class="category-crops">
+            <span class="crop-tag">Kukuruz</span>
+            <span class="crop-tag">Soja</span>
+            <span class="crop-tag">Pšenica</span>
+            <span class="crop-tag">Suncokret</span>
+            <span class="crop-tag">Krompir</span>
+            <span class="crop-tag">Uljana repica</span>
+          </div>
+          <a href="#" class="category-link">Pogledajte herbicide &rarr;</a>
+        </div>
+      </div>
+
+      <!-- FUNGICIDI (Blue) -->
+      <div class="category-card category-card--fungicidi">
+        <div class="category-card-header">
+          <div class="category-icon">&#x1F6E1;</div>
+          <h3>Fungicidi</h3>
+          <p>Zaštita od gljivičnih bolesti</p>
+        </div>
+        <div class="category-card-body">
+          <div class="category-stats">
+            <div class="category-stat">
+              <strong>21+</strong>proizvoda
+            </div>
+            <div class="category-stat">
+              <strong>10+</strong>kultura
+            </div>
+          </div>
+          <div class="category-crops">
+            <span class="crop-tag">Jabuka</span>
+            <span class="crop-tag">Vinova loza</span>
+            <span class="crop-tag">Malina</span>
+            <span class="crop-tag">Krompir</span>
+            <span class="crop-tag">Paradajz</span>
+            <span class="crop-tag">Breskva</span>
+          </div>
+          <a href="#" class="category-link">Pogledajte fungicide &rarr;</a>
+        </div>
+      </div>
+
+      <!-- INSEKTICIDI (Red) -->
+      <div class="category-card category-card--insekticidi">
+        <div class="category-card-header">
+          <div class="category-icon">&#x1F41B;</div>
+          <h3>Insekticidi</h3>
+          <p>Suzbijanje štetnih insekata</p>
+        </div>
+        <div class="category-card-body">
+          <div class="category-stats">
+            <div class="category-stat">
+              <strong>10+</strong>proizvoda
+            </div>
+            <div class="category-stat">
+              <strong>6+</strong>kultura
+            </div>
+          </div>
+          <div class="category-crops">
+            <span class="crop-tag">Jabuka</span>
+            <span class="crop-tag">Vinova loza</span>
+            <span class="crop-tag">Pšenica</span>
+            <span class="crop-tag">Kukuruz</span>
+            <span class="crop-tag">Krompir</span>
+          </div>
+          <a href="#" class="category-link">Pogledajte insekticide &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== OTHER PROGRAMS ===== -->
+  <section class="section" id="programi">
+    <div class="section-header">
+      <div class="section-label">Programi</div>
+      <h2 class="section-title">Kompletna podrška za vaše useve</h2>
+    </div>
+
+    <div class="programs-grid">
+      <div class="program-card">
+        <div class="program-icon">&#x1F331;</div>
+        <h3>Semenski program</h3>
+        <p>Seminis hibridno povrće i Maurizio pšenica</p>
+      </div>
+      <div class="program-card">
+        <div class="program-icon">&#x1F4A7;</div>
+        <h3>Ishrana bilja</h3>
+        <p>Fertiline đubriva za optimalnu ishranu</p>
+      </div>
+      <div class="program-card">
+        <div class="program-icon">&#x1F9EA;</div>
+        <h3>Mikrobiol. preparati</h3>
+        <p>AGROBIOVIT i Kwizda Agro biološki preparati</p>
+      </div>
+      <div class="program-card">
+        <div class="program-icon">&#x1FAB4;</div>
+        <h3>Floragard</h3>
+        <p>Profesionalni supstrati za gajenje</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PROTECTION PLANS ===== -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-label">Preuzimanja</div>
+      <h2 class="section-title">Planovi zaštite i katalozi</h2>
+      <p class="section-subtitle">Detaljni planovi zaštite za svaku vrstu proizvodnje</p>
+    </div>
+
+    <div class="plans-section">
+      <div class="plans-grid">
+        <a href="#" class="plan-card">
+          <div class="plan-icon">&#x1F33E;</div>
+          <div class="plan-info">
+            <h4>Ratarska proizvodnja</h4>
+            <p>Plan zaštite za njivske useve</p>
+          </div>
+          <span class="plan-badge">PDF</span>
+        </a>
+        <a href="#" class="plan-card">
+          <div class="plan-icon">&#x1F34E;</div>
+          <div class="plan-info">
+            <h4>Voćarska proizvodnja</h4>
+            <p>Plan zaštite za voćnjake</p>
+          </div>
+          <span class="plan-badge">PDF</span>
+        </a>
+        <a href="#" class="plan-card">
+          <div class="plan-icon">&#x1F345;</div>
+          <div class="plan-info">
+            <h4>Povrtarska proizvodnja</h4>
+            <p>Plan zaštite za povrtnjake</p>
+          </div>
+          <span class="plan-badge">PDF</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TRUST / ABOUT ===== -->
+  <section class="trust-section" id="o-nama">
+    <div class="trust-inner">
+      <div class="section-header">
+        <div class="section-label">O nama</div>
+        <h2 class="section-title">Zašto Agroarm?</h2>
+        <p class="section-subtitle">Dugogodišnje iskustvo i posvećenost kvalitetu u zaštiti bilja</p>
+      </div>
+
+      <div class="trust-grid">
+        <div class="trust-card">
+          <div class="trust-number">18+</div>
+          <div class="trust-label">Godina iskustva</div>
+        </div>
+        <div class="trust-card">
+          <div class="trust-number">60+</div>
+          <div class="trust-label">Proizvoda u ponudi</div>
+        </div>
+        <div class="trust-card">
+          <div class="trust-number">20+</div>
+          <div class="trust-label">Vrsta kultura</div>
+        </div>
+        <div class="trust-card">
+          <div class="trust-number">3+</div>
+          <div class="trust-label">Filijale u Srbiji</div>
+        </div>
+      </div>
+
+      <div class="partners-strip" style="margin-top:32px">
+        <span class="partner-logo">Seminis</span>
+        <span class="partner-logo">Maurizio</span>
+        <span class="partner-logo">Fertiline</span>
+        <span class="partner-logo">Kwizda Agro</span>
+        <span class="partner-logo">AGROBIOVIT</span>
+        <span class="partner-logo">Floragard</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA BANNER ===== -->
+  <section class="cta-banner">
+    <h2>Potrebna vam je stručna pomoć?</h2>
+    <p>Naš tim tehničke podrške je tu da vam pomogne u odabiru pravih sredstava za vaše useve.</p>
+    <div class="cta-actions">
+      <a href="#kontakt" class="btn btn-white">Kontaktirajte nas</a>
+      <a href="#" class="btn btn-outline" style="color:var(--white);border-color:rgba(255,255,255,0.4)">Preuzmite katalog</a>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section class="section" id="kontakt">
+    <div class="section-header">
+      <div class="section-label">Kontakt</div>
+      <h2 class="section-title">Javite nam se</h2>
+    </div>
+
+    <div class="contact-grid">
+      <div class="contact-card">
+        <div class="contact-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div class="contact-info">
+          <h4>Sedište kompanije</h4>
+          <p>Agroarm d.o.o.<br>Srbija</p>
+        </div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <div class="contact-info">
+          <h4>Telefon</h4>
+          <p><a href="tel:+381000000000">Pozovite nas</a></p>
+        </div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <div class="contact-info">
+          <h4>Email i društvene mreže</h4>
+          <p><a href="#">Pišite nam</a><br>Facebook &middot; YouTube</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <div>
+          <div class="logo" style="color:var(--white);margin-bottom:12px">AGRO<span style="opacity:0.7">ARM</span></div>
+          <p style="font-size:0.9rem;opacity:0.7;line-height:1.6">Kompletna ponuda sredstava za zaštitu bilja, semenskog materijala i đubriva za profesionalne poljoprivrednike.</p>
+        </div>
+        <div>
+          <h4>Zaštita bilja</h4>
+          <a href="#">Herbicidi</a>
+          <a href="#">Fungicidi</a>
+          <a href="#">Insekticidi</a>
+          <a href="#">Akaricidi</a>
+          <a href="#">Biopesticidi</a>
+          <a href="#">Okvašivači</a>
+        </div>
+        <div>
+          <h4>Programi</h4>
+          <a href="#">Semenski program</a>
+          <a href="#">Ishrana bilja</a>
+          <a href="#">Mikrobiol. preparati</a>
+          <a href="#">Floragard supstrati</a>
+          <a href="#">Planovi zaštite</a>
+        </div>
+        <div>
+          <h4>Kompanija</h4>
+          <a href="#">O nama</a>
+          <a href="#">Filijale</a>
+          <a href="#">Tehnička podrška</a>
+          <a href="#">Kontakt</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2025 Agroarm d.o.o. Sva prava zadržana.</span>
+        <span>Zaštitni znakovi su vlasništvo njihovih vlasnika.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile nav toggle
+    const toggle = document.getElementById('navToggle');
+    const mobileNav = document.getElementById('navMobile');
+
+    toggle.addEventListener('click', () => {
+      toggle.classList.toggle('active');
+      mobileNav.classList.toggle('open');
+      document.body.style.overflow = mobileNav.classList.contains('open') ? 'hidden' : '';
+    });
+
+    function closeMobileNav() {
+      toggle.classList.remove('active');
+      mobileNav.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    // Submenu toggle
+    function toggleSub(e, id) {
+      e.preventDefault();
+      const sub = document.getElementById(id);
+      sub.classList.toggle('open');
+    }
+
+    // Close mobile nav on anchor click
+    mobileNav.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener('click', () => {
+        if (!link.onclick) closeMobileNav();
+      });
+    });
+  </script>
+
+</body>
+</html>

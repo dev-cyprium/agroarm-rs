@@ -8,6 +8,8 @@ const NEXT_PUBLIC_SERVER_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Next 16 uses Turbopack by default; satisfy "webpack + no turbopack" check when using Turbopack
+  turbopack: {},
   images: {
     remotePatterns: [
       ...[NEXT_PUBLIC_SERVER_URL /* 'https://example.com' */].map((item) => {
@@ -18,6 +20,15 @@ const nextConfig = {
           protocol: url.protocol.replace(':', ''),
         }
       }),
+      // R2 media custom domain
+      ...(process.env.R2_PUBLIC_URL
+        ? [
+            {
+              hostname: new URL(process.env.R2_PUBLIC_URL).hostname,
+              protocol: 'https',
+            },
+          ]
+        : []),
     ],
   },
   webpack: (webpackConfig) => {

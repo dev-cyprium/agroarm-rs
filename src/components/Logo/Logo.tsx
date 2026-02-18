@@ -5,25 +5,31 @@ interface Props {
   className?: string
   loading?: 'lazy' | 'eager'
   priority?: 'auto' | 'high' | 'low'
+  /** Override logo source (e.g. /beli.svg for homepage) */
+  src?: string
 }
 
 export const Logo = (props: Props) => {
-  const { loading: loadingFromProps, priority: priorityFromProps, className } = props
+  const { loading: loadingFromProps, priority: priorityFromProps, className, src } = props
 
   const loading = loadingFromProps || 'lazy'
   const priority = priorityFromProps || 'low'
+  const logoSrc = src ?? '/logo.svg'
 
   return (
     /* eslint-disable @next/next/no-img-element */
     <img
-      alt="Payload Logo"
-      width={193}
-      height={34}
+      alt="AGROARM Logo"
+      width={logoSrc === '/beli.svg' ? 200 : 110}
+      height={logoSrc === '/beli.svg' ? 60 : 100}
       loading={loading}
       fetchPriority={priority}
       decoding="async"
-      className={clsx('max-w-[9.375rem] w-full h-[34px]', className)}
-      src="https://raw.githubusercontent.com/payloadcms/payload/main/packages/ui/src/assets/payload-logo-light.svg"
+      className={clsx(
+        logoSrc === '/beli.svg' ? 'max-h-[2.5rem]' : 'max-h-[2.5rem] w-auto h-auto',
+        className,
+      )}
+      src={logoSrc}
     />
   )
 }

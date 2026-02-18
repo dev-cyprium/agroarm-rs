@@ -30,12 +30,22 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
   }, [headerTheme])
 
   return (
-    <header className="container relative z-20   " {...(theme ? { 'data-theme': theme } : {})}>
-      <div className="py-8 flex justify-between">
-        <Link href="/">
-          <Logo loading="eager" priority="high" className="invert dark:invert-0" />
-        </Link>
-        <HeaderNav data={data} />
+    <header
+      className="header-glass fixed top-0 left-0 right-0 z-50 isolate"
+      {...(theme ? { 'data-theme': theme } : {})}
+    >
+      <div className="container pt-[max(0.75rem,env(safe-area-inset-top,0px))]">
+        <div className="header-glass-surface relative flex items-center justify-between gap-6 px-5 py-3 md:px-6">
+          <Link href="/" className="shrink-0">
+          <Logo
+            loading="eager"
+            priority="high"
+            src={pathname === '/' ? '/beli.svg' : undefined}
+            className={pathname === '/' ? 'invert dark:invert-0' : undefined}
+          />
+          </Link>
+          <HeaderNav data={data} />
+        </div>
       </div>
     </header>
   )

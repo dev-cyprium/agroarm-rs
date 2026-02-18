@@ -1,7 +1,106 @@
 @import '~@payloadcms/ui/scss';
 
 .admin-bar {
+  position: fixed;
+  inset-inline: 0;
+  top: calc(env(safe-area-inset-top, 0px) + 5.4rem);
+  z-index: 40;
+  pointer-events: none;
+
   @include small-break {
     display: none;
+  }
+
+  &__container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+    pointer-events: none;
+  }
+
+  &__toggle,
+  &__drawer {
+    pointer-events: auto;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.28) 0%,
+      rgba(255, 255, 255, 0.14) 100%
+    );
+    box-shadow:
+      0 10px 30px rgba(15, 23, 42, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    backdrop-filter: saturate(120%) blur(6px);
+    -webkit-backdrop-filter: saturate(120%) blur(6px);
+  }
+
+  &[data-theme='dark'] &__toggle,
+  &[data-theme='dark'] &__drawer {
+    border-color: rgba(255, 255, 255, 0.24);
+    background: linear-gradient(
+      180deg,
+      rgba(18, 22, 31, 0.36) 0%,
+      rgba(18, 22, 31, 0.22) 100%
+    );
+    box-shadow:
+      0 10px 30px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  &__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-radius: 9999px;
+    padding: 0.4rem 0.8rem;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1;
+    transition: transform 180ms ease;
+  }
+
+  &__toggle:hover {
+    transform: translateY(-1px);
+  }
+
+  &__drawer-wrap {
+    width: min(32rem, 100%);
+    max-width: 100%;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition:
+      max-height 240ms ease,
+      opacity 180ms ease,
+      transform 180ms ease;
+    pointer-events: none;
+  }
+
+  &__drawer-wrap--open {
+    max-height: 14rem;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  &__drawer {
+    border-radius: 1.1rem;
+    padding: 0.45rem 0.9rem;
+    color: var(--color-foreground);
+  }
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .admin-bar__toggle,
+  .admin-bar__drawer {
+    background: rgba(243, 246, 250, 0.78);
+  }
+
+  .admin-bar[data-theme='dark'] .admin-bar__toggle,
+  .admin-bar[data-theme='dark'] .admin-bar__drawer {
+    background: rgba(18, 22, 31, 0.68);
   }
 }
