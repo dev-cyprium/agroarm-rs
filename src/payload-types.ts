@@ -71,6 +71,8 @@ export interface Config {
     posts: Post;
     media: Media;
     categories: Category;
+    'protection-plan-categories': ProtectionPlanCategory;
+    'protection-plans': ProtectionPlan;
     users: User;
     redirects: Redirect;
     forms: Form;
@@ -93,6 +95,8 @@ export interface Config {
     posts: PostsSelect<false> | PostsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    'protection-plan-categories': ProtectionPlanCategoriesSelect<false> | ProtectionPlanCategoriesSelect<true>;
+    'protection-plans': ProtectionPlansSelect<false> | ProtectionPlansSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -202,7 +206,16 @@ export interface Page {
       | null;
     media?: (number | null) | Media;
   };
-  layout: (CallToActionBlock | ContentBlock | LabeledCategoryCardsBlock | MediaBlock | ArchiveBlock | FormBlock)[];
+  layout: (
+    | CallToActionBlock
+    | ContentBlock
+    | LabeledCategoryCardsBlock
+    | MediaBlock
+    | ProtectionPlansBlock
+    | RichTextImageBlock
+    | ArchiveBlock
+    | FormBlock
+  )[];
   meta?: {
     title?: string | null;
     /**
@@ -598,6 +611,53 @@ export interface MediaBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProtectionPlansBlock".
+ */
+export interface ProtectionPlansBlock {
+  /**
+   * Optional section heading
+   */
+  blockTitle?: string | null;
+  blockSubtitle?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'protectionPlans';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RichTextImageBlock".
+ */
+export interface RichTextImageBlock {
+  richText: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  image: number | Media;
+  /**
+   * Choose whether the image appears on the left or right of the text
+   */
+  imagePosition?: ('left' | 'right') | null;
+  /**
+   * Hex color for the block background (e.g. #ffffff, #f5f5f5, #007D41)
+   */
+  backgroundColor?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'richTextImage';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "ArchiveBlock".
  */
 export interface ArchiveBlock {
@@ -832,6 +892,63 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "protection-plan-categories".
+ */
+export interface ProtectionPlanCategory {
+  id: number;
+  name: string;
+  /**
+   * Display order (lower numbers first)
+   */
+  order?: number | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "protection-plans".
+ */
+export interface ProtectionPlan {
+  id: number;
+  title: string;
+  /**
+   * Short description for the card
+   */
+  description?: string | null;
+  image: number | Media;
+  category: number | ProtectionPlanCategory;
+  /**
+   * Where the card links to (optional - defaults to plan detail page)
+   */
+  link?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'protection-plans';
+          value: number | ProtectionPlan;
+        } | null);
+    url?: string | null;
+  };
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1037,6 +1154,14 @@ export interface PayloadLockedDocument {
         value: number | Category;
       } | null)
     | ({
+        relationTo: 'protection-plan-categories';
+        value: number | ProtectionPlanCategory;
+      } | null)
+    | ({
+        relationTo: 'protection-plans';
+        value: number | ProtectionPlan;
+      } | null)
+    | ({
         relationTo: 'users';
         value: number | User;
       } | null)
@@ -1138,6 +1263,8 @@ export interface PagesSelect<T extends boolean = true> {
         content?: T | ContentBlockSelect<T>;
         labeledCategoryCards?: T | LabeledCategoryCardsBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
+        protectionPlans?: T | ProtectionPlansBlockSelect<T>;
+        richTextImage?: T | RichTextImageBlockSelect<T>;
         archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
       };
@@ -1238,6 +1365,28 @@ export interface LabeledCategoryCardsBlockSelect<T extends boolean = true> {
  */
 export interface MediaBlockSelect<T extends boolean = true> {
   media?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProtectionPlansBlock_select".
+ */
+export interface ProtectionPlansBlockSelect<T extends boolean = true> {
+  blockTitle?: T;
+  blockSubtitle?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RichTextImageBlock_select".
+ */
+export interface RichTextImageBlockSelect<T extends boolean = true> {
+  richText?: T;
+  image?: T;
+  imagePosition?: T;
+  backgroundColor?: T;
   id?: T;
   blockName?: T;
 }
@@ -1409,6 +1558,40 @@ export interface CategoriesSelect<T extends boolean = true> {
         label?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "protection-plan-categories_select".
+ */
+export interface ProtectionPlanCategoriesSelect<T extends boolean = true> {
+  name?: T;
+  order?: T;
+  generateSlug?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "protection-plans_select".
+ */
+export interface ProtectionPlansSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  image?: T;
+  category?: T;
+  link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+      };
+  generateSlug?: T;
+  slug?: T;
   updatedAt?: T;
   createdAt?: T;
 }

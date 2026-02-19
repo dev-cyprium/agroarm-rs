@@ -38,8 +38,8 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
   }, [pathname, setHeaderTheme])
 
   useEffect(() => {
-    if (headerTheme && headerTheme !== theme) setTheme(headerTheme)
-  }, [headerTheme, theme])
+    setTheme(headerTheme ?? null)
+  }, [headerTheme])
 
   useEffect(() => {
     const desktopMedia = window.matchMedia('(min-width: 48rem)')
@@ -186,8 +186,8 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
               <Logo
                 loading="eager"
                 priority="high"
-                src={theme === 'dark' ? '/beli.svg' : undefined}
-                className={theme === 'dark' ? 'invert dark:invert-0' : undefined}
+                src="/beli.svg"
+                className={theme === 'dark' ? undefined : 'invert'}
               />
             </Link>
             <HeaderNav

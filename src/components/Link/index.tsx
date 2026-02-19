@@ -16,6 +16,12 @@ const liquidTintClasses: Record<LiquidTintColor, string> = {
     'border-red-400/40 bg-red-500/25 text-white shadow-[0_8px_24px_rgba(239,68,68,0.25)] backdrop-blur-md hover:bg-red-500/35 hover:border-red-400/50',
 }
 
+const collectionToUrlPrefix: Record<string, string> = {
+  pages: '',
+  posts: '/posts',
+  'protection-plans': '/planovi-zastite',
+}
+
 type CMSLinkType = {
   appearance?: 'inline' | ButtonProps['variant'] | 'liquid'
   children?: React.ReactNode
@@ -23,8 +29,8 @@ type CMSLinkType = {
   label?: string | null
   newTab?: boolean | null
   reference?: {
-    relationTo: 'pages' | 'posts'
-    value: Page | Post | string | number
+    relationTo: 'pages' | 'posts' | 'protection-plans'
+    value: Page | Post | { slug?: string | null } | string | number
   } | null
   size?: ButtonProps['size'] | null
   tintColor?: LiquidTintColor | null
@@ -48,9 +54,7 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
 
   const href =
     type === 'reference' && typeof reference?.value === 'object' && reference.value.slug
-      ? `${reference?.relationTo !== 'pages' ? `/${reference?.relationTo}` : ''}/${
-          reference.value.slug
-        }`
+      ? `${collectionToUrlPrefix[reference?.relationTo ?? 'pages'] || ''}/${reference.value.slug}`
       : url
 
   if (!href) return null
