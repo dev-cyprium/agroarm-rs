@@ -92,7 +92,7 @@ export default async function PlanoviZastiteSlugPage({ params }: Args) {
 function PlanDetailPage({
   plan,
 }: {
-  plan: { id: string; title: string | null; description?: string | null; image: unknown }
+  plan: { id: string | number; title: string | null; description?: string | null; image: unknown }
 }) {
   const image = plan.image as { url?: string; alt?: string; updatedAt?: string } | null
   const imageUrl = image?.url ? getMediaUrl(image.url, image.updatedAt) : null
@@ -128,7 +128,7 @@ function PlanDetailPage({
 async function CategoryArchivePage({
   category,
 }: {
-  category: { id: string; name?: string | null; slug?: string | null }
+  category: { id: string | number; name?: string | null; slug?: string | null }
 }) {
   const payload = await getPayload({ config: configPromise })
 

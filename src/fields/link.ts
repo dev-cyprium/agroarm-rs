@@ -1,4 +1,4 @@
-import type { Field, GroupField } from 'payload'
+import type { CollectionSlug, Field, GroupField } from 'payload'
 
 import deepMerge from '@/utilities/deepMerge'
 
@@ -30,7 +30,7 @@ export const liquidTintOptions: { label: string; value: LiquidTintColor }[] = [
 type LinkType = (options?: {
   appearances?: LinkAppearances[] | false
   disableLabel?: boolean
-  relationTo?: string[]
+  relationTo?: CollectionSlug[]
   required?: boolean
   overrides?: Partial<GroupField>
 }) => Field
@@ -95,7 +95,7 @@ export const link: LinkType = ({
         condition: (_, siblingData) => siblingData?.type === 'reference',
       },
       label: 'Document to link to',
-      relationTo: relationToOverride ?? ['pages', 'posts'],
+      relationTo: (relationToOverride ?? ['pages', 'posts']) as CollectionSlug[],
       required,
     },
     {

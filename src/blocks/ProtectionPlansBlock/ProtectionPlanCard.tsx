@@ -1,13 +1,14 @@
 import React from 'react'
 
+import type { ProtectionPlan } from '@/payload-types'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 type MediaLike = { url?: string | null; alt?: string | null; updatedAt?: string | null }
-type LinkRef = { relationTo?: string; value?: { slug?: string | null } | string }
+type LinkRef = { relationTo?: string; value?: { slug?: string | null } | string | number }
 type PlanLike = {
   slug: string | null
   link?: {
-    type?: 'reference' | 'custom'
+    type?: 'reference' | 'custom' | null
     url?: string | null
     newTab?: boolean | null
     reference?: LinkRef | null
@@ -15,7 +16,7 @@ type PlanLike = {
 }
 
 type ProtectionPlanCardProps = {
-  plan: PlanLike & { id: string; title: string | null; description?: string | null; image: MediaLike | unknown }
+  plan: (PlanLike & { id: string | number; title: string | null; description?: string | null; image: MediaLike | unknown }) | ProtectionPlan
 }
 
 function getPlanHref(plan: PlanLike): string {

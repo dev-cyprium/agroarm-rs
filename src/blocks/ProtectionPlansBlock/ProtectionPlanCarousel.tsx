@@ -3,25 +3,12 @@
 import useEmblaCarousel from 'embla-carousel-react'
 import React, { useCallback, useEffect, useState } from 'react'
 
+import type { ProtectionPlan } from '@/payload-types'
+
 import { ProtectionPlanCard } from './ProtectionPlanCard'
 
-type Plan = {
-  id: string | number
-  title: string | null
-  slug: string | null
-  description?: string | null
-  image: unknown
-  category?: unknown
-  link?: {
-    type?: 'reference' | 'custom'
-    url?: string | null
-    newTab?: boolean | null
-    reference?: { slug?: string | null; relationTo?: string } | unknown
-  } | null
-}
-
 type ProtectionPlanCarouselProps = {
-  plans: Plan[]
+  plans: ProtectionPlan[]
 }
 
 export const ProtectionPlanCarousel: React.FC<ProtectionPlanCarouselProps> = ({ plans }) => {
