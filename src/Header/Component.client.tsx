@@ -23,6 +23,8 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [mobileSurfaceExpanded, setMobileSurfaceExpanded] = useState(false)
   const [surfaceMorphing, setSurfaceMorphing] = useState(false)
+  const [mobileSurfaceCollapsing, setMobileSurfaceCollapsing] = useState(false)
+  const [useGlassSurface, setUseGlassSurface] = useState(true)
   const { headerTheme, setHeaderTheme } = useHeaderTheme()
   const pathname = usePathname()
   const navItems = data?.navItems || []
@@ -32,6 +34,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
     setMobileOpen(false)
     setMobileSurfaceExpanded(false)
     setSurfaceMorphing(false)
+    setMobileSurfaceCollapsing(false)
   }, [pathname, setHeaderTheme])
 
   useEffect(() => {
@@ -75,6 +78,39 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
     }
   }, [mobileSurfaceExpanded])
 
+  useEffect(() => {
+    let frame: number | null = null
+
+    const measureHeroThreshold = () => {
+      const hero = document.querySelector<HTMLElement>('[data-hero-root="true"]')
+      const heroHeight = hero?.offsetHeight ?? window.innerHeight * 0.5
+      return Math.min(100, Math.max(50, heroHeight * 0.12))
+    }
+
+    const applySurfaceMode = () => {
+      const threshold = measureHeroThreshold()
+      setUseGlassSurface(window.scrollY <= threshold)
+    }
+
+    const onScroll = () => {
+      if (frame !== null) return
+      frame = window.requestAnimationFrame(() => {
+        applySurfaceMode()
+        frame = null
+      })
+    }
+
+    applySurfaceMode()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', applySurfaceMode)
+
+    return () => {
+      if (frame !== null) window.cancelAnimationFrame(frame)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', applySurfaceMode)
+    }
+  }, [pathname])
+
   const handleToggleMobileMenu = React.useCallback(() => {
     setMobileOpen((previouslyOpen) => {
       const nextOpen = !previouslyOpen
@@ -100,6 +136,8 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
           initial={false}
           onLayoutAnimationStart={() => setSurfaceMorphing(true)}
           onLayoutAnimationComplete={() => setSurfaceMorphing(false)}
+          onAnimationStart={() => setSurfaceMorphing(true)}
+          onAnimationComplete={() => setSurfaceMorphing(false)}
           animate={
             mobileSurfaceExpanded
               ? {
@@ -130,6 +168,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
           }
           className={cn(
             'header-glass-surface relative z-10 flex items-center justify-between gap-6 px-5 py-3 md:px-6',
+            !useGlassSurface && 'header-solid-surface',
             mobileSurfaceExpanded && 'header-glass-surface-mobile-open',
           )}
         >
@@ -138,15 +177,17 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
               href="/"
               className={cn(
                 'shrink-0 transition-opacity duration-150',
-                surfaceMorphing ? 'pointer-events-none opacity-0 md:pointer-events-auto md:opacity-100' : 'opacity-100',
+                surfaceMorphing || mobileSurfaceCollapsing
+                  ? 'pointer-events-none opacity-0 md:pointer-events-auto md:opacity-100'
+                  : 'opacity-100',
               )}
               onClick={handleCloseMobileMenu}
             >
               <Logo
                 loading="eager"
                 priority="high"
-                src={pathname === '/' ? '/beli.svg' : undefined}
-                className={pathname === '/' ? 'invert dark:invert-0' : undefined}
+                src={theme === 'dark' ? '/beli.svg' : undefined}
+                className={theme === 'dark' ? 'invert dark:invert-0' : undefined}
               />
             </Link>
             <HeaderNav
@@ -159,13 +200,19 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
           <AnimatePresence
             initial={false}
             onExitComplete={() => {
-              if (!mobileOpen) setMobileSurfaceExpanded(false)
+              if (!mobileOpen) {
+                setMobileSurfaceCollapsing(true)
+                setMobileSurfaceExpanded(false)
+                window.setTimeout(() => {
+                  setMobileSurfaceCollapsing(false)
+                }, 320)
+              }
             }}
           >
             {mobileOpen && (
               <motion.nav
                 id="mobile-nav-panel"
-                className="header-glass-mobile-nav md:hidden"
+                className="header-glass-mobile-nav rounded-2xl p-0 shadow-none md:hidden"
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 12 }}

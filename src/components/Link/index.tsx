@@ -5,8 +5,19 @@ import React from 'react'
 
 import type { Page, Post } from '@/payload-types'
 
+import type { LiquidTintColor } from '@/fields/link'
+
+const liquidTintClasses: Record<LiquidTintColor, string> = {
+  herbicidi:
+    'border-emerald-400/40 bg-emerald-500/25 text-white shadow-[0_8px_24px_rgba(5,150,105,0.25)] backdrop-blur-md hover:bg-emerald-500/35 hover:border-emerald-400/50',
+  fungicidi:
+    'border-blue-400/40 bg-blue-500/25 text-white shadow-[0_8px_24px_rgba(59,130,246,0.25)] backdrop-blur-md hover:bg-blue-500/35 hover:border-blue-400/50',
+  insekticidi:
+    'border-red-400/40 bg-red-500/25 text-white shadow-[0_8px_24px_rgba(239,68,68,0.25)] backdrop-blur-md hover:bg-red-500/35 hover:border-red-400/50',
+}
+
 type CMSLinkType = {
-  appearance?: 'inline' | ButtonProps['variant']
+  appearance?: 'inline' | ButtonProps['variant'] | 'liquid'
   children?: React.ReactNode
   className?: string
   label?: string | null
@@ -16,6 +27,7 @@ type CMSLinkType = {
     value: Page | Post | string | number
   } | null
   size?: ButtonProps['size'] | null
+  tintColor?: LiquidTintColor | null
   type?: 'custom' | 'reference' | null
   url?: string | null
 }
@@ -30,6 +42,7 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
     newTab,
     reference,
     size: sizeFromProps,
+    tintColor = 'herbicidi',
     url,
   } = props
 
@@ -49,6 +62,25 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
   if (appearance === 'inline') {
     return (
       <Link className={cn(className)} href={href || url || ''} {...newTabProps}>
+        {label && label}
+        {children && children}
+      </Link>
+    )
+  }
+
+  if (appearance === 'liquid') {
+    const tint = tintColor && liquidTintClasses[tintColor] ? tintColor : 'herbicidi'
+    return (
+      <Link
+        className={cn(
+          'inline-flex items-center justify-center rounded-2xl border px-5 py-3 text-sm font-medium transition-colors',
+          liquidTintClasses[tint],
+          sizeFromProps === 'lg' && 'px-8 py-3.5 text-base',
+          className,
+        )}
+        href={href || url || ''}
+        {...newTabProps}
+      >
         {label && label}
         {children && children}
       </Link>

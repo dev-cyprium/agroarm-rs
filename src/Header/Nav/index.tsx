@@ -5,6 +5,7 @@ import React from 'react'
 import type { Header as HeaderType } from '@/payload-types'
 
 import { CMSLink } from '@/components/Link'
+import { cn } from '@/utilities/ui'
 import Link from 'next/link'
 import { Menu, SearchIcon, X } from 'lucide-react'
 
@@ -41,7 +42,12 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ data, mobileOpen, onToggle
 
       <button
         type="button"
-        className="md:hidden inline-flex items-center justify-center rounded-full p-2 text-foreground/90 hover:text-foreground transition-colors hover:bg-white/20 dark:hover:bg-white/10"
+        className={cn(
+          'md:hidden inline-flex items-center justify-center rounded-full p-2 transition-colors',
+          mobileOpen
+            ? 'bg-black/40 text-white shadow-[0_8px_20px_rgba(2,6,23,0.35)] ring-1 ring-white/30 backdrop-blur-sm'
+            : 'text-foreground/90 hover:text-foreground hover:bg-white/20 dark:hover:bg-white/10',
+        )}
         aria-expanded={mobileOpen}
         aria-controls="mobile-nav-panel"
         aria-label={mobileOpen ? 'Close menu' : 'Open menu'}

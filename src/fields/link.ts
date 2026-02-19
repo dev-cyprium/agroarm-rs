@@ -2,7 +2,9 @@ import type { Field, GroupField } from 'payload'
 
 import deepMerge from '@/utilities/deepMerge'
 
-export type LinkAppearances = 'default' | 'outline'
+export type LinkAppearances = 'default' | 'outline' | 'liquid'
+
+export type LiquidTintColor = 'herbicidi' | 'fungicidi' | 'insekticidi'
 
 export const appearanceOptions: Record<LinkAppearances, { label: string; value: string }> = {
   default: {
@@ -13,7 +15,17 @@ export const appearanceOptions: Record<LinkAppearances, { label: string; value: 
     label: 'Outline',
     value: 'outline',
   },
+  liquid: {
+    label: 'Liquid',
+    value: 'liquid',
+  },
 }
+
+export const liquidTintOptions: { label: string; value: LiquidTintColor }[] = [
+  { label: 'Herbicidi (green)', value: 'herbicidi' },
+  { label: 'Fungicidi (blue)', value: 'fungicidi' },
+  { label: 'Insekticidi (red)', value: 'insekticidi' },
+]
 
 type LinkType = (options?: {
   appearances?: LinkAppearances[] | false
@@ -133,6 +145,20 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
       defaultValue: 'default',
       options: appearanceOptionsToUse,
     })
+
+    if (appearanceOptionsToUse.some((o) => o.value === 'liquid')) {
+      linkResult.fields.push({
+        name: 'tintColor',
+        type: 'select',
+        label: 'Tint color',
+        admin: {
+          condition: (_, siblingData) => siblingData?.appearance === 'liquid',
+          description: 'Color tint for the liquid glass style.',
+        },
+        defaultValue: 'herbicidi',
+        options: liquidTintOptions,
+      })
+    }
   }
 
   return deepMerge(linkResult, overrides)

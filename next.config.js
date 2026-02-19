@@ -11,6 +11,7 @@ const nextConfig = {
   // Next 16 uses Turbopack by default; satisfy "webpack + no turbopack" check when using Turbopack
   turbopack: {},
   images: {
+    qualities: [100, 70, 70, 75],
     remotePatterns: [
       ...[NEXT_PUBLIC_SERVER_URL /* 'https://example.com' */].map((item) => {
         const url = new URL(item)

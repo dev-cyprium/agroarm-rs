@@ -70,9 +70,10 @@ export default async function Page({ params: paramsPromise }: Args) {
   }
 
   const { hero, layout } = page
+  const articleClassName = hero?.type === 'highImpact' ? 'pb-24' : 'pt-16 pb-24'
 
   return (
-    <article className="pt-16 pb-24">
+    <article className={articleClassName}>
       <PageClient />
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />

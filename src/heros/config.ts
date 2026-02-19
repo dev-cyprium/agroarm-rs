@@ -54,8 +54,9 @@ export const hero: Field = {
       label: false,
     },
     linkGroup({
+      appearances: ['default', 'outline', 'liquid'],
       overrides: {
-        maxRows: 2,
+        maxRows: 3,
       },
     }),
     {

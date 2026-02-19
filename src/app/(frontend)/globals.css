@@ -242,6 +242,24 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
+.header-glass .header-solid-surface {
+  border-color: rgba(148, 163, 184, 0.22);
+  background: rgb(255 255 255 / 0.96);
+  box-shadow:
+    0 10px 24px rgba(15, 23, 42, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.header-glass[data-theme='dark'] .header-solid-surface {
+  border-color: rgba(71, 85, 105, 0.5);
+  background: rgb(15 23 42 / 0.94);
+  box-shadow:
+    0 10px 28px rgba(2, 6, 23, 0.45),
+    inset 0 1px 0 rgba(148, 163, 184, 0.18);
+}
+
 .header-glass-surface-mobile-open {
   min-height: calc(100dvh - max(0.75rem, env(safe-area-inset-top, 0px)) - 0.7rem);
   max-height: calc(100dvh - max(0.75rem, env(safe-area-inset-top, 0px)) - 0.7rem);
@@ -256,6 +274,10 @@
   box-shadow:
     0 22px 60px rgba(15, 23, 42, 0.28),
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  border-color: transparent;
+  background: #0f172a;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .header-glass-mobile-nav {
@@ -263,13 +285,9 @@
   overflow-y: auto;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0,
-    rgb(0 0 0) 1rem,
-    rgb(0 0 0) calc(100% - 1rem),
-    transparent 100%
-  );
+  background: transparent;
+  border: 0;
+  mask-image: none;
 }
 
 .header-glass-mobile-nav::-webkit-scrollbar {
@@ -280,7 +298,11 @@
 .header-glass[data-theme='dark'] .header-glass-surface-mobile-open {
   box-shadow:
     0 22px 60px rgba(0, 0, 0, 0.44),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    inset 0 1px 0 rgba(148, 163, 184, 0.14);
+  border-color: transparent;
+  background: #0f172a;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 @media (min-width: 48rem) {

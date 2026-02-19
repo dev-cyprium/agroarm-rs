@@ -191,14 +191,18 @@ export interface Page {
             /**
              * Choose how the link should be rendered.
              */
-            appearance?: ('default' | 'outline') | null;
+            appearance?: ('default' | 'outline' | 'liquid') | null;
+            /**
+             * Color tint for the liquid glass style.
+             */
+            tintColor?: ('herbicidi' | 'fungicidi' | 'insekticidi') | null;
           };
           id?: string | null;
         }[]
       | null;
     media?: (number | null) | Media;
   };
-  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock)[];
+  layout: (CallToActionBlock | ContentBlock | LabeledCategoryCardsBlock | MediaBlock | ArchiveBlock | FormBlock)[];
   meta?: {
     title?: string | null;
     /**
@@ -476,7 +480,11 @@ export interface CallToActionBlock {
           /**
            * Choose how the link should be rendered.
            */
-          appearance?: ('default' | 'outline') | null;
+          appearance?: ('default' | 'outline' | 'liquid') | null;
+          /**
+           * Color tint for the liquid glass style.
+           */
+          tintColor?: ('herbicidi' | 'fungicidi' | 'insekticidi') | null;
         };
         id?: string | null;
       }[]
@@ -534,6 +542,49 @@ export interface ContentBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'content';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LabeledCategoryCardsBlock".
+ */
+export interface LabeledCategoryCardsBlock {
+  /**
+   * Uppercase intro text (e.g. "AGROSAVA - SINCE 1990")
+   */
+  smallText?: string | null;
+  heading: string;
+  subheading?: string | null;
+  /**
+   * Category cards with icon and label
+   */
+  cards: {
+    /**
+     * Upload an SVG or image for the category icon
+     */
+    icon: number | Media;
+    /**
+     * Optional link for the card (leave empty to show as non-clickable)
+     */
+    link: {
+      type?: ('reference' | 'custom') | null;
+      newTab?: boolean | null;
+      reference?:
+        | ({
+            relationTo: 'pages';
+            value: number | Page;
+          } | null)
+        | ({
+            relationTo: 'posts';
+            value: number | Post;
+          } | null);
+      url?: string | null;
+      label: string;
+    };
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'labeledCategoryCards';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1074,6 +1125,7 @@ export interface PagesSelect<T extends boolean = true> {
                     url?: T;
                     label?: T;
                     appearance?: T;
+                    tintColor?: T;
                   };
               id?: T;
             };
@@ -1084,6 +1136,7 @@ export interface PagesSelect<T extends boolean = true> {
     | {
         cta?: T | CallToActionBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
+        labeledCategoryCards?: T | LabeledCategoryCardsBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
         archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
@@ -1120,6 +1173,7 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
               url?: T;
               label?: T;
               appearance?: T;
+              tintColor?: T;
             };
         id?: T;
       };
@@ -1146,6 +1200,32 @@ export interface ContentBlockSelect<T extends boolean = true> {
               url?: T;
               label?: T;
               appearance?: T;
+            };
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LabeledCategoryCardsBlock_select".
+ */
+export interface LabeledCategoryCardsBlockSelect<T extends boolean = true> {
+  smallText?: T;
+  heading?: T;
+  subheading?: T;
+  cards?:
+    | T
+    | {
+        icon?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
             };
         id?: T;
       };
