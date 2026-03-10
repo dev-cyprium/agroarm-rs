@@ -49,7 +49,7 @@ export const ProtectionPlansBlock: React.FC<{
           <header className="mb-14 max-w-2xl">
             {blockTitle && (
               <h2
-                className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl"
+                className="text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl"
                 style={{ color: BRAND_GREEN }}
               >
                 {blockTitle}

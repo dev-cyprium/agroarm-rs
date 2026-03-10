@@ -29,7 +29,7 @@ export const LabeledCategoryCardsBlock: React.FC<BlockProps> = (props) => {
           )}
           {heading && (
             <h1
-              className="text-2xl sm:text-3xl md:text-4xl font-bold"
+              className="text-2xl sm:text-3xl md:text-4xl font-semibold"
               style={{ color: BRAND_GREEN }}
             >
               {heading}

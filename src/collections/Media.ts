@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, UploadConfig } from 'payload'
 
 import {
   FixedToolbarFeature,
@@ -10,6 +10,7 @@ import { fileURLToPath } from 'url'
 
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
+import { r2FileHandler } from '@/upload/r2FileHandler'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -45,6 +46,11 @@ export const Media: CollectionConfig = {
     ...(!(process.env.R2_BUCKET || process.env.S3_BUCKET) && {
       staticDir: path.resolve(dirname, '../../public/media'),
     }),
+    // Stream from R2 when disablePayloadAccessControl is used (plugin only registers
+    // its handler for client-upload context, so /api/media/file/:filename would hit disk otherwise).
+    ...(process.env.R2_BUCKET || process.env.S3_BUCKET
+      ? { handlers: [r2FileHandler] as NonNullable<UploadConfig['handlers']> }
+      : {}),
     adminThumbnail: 'thumbnail',
     focalPoint: true,
     imageSizes: [

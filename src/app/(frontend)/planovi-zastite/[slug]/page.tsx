@@ -110,7 +110,7 @@ function PlanDetailPage({
           </div>
         )}
         <h1
-          className="text-3xl font-bold sm:text-4xl"
+          className="text-3xl font-semibold sm:text-4xl"
           style={{ color: BRAND_GREEN }}
         >
           {plan.title}
@@ -146,7 +146,7 @@ async function CategoryArchivePage({
     <article className="container py-16">
       <header className="mb-12">
         <h1
-          className="text-3xl font-bold sm:text-4xl"
+          className="text-3xl font-semibold sm:text-4xl"
           style={{ color: BRAND_GREEN }}
         >
           {category.name}
