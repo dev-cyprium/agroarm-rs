@@ -210,6 +210,7 @@ export interface Page {
     | CallToActionBlock
     | ContentBlock
     | LabeledCategoryCardsBlock
+    | PlansSplitBlock
     | MediaBlock
     | ProtectionPlansBlock
     | RichTextImageBlock
@@ -598,6 +599,63 @@ export interface LabeledCategoryCardsBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'labeledCategoryCards';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PlansSplitBlock".
+ */
+export interface PlansSplitBlock {
+  nutritionPlans: {
+    description: string;
+    /**
+     * Izaberi jedan od 2 vizuelna identiteta za kolonu.
+     */
+    visualIdentity: 'primary' | 'secondary';
+    /**
+     * Dugme "Saznaj vise" koristi ovaj link.
+     */
+    link?: {
+      type?: ('reference' | 'custom') | null;
+      newTab?: boolean | null;
+      reference?:
+        | ({
+            relationTo: 'pages';
+            value: number | Page;
+          } | null)
+        | ({
+            relationTo: 'posts';
+            value: number | Post;
+          } | null);
+      url?: string | null;
+    };
+  };
+  protectionPlans: {
+    description: string;
+    /**
+     * Izaberi jedan od 2 vizuelna identiteta za kolonu.
+     */
+    visualIdentity: 'primary' | 'secondary';
+    /**
+     * Dugme "Saznaj vise" koristi ovaj link.
+     */
+    link?: {
+      type?: ('reference' | 'custom') | null;
+      newTab?: boolean | null;
+      reference?:
+        | ({
+            relationTo: 'pages';
+            value: number | Page;
+          } | null)
+        | ({
+            relationTo: 'posts';
+            value: number | Post;
+          } | null);
+      url?: string | null;
+    };
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'plansSplit';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1262,6 +1320,7 @@ export interface PagesSelect<T extends boolean = true> {
         cta?: T | CallToActionBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
         labeledCategoryCards?: T | LabeledCategoryCardsBlockSelect<T>;
+        plansSplit?: T | PlansSplitBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
         protectionPlans?: T | ProtectionPlansBlockSelect<T>;
         richTextImage?: T | RichTextImageBlockSelect<T>;
@@ -1355,6 +1414,42 @@ export interface LabeledCategoryCardsBlockSelect<T extends boolean = true> {
               label?: T;
             };
         id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PlansSplitBlock_select".
+ */
+export interface PlansSplitBlockSelect<T extends boolean = true> {
+  nutritionPlans?:
+    | T
+    | {
+        description?: T;
+        visualIdentity?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+            };
+      };
+  protectionPlans?:
+    | T
+    | {
+        description?: T;
+        visualIdentity?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+            };
       };
   id?: T;
   blockName?: T;

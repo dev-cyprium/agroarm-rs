@@ -8,6 +8,7 @@ import { Content } from '../../blocks/Content/config'
 import { LabeledCategoryCards } from '../../blocks/LabeledCategoryCards/config'
 import { FormBlock } from '../../blocks/Form/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
+import { PlansSplit } from '../../blocks/PlansSplitBlock/config'
 import { ProtectionPlans as ProtectionPlansBlock } from '../../blocks/ProtectionPlansBlock/config'
 import { RichTextImage } from '../../blocks/RichTextImage/config'
 import { hero } from '@/heros/config'
@@ -75,7 +76,7 @@ export const Pages: CollectionConfig<'pages'> = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [CallToAction, Content, LabeledCategoryCards, MediaBlock, ProtectionPlansBlock, RichTextImage, Archive, FormBlock],
+              blocks: [CallToAction, Content, LabeledCategoryCards, PlansSplit, MediaBlock, ProtectionPlansBlock, RichTextImage, Archive, FormBlock],
               required: true,
               admin: {
                 initCollapsed: true,

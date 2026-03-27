@@ -8,6 +8,7 @@ import { ContentBlock } from '@/blocks/Content/Component'
 import { LabeledCategoryCardsBlock } from '@/blocks/LabeledCategoryCards/Component'
 import { FormBlock } from '@/blocks/Form/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
+import { PlansSplitBlock } from '@/blocks/PlansSplitBlock/Component'
 import { ProtectionPlansBlock } from '@/blocks/ProtectionPlansBlock/Component'
 import { RichTextImageBlock } from '@/blocks/RichTextImage/Component'
 
@@ -18,6 +19,7 @@ const blockComponents = {
   formBlock: FormBlock,
   labeledCategoryCards: LabeledCategoryCardsBlock,
   mediaBlock: MediaBlock,
+  plansSplit: PlansSplitBlock,
   protectionPlans: ProtectionPlansBlock,
   richTextImage: RichTextImageBlock,
 }
