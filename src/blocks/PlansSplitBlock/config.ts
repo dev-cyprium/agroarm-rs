@@ -20,11 +20,14 @@ const createPlanColumnFields = ({
   descriptionDefault: string
   visualIdentityDefault: 'primary' | 'secondary'
 }): Field => ({
+  dbName,
   name,
   type: 'group',
   label,
   fields: [
     {
+      // @ts-expect-error dbName shortens Postgres column names below 63 char limit
+      dbName: 'desc',
       name: 'description',
       type: 'textarea',
       label: 'Description',
@@ -32,6 +35,7 @@ const createPlanColumnFields = ({
       defaultValue: descriptionDefault,
     },
     {
+      dbName: 'vi',
       name: 'visualIdentity',
       type: 'select',
       label: 'Visual identity',
