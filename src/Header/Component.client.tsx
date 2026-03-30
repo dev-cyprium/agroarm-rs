@@ -5,19 +5,21 @@ import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 import type { Header } from '@/payload-types'
+import type { NavItemWithChildren, NavItemLink } from './Component'
 
 import { CMSLink } from '@/components/Link'
 import { Logo } from '@/components/Logo/Logo'
 import { cn } from '@/utilities/ui'
 import { AnimatePresence, motion } from 'framer-motion'
-import { SearchIcon } from 'lucide-react'
+import { ChevronDown, SearchIcon } from 'lucide-react'
 import { HeaderNav } from './Nav'
 
 interface HeaderClientProps {
   data: Header
+  resolvedNavItems: NavItemWithChildren[]
 }
 
-export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
+export const HeaderClient: React.FC<HeaderClientProps> = ({ data, resolvedNavItems }) => {
   /* Storing the value in a useState to avoid hydration errors */
   const [theme, setTheme] = useState<string | null>(null)
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -25,9 +27,9 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
   const [surfaceMorphing, setSurfaceMorphing] = useState(false)
   const [mobileSurfaceCollapsing, setMobileSurfaceCollapsing] = useState(false)
   const [useGlassSurface, setUseGlassSurface] = useState(true)
+  const [expandedMobileCategory, setExpandedMobileCategory] = useState<string | null>(null)
   const { headerTheme, setHeaderTheme } = useHeaderTheme()
   const pathname = usePathname()
-  const navItems = data?.navItems || []
 
   useEffect(() => {
     setHeaderTheme(null)
@@ -35,6 +37,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
     setMobileSurfaceExpanded(false)
     setSurfaceMorphing(false)
     setMobileSurfaceCollapsing(false)
+    setExpandedMobileCategory(null)
   }, [pathname, setHeaderTheme])
 
   useEffect(() => {
@@ -191,7 +194,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
               />
             </Link>
             <HeaderNav
-              data={data}
+              resolvedNavItems={resolvedNavItems}
               mobileOpen={mobileOpen}
               onToggleMobileMenu={handleToggleMobileMenu}
             />
@@ -228,10 +231,64 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
                     visible: { transition: { delayChildren: 0.04, staggerChildren: 0.045 } },
                   }}
                 >
-                  {navItems.map(({ link }, i) => {
+                  {resolvedNavItems.map((navItem, i) => {
+                    if (navItem.type === 'category' && navItem.category) {
+                      const label = navItem.categoryLabel || navItem.category.title
+                      const isExpanded = expandedMobileCategory === navItem.id
+                      return (
+                        <motion.li
+                          key={navItem.id || i}
+                          variants={{
+                            hidden: { opacity: 0, y: 8, scale: 0.98 },
+                            visible: { opacity: 1, y: 0, scale: 1 },
+                          }}
+                          transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                        >
+                          <button
+                            type="button"
+                            className="flex w-full items-center justify-between rounded-2xl px-4 py-3 text-base font-medium text-white/95 hover:text-white hover:bg-white/20 dark:hover:bg-white/10 transition-colors"
+                            onClick={() =>
+                              setExpandedMobileCategory(isExpanded ? null : (navItem.id ?? null))
+                            }
+                          >
+                            {label}
+                            <ChevronDown
+                              className={cn(
+                                'h-4 w-4 transition-transform duration-200',
+                                isExpanded && 'rotate-180',
+                              )}
+                            />
+                          </button>
+                          <AnimatePresence initial={false}>
+                            {isExpanded && navItem.children && navItem.children.length > 0 && (
+                              <motion.ul
+                                className="flex flex-col gap-1 pl-4"
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                exit={{ opacity: 0, height: 0 }}
+                                transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                              >
+                                {navItem.children.map((child) => (
+                                  <li key={child.id}>
+                                    <Link
+                                      href={`/kategorije/${child.slug}`}
+                                      className="block w-full rounded-xl px-4 py-2.5 text-sm font-medium text-white/80 hover:text-white hover:bg-white/15 transition-colors"
+                                      onClick={handleCloseMobileMenu}
+                                    >
+                                      {child.title}
+                                    </Link>
+                                  </li>
+                                ))}
+                              </motion.ul>
+                            )}
+                          </AnimatePresence>
+                        </motion.li>
+                      )
+                    }
+
                     return (
                       <motion.li
-                        key={i}
+                        key={navItem.id || i}
                         onClick={handleCloseMobileMenu}
                         variants={{
                           hidden: { opacity: 0, y: 8, scale: 0.98 },
@@ -240,7 +297,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
                         transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
                       >
                         <CMSLink
-                          {...link}
+                          {...(navItem as NavItemLink).link}
                           appearance="link"
                           className="w-full justify-start rounded-2xl px-4 py-3 text-base font-medium text-white/95 hover:text-white hover:bg-white/20 dark:hover:bg-white/10 no-underline hover:no-underline transition-colors"
                         />
@@ -260,7 +317,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
                       onClick={handleCloseMobileMenu}
                     >
                       <SearchIcon className="h-4 w-4" />
-                      Search
+                      Pretraga
                     </Link>
                   </motion.li>
                 </motion.ul>

@@ -71,6 +71,9 @@ export interface Config {
     posts: Post;
     media: Media;
     categories: Category;
+    'culture-groups': CultureGroup;
+    cultures: Culture;
+    products: Product;
     'protection-plan-categories': ProtectionPlanCategory;
     'protection-plans': ProtectionPlan;
     users: User;
@@ -95,6 +98,9 @@ export interface Config {
     posts: PostsSelect<false> | PostsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    'culture-groups': CultureGroupsSelect<false> | CultureGroupsSelect<true>;
+    cultures: CulturesSelect<false> | CulturesSelect<true>;
+    products: ProductsSelect<false> | ProductsSelect<true>;
     'protection-plan-categories': ProtectionPlanCategoriesSelect<false> | ProtectionPlanCategoriesSelect<true>;
     'protection-plans': ProtectionPlansSelect<false> | ProtectionPlansSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
@@ -950,6 +956,79 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "culture-groups".
+ */
+export interface CultureGroup {
+  id: number;
+  title: string;
+  description?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cultures".
+ */
+export interface Culture {
+  id: number;
+  title: string;
+  image: number | Media;
+  icon?: (number | null) | Media;
+  cultureGroup: number | CultureGroup;
+  keywordAliases?:
+    | {
+        keyword: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: number;
+  title: string;
+  image: number | Media;
+  shortDescription?: string | null;
+  activeMaterial?: string | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  documents?:
+    | {
+        title?: string | null;
+        file: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  categories?: (number | Category)[] | null;
+  culture?: (number | null) | Culture;
+  cultureGroup?: (number | null) | CultureGroup;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "protection-plan-categories".
  */
 export interface ProtectionPlanCategory {
@@ -1210,6 +1289,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'categories';
         value: number | Category;
+      } | null)
+    | ({
+        relationTo: 'culture-groups';
+        value: number | CultureGroup;
+      } | null)
+    | ({
+        relationTo: 'cultures';
+        value: number | Culture;
+      } | null)
+    | ({
+        relationTo: 'products';
+        value: number | Product;
       } | null)
     | ({
         relationTo: 'protection-plan-categories';
@@ -1658,6 +1749,59 @@ export interface CategoriesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "culture-groups_select".
+ */
+export interface CultureGroupsSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cultures_select".
+ */
+export interface CulturesSelect<T extends boolean = true> {
+  title?: T;
+  image?: T;
+  icon?: T;
+  cultureGroup?: T;
+  keywordAliases?:
+    | T
+    | {
+        keyword?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products_select".
+ */
+export interface ProductsSelect<T extends boolean = true> {
+  title?: T;
+  image?: T;
+  shortDescription?: T;
+  activeMaterial?: T;
+  content?: T;
+  documents?:
+    | T
+    | {
+        title?: T;
+        file?: T;
+        id?: T;
+      };
+  categories?: T;
+  culture?: T;
+  cultureGroup?: T;
+  generateSlug?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "protection-plan-categories_select".
  */
 export interface ProtectionPlanCategoriesSelect<T extends boolean = true> {
@@ -1996,7 +2140,8 @@ export interface Header {
   id: number;
   navItems?:
     | {
-        link: {
+        type: 'link' | 'category';
+        link?: {
           type?: ('reference' | 'custom') | null;
           newTab?: boolean | null;
           reference?:
@@ -2011,6 +2156,14 @@ export interface Header {
           url?: string | null;
           label: string;
         };
+        /**
+         * Select a parent category. Its children will appear as a dropdown.
+         */
+        category?: (number | null) | Category;
+        /**
+         * Optional label override. Defaults to the category title.
+         */
+        categoryLabel?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -2054,6 +2207,7 @@ export interface HeaderSelect<T extends boolean = true> {
   navItems?:
     | T
     | {
+        type?: T;
         link?:
           | T
           | {
@@ -2063,6 +2217,8 @@ export interface HeaderSelect<T extends boolean = true> {
               url?: T;
               label?: T;
             };
+        category?: T;
+        categoryLabel?: T;
         id?: T;
       };
   updatedAt?: T;

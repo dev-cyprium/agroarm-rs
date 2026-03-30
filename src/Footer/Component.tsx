@@ -11,7 +11,7 @@ export async function Footer() {
   let footerData: Footer = { navItems: [] } as unknown as Footer
 
   try {
-    footerData = await getCachedGlobal('footer', 1)()
+    footerData = (await getCachedGlobal('footer', 1)()) as Footer
   } catch (error) {
     console.warn('Failed to load footer global from Payload.', error)
   }

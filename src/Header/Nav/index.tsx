@@ -2,43 +2,85 @@
 
 import React from 'react'
 
-import type { Header as HeaderType } from '@/payload-types'
+import type { NavItemWithChildren, NavItemLink } from '../Component'
 
 import { CMSLink } from '@/components/Link'
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from '@/components/ui/navigation-menu'
 import { cn } from '@/utilities/ui'
 import Link from 'next/link'
 import { Menu, SearchIcon, X } from 'lucide-react'
 
 type HeaderNavProps = {
-  data: HeaderType
+  resolvedNavItems: NavItemWithChildren[]
   mobileOpen: boolean
   onToggleMobileMenu: () => void
 }
 
-export const HeaderNav: React.FC<HeaderNavProps> = ({ data, mobileOpen, onToggleMobileMenu }) => {
-  const navItems = data?.navItems || []
-
+export const HeaderNav: React.FC<HeaderNavProps> = ({
+  resolvedNavItems,
+  mobileOpen,
+  onToggleMobileMenu,
+}) => {
   return (
     <div className="relative flex items-center">
-      <nav className="hidden md:flex gap-5 md:gap-7 items-center">
-        {navItems.map(({ link }, i) => {
-          return (
-            <CMSLink
-              key={i}
-              {...link}
-              appearance="link"
-              className="text-sm font-medium text-foreground/85 hover:text-foreground no-underline hover:no-underline transition-colors"
-            />
-          )
-        })}
-        <Link
-          href="/search"
-          className="text-foreground/80 hover:text-foreground transition-colors p-1.5 rounded-full hover:bg-white/20 dark:hover:bg-white/10"
-          aria-label="Search"
-        >
-          <SearchIcon className="w-5" />
-        </Link>
-      </nav>
+      <NavigationMenu className="hidden md:flex">
+        <NavigationMenuList className="gap-1">
+          {resolvedNavItems.map((navItem, i) => {
+            if (navItem.type === 'category' && navItem.category) {
+              const label = navItem.categoryLabel || navItem.category.title
+              return (
+                <NavigationMenuItem key={navItem.id || i}>
+                  <NavigationMenuTrigger className="bg-transparent text-sm font-medium text-foreground/85 hover:text-foreground hover:bg-white/20 dark:hover:bg-white/10 data-[state=open]:bg-white/20 dark:data-[state=open]:bg-white/10">
+                    {label}
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid w-[200px] gap-1 p-2">
+                      {navItem.children?.map((child) => (
+                        <li key={child.id}>
+                          <NavigationMenuLink asChild>
+                            <Link
+                              href={`/kategorije/${child.slug}`}
+                              className="block select-none rounded-md px-3 py-2 text-sm leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                            >
+                              {child.title}
+                            </Link>
+                          </NavigationMenuLink>
+                        </li>
+                      ))}
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              )
+            }
+
+            return (
+              <NavigationMenuItem key={navItem.id || i}>
+                <CMSLink
+                  {...(navItem as NavItemLink).link}
+                  appearance="link"
+                  className="text-sm font-medium text-foreground/85 hover:text-foreground no-underline hover:no-underline transition-colors"
+                />
+              </NavigationMenuItem>
+            )
+          })}
+          <NavigationMenuItem>
+            <Link
+              href="/search"
+              className="text-foreground/80 hover:text-foreground transition-colors p-1.5 rounded-full hover:bg-white/20 dark:hover:bg-white/10"
+              aria-label="Search"
+            >
+              <SearchIcon className="w-5" />
+            </Link>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
 
       <button
         type="button"

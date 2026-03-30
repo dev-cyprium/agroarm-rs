@@ -20,6 +20,9 @@ const collectionToUrlPrefix: Record<string, string> = {
   pages: '',
   posts: '/posts',
   'protection-plans': '/planovi-zastite',
+  products: '/proizvodi',
+  cultures: '/kulture',
+  'culture-groups': '/grupe-kultura',
 }
 
 type CMSLinkType = {
