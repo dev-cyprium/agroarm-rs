@@ -20,13 +20,11 @@ const createPlanColumnFields = ({
   descriptionDefault: string
   visualIdentityDefault: 'primary' | 'secondary'
 }): Field => ({
-  dbName,
   name,
   type: 'group',
   label,
   fields: [
     {
-      dbName: 'desc',
       name: 'description',
       type: 'textarea',
       label: 'Description',
@@ -34,7 +32,6 @@ const createPlanColumnFields = ({
       defaultValue: descriptionDefault,
     },
     {
-      dbName: 'vi',
       name: 'visualIdentity',
       type: 'select',
       label: 'Visual identity',
