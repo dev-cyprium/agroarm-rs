@@ -994,6 +994,16 @@ export interface Product {
   image: number | Media;
   shortDescription?: string | null;
   activeMaterial?: string | null;
+  /**
+   * Dinamički atributi koji se prikazuju kao tabela na stranici proizvoda.
+   */
+  attributes?:
+    | {
+        label: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
   content?: {
     root: {
       type: string;
@@ -1784,6 +1794,13 @@ export interface ProductsSelect<T extends boolean = true> {
   image?: T;
   shortDescription?: T;
   activeMaterial?: T;
+  attributes?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+        id?: T;
+      };
   content?: T;
   documents?:
     | T

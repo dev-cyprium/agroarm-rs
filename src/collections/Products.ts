@@ -56,6 +56,33 @@ export const Products: CollectionConfig = {
       label: 'Aktivna materija',
     },
     {
+      name: 'attributes',
+      type: 'array',
+      label: 'Atributi proizvoda',
+      labels: {
+        singular: 'Atribut',
+        plural: 'Atributi',
+      },
+      admin: {
+        description: 'Dinamički atributi koji se prikazuju kao tabela na stranici proizvoda.',
+        initCollapsed: false,
+      },
+      fields: [
+        {
+          name: 'label',
+          type: 'text',
+          required: true,
+          label: 'Naziv',
+        },
+        {
+          name: 'value',
+          type: 'text',
+          required: true,
+          label: 'Vrednost',
+        },
+      ],
+    },
+    {
       type: 'tabs',
       tabs: [
         {
