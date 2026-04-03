@@ -10,6 +10,8 @@ import { homeStatic } from '@/endpoints/seed/home-static'
 import { RenderBlocks } from '@/blocks/RenderBlocks'
 import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
+import { getCachedGlobal } from '@/utilities/getGlobals'
+import type { SiteSetting } from '@/payload-types'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 
@@ -72,6 +74,15 @@ export default async function Page({ params: paramsPromise }: Args) {
   const { hero, layout } = page
   const articleClassName = hero?.type === 'highImpact' ? 'pb-24' : 'pt-16 pb-24'
 
+  let siteSettings: SiteSetting | null = null
+  if (hero?.type === 'highImpact') {
+    try {
+      siteSettings = (await getCachedGlobal('site-settings', 1)()) as SiteSetting
+    } catch (error) {
+      console.warn('Failed to load site settings.', error)
+    }
+  }
+
   return (
     <article className={articleClassName}>
       <PageClient />
@@ -80,7 +91,7 @@ export default async function Page({ params: paramsPromise }: Args) {
 
       {draft && <LivePreviewListener />}
 
-      <RenderHero {...hero} />
+      <RenderHero {...hero} siteSettings={siteSettings} />
       <RenderBlocks blocks={layout} />
     </article>
   )

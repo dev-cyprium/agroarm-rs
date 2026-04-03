@@ -16,6 +16,7 @@ import { ProtectionPlans } from './collections/ProtectionPlans'
 import { Users } from './collections/Users'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
+import { SiteSettings } from './SiteSettings/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
@@ -73,7 +74,7 @@ export default buildConfig({
   }),
   collections: [Pages, Posts, Media, Categories, CultureGroups, Cultures, Products, ProtectionPlanCategories, ProtectionPlans, Users],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer],
+  globals: [Header, Footer, SiteSettings],
   plugins,
   secret: process.env.PAYLOAD_SECRET,
   sharp,

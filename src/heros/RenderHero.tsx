@@ -1,6 +1,6 @@
 import React from 'react'
 
-import type { Page } from '@/payload-types'
+import type { Page, SiteSetting } from '@/payload-types'
 
 import { HighImpactHero } from '@/heros/HighImpact'
 import { LowImpactHero } from '@/heros/LowImpact'
@@ -12,8 +12,12 @@ const heroes = {
   mediumImpact: MediumImpactHero,
 }
 
-export const RenderHero: React.FC<Page['hero']> = (props) => {
-  const { type } = props || {}
+type RenderHeroProps = Page['hero'] & {
+  siteSettings?: SiteSetting | null
+}
+
+export const RenderHero: React.FC<RenderHeroProps> = (props) => {
+  const { type, siteSettings, ...rest } = props || {}
 
   if (!type || type === 'none') return null
 
@@ -21,5 +25,5 @@ export const RenderHero: React.FC<Page['hero']> = (props) => {
 
   if (!HeroToRender) return null
 
-  return <HeroToRender {...props} />
+  return <HeroToRender {...rest} type={type} siteSettings={siteSettings} />
 }
