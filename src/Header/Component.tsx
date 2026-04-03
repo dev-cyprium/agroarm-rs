@@ -56,7 +56,7 @@ export async function Header() {
           collection: 'categories',
           where: { parent: { equals: categoryId } },
           limit: 50,
-          sort: 'title',
+          sort: 'order',
         })
 
         return {

@@ -54,7 +54,19 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, resolvedNavIte
         <nav className="hidden items-center gap-1 md:flex">
           {resolvedNavItems.map((navItem, i) => {
             if (navItem.type === 'category' && navItem.category) {
-              return <DesktopDropdown key={navItem.id || i} navItem={navItem} />
+              if (navItem.children && navItem.children.length > 0) {
+                return <DesktopDropdown key={navItem.id || i} navItem={navItem} />
+              }
+              const label = navItem.categoryLabel || navItem.category.title
+              return (
+                <Link
+                  key={navItem.id || i}
+                  href={`/kategorije/${navItem.category.slug}`}
+                  className="rounded-md px-3 py-2 text-sm font-medium text-white/90 no-underline transition-colors hover:bg-white/15 hover:text-white hover:no-underline"
+                >
+                  {label}
+                </Link>
+              )
             }
 
             return (
@@ -90,14 +102,25 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, resolvedNavIte
 
       {/* Mobile nav */}
       {mobileOpen && (
-        <nav
-          id="mobile-nav-panel"
-          className="border-t border-white/20 bg-[#007D41] md:hidden"
-        >
+        <nav id="mobile-nav-panel" className="border-t border-white/20 bg-[#007D41] md:hidden">
           <ul className="container flex flex-col gap-1 py-4">
             {resolvedNavItems.map((navItem, i) => {
               if (navItem.type === 'category' && navItem.category) {
                 const label = navItem.categoryLabel || navItem.category.title
+
+                if (!navItem.children || navItem.children.length === 0) {
+                  return (
+                    <li key={navItem.id || i} onClick={() => setMobileOpen(false)}>
+                      <Link
+                        href={`/kategorije/${navItem.category.slug}`}
+                        className="block w-full rounded-md px-3 py-2.5 text-base font-medium text-white/90 no-underline transition-colors hover:bg-white/15 hover:text-white"
+                      >
+                        {label}
+                      </Link>
+                    </li>
+                  )
+                }
+
                 const isExpanded = expandedMobileCategory === navItem.id
                 return (
                   <li key={navItem.id || i}>
@@ -116,7 +139,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, resolvedNavIte
                         )}
                       />
                     </button>
-                    {isExpanded && navItem.children && navItem.children.length > 0 && (
+                    {isExpanded && (
                       <ul className="flex flex-col gap-0.5 pb-1 pl-3">
                         {navItem.children.map((child) => (
                           <li key={child.id}>
@@ -163,7 +186,11 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, resolvedNavIte
 }
 
 /* ── Desktop dropdown for category nav items ── */
-function DesktopDropdown({ navItem }: { navItem: Extract<NavItemWithChildren, { type: 'category' }> }) {
+function DesktopDropdown({
+  navItem,
+}: {
+  navItem: Extract<NavItemWithChildren, { type: 'category' }>
+}) {
   const [open, setOpen] = useState(false)
   const label = navItem.categoryLabel || navItem.category.title
 

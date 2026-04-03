@@ -14,12 +14,21 @@ export const Categories: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
+    defaultColumns: ['title', 'slug', 'order', 'updatedAt'],
   },
   fields: [
     {
       name: 'title',
       type: 'text',
       required: true,
+    },
+    {
+      name: 'order',
+      type: 'number',
+      admin: {
+        description: 'Redosled prikazivanja (manji broj = viši prioritet)',
+      },
+      defaultValue: 0,
     },
     slugField({
       position: undefined,
