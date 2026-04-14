@@ -26,6 +26,7 @@ import {
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
 import { slugField } from 'payload'
+import { serbianSlugify } from '@/utilities/serbianSlugify'
 
 export const Posts: CollectionConfig<'posts'> = {
   slug: 'posts',
@@ -214,7 +215,7 @@ export const Posts: CollectionConfig<'posts'> = {
         },
       ],
     },
-    slugField(),
+    slugField({ slugify: serbianSlugify }),
   ],
   hooks: {
     afterChange: [revalidatePost],

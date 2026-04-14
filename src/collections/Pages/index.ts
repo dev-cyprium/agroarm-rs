@@ -13,6 +13,7 @@ import { ProtectionPlans as ProtectionPlansBlock } from '../../blocks/Protection
 import { RichTextImage } from '../../blocks/RichTextImage/config'
 import { hero } from '@/heros/config'
 import { slugField } from 'payload'
+import { serbianSlugify } from '@/utilities/serbianSlugify'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
 import { revalidateDelete, revalidatePage } from './hooks/revalidatePage'
@@ -121,7 +122,7 @@ export const Pages: CollectionConfig<'pages'> = {
         position: 'sidebar',
       },
     },
-    slugField(),
+    slugField({ slugify: serbianSlugify }),
   ],
   hooks: {
     afterChange: [revalidatePage],

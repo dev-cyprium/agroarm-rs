@@ -16,6 +16,7 @@ import { Banner } from '../blocks/Banner/config'
 import { Code } from '../blocks/Code/config'
 import { MediaBlock } from '../blocks/MediaBlock/config'
 import { slugField } from 'payload'
+import { serbianSlugify } from '@/utilities/serbianSlugify'
 
 export const Products: CollectionConfig = {
   slug: 'products',
@@ -166,6 +167,7 @@ export const Products: CollectionConfig = {
     },
     slugField({
       fieldToUse: 'title',
+      slugify: serbianSlugify,
     }),
   ],
 }

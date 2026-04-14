@@ -2200,7 +2200,71 @@ export interface Header {
  */
 export interface Footer {
   id: number;
-  navItems?:
+  columnLeft?: (FooterLogoBlock | FooterTextBlock | FooterNavBlock | FooterContactBlock | FooterSocialBlock)[] | null;
+  columnCenter?: (FooterLogoBlock | FooterTextBlock | FooterNavBlock | FooterContactBlock | FooterSocialBlock)[] | null;
+  columnRight?: (FooterLogoBlock | FooterTextBlock | FooterNavBlock | FooterContactBlock | FooterSocialBlock)[] | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FooterLogoBlock".
+ */
+export interface FooterLogoBlock {
+  image: number | Media;
+  /**
+   * Visina slike u pikselima
+   */
+  height?: number | null;
+  link?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null);
+    url?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'footerLogo';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FooterTextBlock".
+ */
+export interface FooterTextBlock {
+  richText?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'footerText';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FooterNavBlock".
+ */
+export interface FooterNavBlock {
+  title?: string | null;
+  links?:
     | {
         link: {
           type?: ('reference' | 'custom') | null;
@@ -2220,8 +2284,32 @@ export interface Footer {
         id?: string | null;
       }[]
     | null;
-  updatedAt?: string | null;
-  createdAt?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'footerNav';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FooterContactBlock".
+ */
+export interface FooterContactBlock {
+  title?: string | null;
+  showPhone?: boolean | null;
+  showEmail?: boolean | null;
+  showAddress?: boolean | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'footerContact';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FooterSocialBlock".
+ */
+export interface FooterSocialBlock {
+  title?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'footerSocial';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2273,7 +2361,71 @@ export interface HeaderSelect<T extends boolean = true> {
  * via the `definition` "footer_select".
  */
 export interface FooterSelect<T extends boolean = true> {
-  navItems?:
+  columnLeft?:
+    | T
+    | {
+        footerLogo?: T | FooterLogoBlockSelect<T>;
+        footerText?: T | FooterTextBlockSelect<T>;
+        footerNav?: T | FooterNavBlockSelect<T>;
+        footerContact?: T | FooterContactBlockSelect<T>;
+        footerSocial?: T | FooterSocialBlockSelect<T>;
+      };
+  columnCenter?:
+    | T
+    | {
+        footerLogo?: T | FooterLogoBlockSelect<T>;
+        footerText?: T | FooterTextBlockSelect<T>;
+        footerNav?: T | FooterNavBlockSelect<T>;
+        footerContact?: T | FooterContactBlockSelect<T>;
+        footerSocial?: T | FooterSocialBlockSelect<T>;
+      };
+  columnRight?:
+    | T
+    | {
+        footerLogo?: T | FooterLogoBlockSelect<T>;
+        footerText?: T | FooterTextBlockSelect<T>;
+        footerNav?: T | FooterNavBlockSelect<T>;
+        footerContact?: T | FooterContactBlockSelect<T>;
+        footerSocial?: T | FooterSocialBlockSelect<T>;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FooterLogoBlock_select".
+ */
+export interface FooterLogoBlockSelect<T extends boolean = true> {
+  image?: T;
+  height?: T;
+  link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FooterTextBlock_select".
+ */
+export interface FooterTextBlockSelect<T extends boolean = true> {
+  richText?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FooterNavBlock_select".
+ */
+export interface FooterNavBlockSelect<T extends boolean = true> {
+  title?: T;
+  links?:
     | T
     | {
         link?:
@@ -2287,9 +2439,29 @@ export interface FooterSelect<T extends boolean = true> {
             };
         id?: T;
       };
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FooterContactBlock_select".
+ */
+export interface FooterContactBlockSelect<T extends boolean = true> {
+  title?: T;
+  showPhone?: T;
+  showEmail?: T;
+  showAddress?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FooterSocialBlock_select".
+ */
+export interface FooterSocialBlockSelect<T extends boolean = true> {
+  title?: T;
+  id?: T;
+  blockName?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

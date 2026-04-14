@@ -4,6 +4,7 @@ import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 import { link } from '../fields/link'
 import { slugField } from 'payload'
+import { serbianSlugify } from '@/utilities/serbianSlugify'
 
 export const ProtectionPlans: CollectionConfig = {
   slug: 'protection-plans',
@@ -63,6 +64,7 @@ export const ProtectionPlans: CollectionConfig = {
     }),
     slugField({
       fieldToUse: 'title',
+      slugify: serbianSlugify,
     }),
   ],
 }

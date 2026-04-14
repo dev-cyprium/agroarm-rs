@@ -3,6 +3,7 @@ import type { CollectionConfig } from 'payload'
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 import { slugField } from 'payload'
+import { serbianSlugify } from '@/utilities/serbianSlugify'
 
 export const ProtectionPlanCategories: CollectionConfig = {
   slug: 'protection-plan-categories',
@@ -37,6 +38,7 @@ export const ProtectionPlanCategories: CollectionConfig = {
     },
     slugField({
       fieldToUse: 'name',
+      slugify: serbianSlugify,
     }),
   ],
 }
