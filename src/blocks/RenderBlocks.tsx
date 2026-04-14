@@ -13,6 +13,8 @@ import { ProtectionPlansBlock } from '@/blocks/ProtectionPlansBlock/Component'
 import { RichTextImageBlock } from '@/blocks/RichTextImage/Component'
 import { MapEmbedBlock } from '@/blocks/MapEmbed/Component'
 import { OfficeLocationsBlock } from '@/blocks/OfficeLocations/Component'
+import { LogoTickerBlock } from '@/blocks/LogoTicker/Component'
+import { FeaturedProductsBlock } from '@/blocks/FeaturedProducts/Component'
 
 const blockComponents = {
   archive: ArchiveBlock,
@@ -20,6 +22,8 @@ const blockComponents = {
   cta: CallToActionBlock,
   formBlock: FormBlock,
   labeledCategoryCards: LabeledCategoryCardsBlock,
+  featuredProducts: FeaturedProductsBlock,
+  logoTicker: LogoTickerBlock,
   mapEmbed: MapEmbedBlock,
   mediaBlock: MediaBlock,
   officeLocations: OfficeLocationsBlock,
@@ -46,9 +50,12 @@ export const RenderBlocks: React.FC<{
 
             if (Block) {
               const isFirstBlock = index === 0
+              const isFullBleed = blockType === 'logoTicker'
+              const prevBlock = index > 0 ? blocks[index - 1] : null
+              const afterFullBleed = prevBlock && 'blockType' in prevBlock && prevBlock.blockType === 'logoTicker'
               return (
                 <div
-                  className={isFirstBlock ? 'mt-0 mb-16' : 'my-16'}
+                  className={isFullBleed ? '' : ((isFirstBlock || afterFullBleed) ? 'mt-0 mb-16' : 'my-16')}
                   key={index}
                 >
                   {/* @ts-expect-error there may be some mismatch between the expected types here */}

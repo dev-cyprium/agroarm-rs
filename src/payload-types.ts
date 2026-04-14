@@ -224,6 +224,8 @@ export interface Page {
     | RichTextImageBlock
     | MapEmbedBlock
     | OfficeLocationsBlock
+    | LogoTickerBlock
+    | FeaturedProductsBlock
     | ArchiveBlock
     | FormBlock
   )[];
@@ -774,6 +776,126 @@ export interface OfficeLocationsBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LogoTickerBlock".
+ */
+export interface LogoTickerBlock {
+  /**
+   * Npr. "Naši saradnici" ili "Partneri od poverenja"
+   */
+  heading?: string | null;
+  logos: {
+    image: number | Media;
+    /**
+     * Koristi se za alt tekst slike
+     */
+    name?: string | null;
+    id?: string | null;
+  }[];
+  speed?: ('slow' | 'normal' | 'fast') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'logoTicker';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeaturedProductsBlock".
+ */
+export interface FeaturedProductsBlock {
+  heading?: string | null;
+  subheading?: string | null;
+  /**
+   * Odaberite proizvode za prikaz (preporuka: 4)
+   */
+  products: (number | Product)[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'featuredProducts';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: number;
+  title: string;
+  image: number | Media;
+  shortDescription?: string | null;
+  activeMaterial?: string | null;
+  /**
+   * Dinamički atributi koji se prikazuju kao tabela na stranici proizvoda.
+   */
+  attributes?:
+    | {
+        label: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  documents?:
+    | {
+        title?: string | null;
+        file: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  categories?: (number | Category)[] | null;
+  culture?: (number | null) | Culture;
+  cultureGroup?: (number | null) | CultureGroup;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cultures".
+ */
+export interface Culture {
+  id: number;
+  title: string;
+  image: number | Media;
+  icon?: (number | null) | Media;
+  cultureGroup: number | CultureGroup;
+  keywordAliases?:
+    | {
+        keyword: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "culture-groups".
+ */
+export interface CultureGroup {
+  id: number;
+  title: string;
+  description?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "ArchiveBlock".
  */
 export interface ArchiveBlock {
@@ -1003,89 +1125,6 @@ export interface Form {
         id?: string | null;
       }[]
     | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "culture-groups".
- */
-export interface CultureGroup {
-  id: number;
-  title: string;
-  description?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "cultures".
- */
-export interface Culture {
-  id: number;
-  title: string;
-  image: number | Media;
-  icon?: (number | null) | Media;
-  cultureGroup: number | CultureGroup;
-  keywordAliases?:
-    | {
-        keyword: string;
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "products".
- */
-export interface Product {
-  id: number;
-  title: string;
-  image: number | Media;
-  shortDescription?: string | null;
-  activeMaterial?: string | null;
-  /**
-   * Dinamički atributi koji se prikazuju kao tabela na stranici proizvoda.
-   */
-  attributes?:
-    | {
-        label: string;
-        value: string;
-        id?: string | null;
-      }[]
-    | null;
-  content?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  documents?:
-    | {
-        title?: string | null;
-        file: number | Media;
-        id?: string | null;
-      }[]
-    | null;
-  categories?: (number | Category)[] | null;
-  culture?: (number | null) | Culture;
-  cultureGroup?: (number | null) | CultureGroup;
-  /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -1479,6 +1518,8 @@ export interface PagesSelect<T extends boolean = true> {
         richTextImage?: T | RichTextImageBlockSelect<T>;
         mapEmbed?: T | MapEmbedBlockSelect<T>;
         officeLocations?: T | OfficeLocationsBlockSelect<T>;
+        logoTicker?: T | LogoTickerBlockSelect<T>;
+        featuredProducts?: T | FeaturedProductsBlockSelect<T>;
         archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
       };
@@ -1669,6 +1710,34 @@ export interface OfficeLocationsBlockSelect<T extends boolean = true> {
         mapAddress?: T;
         id?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LogoTickerBlock_select".
+ */
+export interface LogoTickerBlockSelect<T extends boolean = true> {
+  heading?: T;
+  logos?:
+    | T
+    | {
+        image?: T;
+        name?: T;
+        id?: T;
+      };
+  speed?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeaturedProductsBlock_select".
+ */
+export interface FeaturedProductsBlockSelect<T extends boolean = true> {
+  heading?: T;
+  subheading?: T;
+  products?: T;
   id?: T;
   blockName?: T;
 }
