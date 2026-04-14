@@ -11,6 +11,8 @@ import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { PlansSplit } from '../../blocks/PlansSplitBlock/config'
 import { ProtectionPlans as ProtectionPlansBlock } from '../../blocks/ProtectionPlansBlock/config'
 import { RichTextImage } from '../../blocks/RichTextImage/config'
+import { MapEmbed } from '../../blocks/MapEmbed/config'
+import { OfficeLocations } from '../../blocks/OfficeLocations/config'
 import { hero } from '@/heros/config'
 import { slugField } from 'payload'
 import { serbianSlugify } from '@/utilities/serbianSlugify'
@@ -77,7 +79,7 @@ export const Pages: CollectionConfig<'pages'> = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [CallToAction, Content, LabeledCategoryCards, PlansSplit, MediaBlock, ProtectionPlansBlock, RichTextImage, Archive, FormBlock],
+              blocks: [CallToAction, Content, LabeledCategoryCards, PlansSplit, MediaBlock, ProtectionPlansBlock, RichTextImage, MapEmbed, OfficeLocations, Archive, FormBlock],
               required: true,
               admin: {
                 initCollapsed: true,

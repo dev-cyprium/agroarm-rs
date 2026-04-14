@@ -222,6 +222,8 @@ export interface Page {
     | MediaBlock
     | ProtectionPlansBlock
     | RichTextImageBlock
+    | MapEmbedBlock
+    | OfficeLocationsBlock
     | ArchiveBlock
     | FormBlock
   )[];
@@ -725,6 +727,50 @@ export interface RichTextImageBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'richTextImage';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MapEmbedBlock".
+ */
+export interface MapEmbedBlock {
+  /**
+   * Adresa koja će biti prikazana na mapi (npr. "Pukovnika Purića 4, Beograd")
+   */
+  address: string;
+  /**
+   * Visina mape u pikselima
+   */
+  height?: number | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'mapEmbed';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "OfficeLocationsBlock".
+ */
+export interface OfficeLocationsBlock {
+  heading?: string | null;
+  subheading?: string | null;
+  offices: {
+    name: string;
+    /**
+     * Npr. "Sedište" ili "Filijala"
+     */
+    badge?: string | null;
+    address: string;
+    phone?: string | null;
+    fax?: string | null;
+    email?: string | null;
+    /**
+     * Puna adresa za Google Maps pretragu (npr. "Pukovnika Purića 4, Beograd, Srbija")
+     */
+    mapAddress?: string | null;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'officeLocations';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1431,6 +1477,8 @@ export interface PagesSelect<T extends boolean = true> {
         mediaBlock?: T | MediaBlockSelect<T>;
         protectionPlans?: T | ProtectionPlansBlockSelect<T>;
         richTextImage?: T | RichTextImageBlockSelect<T>;
+        mapEmbed?: T | MapEmbedBlockSelect<T>;
+        officeLocations?: T | OfficeLocationsBlockSelect<T>;
         archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
       };
@@ -1589,6 +1637,38 @@ export interface RichTextImageBlockSelect<T extends boolean = true> {
   image?: T;
   imagePosition?: T;
   backgroundColor?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MapEmbedBlock_select".
+ */
+export interface MapEmbedBlockSelect<T extends boolean = true> {
+  address?: T;
+  height?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "OfficeLocationsBlock_select".
+ */
+export interface OfficeLocationsBlockSelect<T extends boolean = true> {
+  heading?: T;
+  subheading?: T;
+  offices?:
+    | T
+    | {
+        name?: T;
+        badge?: T;
+        address?: T;
+        phone?: T;
+        fax?: T;
+        email?: T;
+        mapAddress?: T;
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }

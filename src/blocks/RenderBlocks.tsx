@@ -11,6 +11,8 @@ import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { PlansSplitBlock } from '@/blocks/PlansSplitBlock/Component'
 import { ProtectionPlansBlock } from '@/blocks/ProtectionPlansBlock/Component'
 import { RichTextImageBlock } from '@/blocks/RichTextImage/Component'
+import { MapEmbedBlock } from '@/blocks/MapEmbed/Component'
+import { OfficeLocationsBlock } from '@/blocks/OfficeLocations/Component'
 
 const blockComponents = {
   archive: ArchiveBlock,
@@ -18,7 +20,9 @@ const blockComponents = {
   cta: CallToActionBlock,
   formBlock: FormBlock,
   labeledCategoryCards: LabeledCategoryCardsBlock,
+  mapEmbed: MapEmbedBlock,
   mediaBlock: MediaBlock,
+  officeLocations: OfficeLocationsBlock,
   plansSplit: PlansSplitBlock,
   protectionPlans: ProtectionPlansBlock,
   richTextImage: RichTextImageBlock,
