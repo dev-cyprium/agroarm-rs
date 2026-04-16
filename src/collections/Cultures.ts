@@ -29,7 +29,6 @@ export const Cultures: CollectionConfig = {
       name: 'image',
       type: 'upload',
       relationTo: 'media',
-      required: true,
     },
     {
       name: 'icon',
