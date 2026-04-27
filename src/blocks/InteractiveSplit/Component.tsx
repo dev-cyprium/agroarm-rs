@@ -132,17 +132,22 @@ function resolveLink(link: LinkLike): { href: string; label: string; newTab: boo
 // ── Animated stat counter ──────────────────────────────────────────────────
 
 function StatValue({ value }: { value: string }) {
-  // If the string starts with a number we count up to it; otherwise we just
-  // render the static label.
-  const numMatch = value.match(/^(\d+)(.*)$/)
+  // Parse once per `value`. Without memoising, `match()` returns a new array
+  // each render which retriggers the animation effect → counter resets to 0
+  // → flicker.
+  const parsed = React.useMemo(() => {
+    const m = value.match(/^(\d+)(.*)$/)
+    if (!m) return null
+    return { target: parseInt(m[1], 10), suffix: m[2] ?? '' }
+  }, [value])
+
   const ref = useRef<HTMLSpanElement>(null)
   const inView = useInView(ref, { once: true, margin: '-20% 0px' })
-  const [display, setDisplay] = useState(numMatch ? '0' + (numMatch[2] ?? '') : value)
+  const [display, setDisplay] = useState(parsed ? `0${parsed.suffix}` : value)
 
   useEffect(() => {
-    if (!numMatch || !inView) return
-    const target = parseInt(numMatch[1], 10)
-    const suffix = numMatch[2] ?? ''
+    if (!parsed || !inView) return
+    const { target, suffix } = parsed
     const duration = 900
     const start = performance.now()
     let raf = 0
@@ -154,7 +159,7 @@ function StatValue({ value }: { value: string }) {
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [inView, numMatch])
+  }, [inView, parsed])
 
   return <span ref={ref}>{display}</span>
 }
