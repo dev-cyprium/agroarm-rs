@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 import { notFound } from 'next/navigation'
+import { Suspense } from 'react'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { CategoryPageClient } from './CategoryPageClient'
@@ -88,12 +89,14 @@ export default async function CategoryPage({ params }: Args) {
     const countsMap = Object.fromEntries(childProductCounts.map((c) => [c.id, c.count]))
 
     return (
-      <CategoryPageClient
-        mode="parent"
-        category={category}
-        children={children}
-        childProductCounts={countsMap}
-      />
+      <Suspense fallback={null}>
+        <CategoryPageClient
+          mode="parent"
+          category={category}
+          children={children}
+          childProductCounts={countsMap}
+        />
+      </Suspense>
     )
   }
 
@@ -127,19 +130,23 @@ export default async function CategoryPage({ params }: Args) {
   const ungroupedCultures = new Map<number, { id: number; title: string }>()
 
   for (const product of products) {
-    const culture = typeof product.culture === 'object' ? product.culture : null
+    const productCultures = (product.culture ?? []).filter(
+      (c): c is Exclude<typeof c, number> => typeof c === 'object',
+    )
     const cultureGroup = typeof product.cultureGroup === 'object' ? product.cultureGroup : null
 
-    if (cultureGroup && culture) {
-      if (!groupsMap.has(cultureGroup.id)) {
-        groupsMap.set(cultureGroup.id, {
-          group: { id: cultureGroup.id, title: cultureGroup.title },
-          cultures: new Map(),
-        })
+    for (const culture of productCultures) {
+      if (cultureGroup) {
+        if (!groupsMap.has(cultureGroup.id)) {
+          groupsMap.set(cultureGroup.id, {
+            group: { id: cultureGroup.id, title: cultureGroup.title },
+            cultures: new Map(),
+          })
+        }
+        groupsMap.get(cultureGroup.id)!.cultures.set(culture.id, { id: culture.id, title: culture.title })
+      } else {
+        ungroupedCultures.set(culture.id, { id: culture.id, title: culture.title })
       }
-      groupsMap.get(cultureGroup.id)!.cultures.set(culture.id, { id: culture.id, title: culture.title })
-    } else if (culture) {
-      ungroupedCultures.set(culture.id, { id: culture.id, title: culture.title })
     }
   }
 
@@ -155,13 +162,15 @@ export default async function CategoryPage({ params }: Args) {
   )
 
   return (
-    <CategoryPageClient
-      mode="leaf"
-      category={category}
-      siblings={siblings}
-      products={products}
-      cultureFilterGroups={cultureFilterGroups}
-      ungroupedCultures={ungrouped}
-    />
+    <Suspense fallback={null}>
+      <CategoryPageClient
+        mode="leaf"
+        category={category}
+        siblings={siblings}
+        products={products}
+        cultureFilterGroups={cultureFilterGroups}
+        ungroupedCultures={ungrouped}
+      />
+    </Suspense>
   )
 }

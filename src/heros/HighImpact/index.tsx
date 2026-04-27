@@ -82,9 +82,6 @@ export const HighImpactHero: React.FC<HighImpactHeroProps> = ({
       {/* Content pinned to bottom-left */}
       <div className="container relative z-10 px-6 pb-12 md:px-8 md:pb-16">
         <div className="max-w-2xl">
-          {/* Accent bar */}
-          <div className="mb-5 h-1 w-16 rounded-full bg-[#007D41]" />
-
           {richText && (
             <RichText
               className="mb-6 [&_p]:m-0 [&_p]:text-base [&_p]:leading-relaxed [&_p]:text-white/85 [&_h1]:text-[2.25rem] [&_h1]:font-bold [&_h1]:leading-tight [&_h1]:tracking-tight md:[&_h1]:text-[3rem] md:[&_p]:text-lg"

@@ -11,6 +11,9 @@ import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { PlansSplit } from '../../blocks/PlansSplitBlock/config'
 import { ProtectionPlans as ProtectionPlansBlock } from '../../blocks/ProtectionPlansBlock/config'
 import { RichTextImage } from '../../blocks/RichTextImage/config'
+import { TextImage } from '../../blocks/TextImage/config'
+import { FeatureGrid } from '../../blocks/FeatureGrid/config'
+import { InteractiveSplit } from '../../blocks/InteractiveSplit/config'
 import { MapEmbed } from '../../blocks/MapEmbed/config'
 import { OfficeLocations } from '../../blocks/OfficeLocations/config'
 import { LogoTicker } from '../../blocks/LogoTicker/config'
@@ -81,7 +84,7 @@ export const Pages: CollectionConfig<'pages'> = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [CallToAction, Content, LabeledCategoryCards, PlansSplit, MediaBlock, ProtectionPlansBlock, RichTextImage, MapEmbed, OfficeLocations, LogoTicker, FeaturedProducts, Archive, FormBlock],
+              blocks: [CallToAction, Content, LabeledCategoryCards, PlansSplit, MediaBlock, ProtectionPlansBlock, RichTextImage, TextImage, FeatureGrid, InteractiveSplit, MapEmbed, OfficeLocations, LogoTicker, FeaturedProducts, Archive, FormBlock],
               required: true,
               admin: {
                 initCollapsed: true,

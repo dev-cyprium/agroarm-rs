@@ -5,12 +5,22 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 import Link from 'next/link'
-import { FileText, TriangleAlert, Leaf, FlaskConical, Tag } from 'lucide-react'
+import { ChevronRight, FileText, TriangleAlert, Leaf, FlaskConical, Tag } from 'lucide-react'
 import RichText from '@/components/RichText'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 
+import type { Category } from '@/payload-types'
+
+type SearchParams = { [key: string]: string | string[] | undefined }
+
 type Args = {
   params: Promise<{ slug: string }>
+  searchParams: Promise<SearchParams>
+}
+
+const pickString = (v: string | string[] | undefined): string | null => {
+  if (Array.isArray(v)) return v[0] ?? null
+  return v ?? null
 }
 
 export async function generateStaticParams() {
@@ -36,8 +46,9 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   }
 }
 
-export default async function ProductPage({ params }: Args) {
+export default async function ProductPage({ params, searchParams }: Args) {
   const { slug } = await params
+  const sp = await searchParams
   const product = await queryProductBySlug(decodeURIComponent(slug))
 
   if (!product) notFound()
@@ -48,14 +59,40 @@ export default async function ProductPage({ params }: Args) {
   const categories = (product.categories ?? []).filter(
     (c): c is Exclude<typeof c, number> => typeof c === 'object',
   )
-  const culture = typeof product.culture === 'object' ? product.culture : null
+  const cultures = (product.culture ?? []).filter(
+    (c): c is Exclude<typeof c, number> => typeof c === 'object',
+  )
   const cultureGroup = typeof product.cultureGroup === 'object' ? product.cultureGroup : null
   const documents = product.documents ?? []
   const attributes = product.attributes ?? []
 
+  // Resolve breadcrumb context: prefer `?from=<slug>` (the category the user
+  // came from), fall back to the product's first category. Empty array if neither.
+  const fromSlug = pickString(sp.from)
+  const breadcrumbCategory = await resolveBreadcrumbCategory(fromSlug, categories)
+
+  // Filter params we round-trip back to the originating category page.
+  const restoreParams = new URLSearchParams()
+  const q = pickString(sp.q)
+  const culture = pickString(sp.culture)
+  if (q) restoreParams.set('q', q)
+  if (culture) restoreParams.set('culture', culture)
+  const restoreQs = restoreParams.toString()
+  const categoryHref = (slug: string) =>
+    `/kategorije/${slug}${restoreQs ? `?${restoreQs}` : ''}`
+
   return (
     <article className="bg-[#F4F8F6]">
-      <div className="container py-12 md:py-16">
+      <div className="container pt-6 md:pt-8">
+        <div className="mx-auto max-w-5xl">
+          <Breadcrumbs
+            category={breadcrumbCategory}
+            productTitle={product.title}
+            categoryHref={categoryHref}
+          />
+        </div>
+      </div>
+      <div className="container pb-12 pt-6 md:pb-16">
         <div className="mx-auto max-w-5xl">
 
           {/* Product hero card */}
@@ -89,12 +126,15 @@ export default async function ProductPage({ params }: Args) {
                       {cat.title}
                     </Link>
                   ))}
-                  {culture && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E6EFEA] px-3 py-1 text-xs font-semibold text-[#024E29]">
+                  {cultures.map((culture) => (
+                    <span
+                      key={culture.id}
+                      className="inline-flex items-center gap-1.5 rounded-full bg-[#E6EFEA] px-3 py-1 text-xs font-semibold text-[#024E29]"
+                    >
                       <Leaf className="h-3 w-3" />
                       {culture.title}
                     </span>
-                  )}
+                  ))}
                   {cultureGroup && (
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E6EFEA] px-3 py-1 text-xs font-semibold text-[#024E29]">
                       <Leaf className="h-3 w-3" />
@@ -214,3 +254,82 @@ const queryProductBySlug = cache(async (slug: string) => {
     return null
   }
 })
+
+const queryCategoryBySlug = cache(async (slug: string): Promise<Category | null> => {
+  try {
+    const payload = await getPayload({ config: configPromise })
+    const result = await payload.find({
+      collection: 'categories',
+      depth: 1,
+      limit: 1,
+      pagination: false,
+      overrideAccess: false,
+      where: { slug: { equals: slug } },
+    })
+    return result.docs?.[0] ?? null
+  } catch (error) {
+    console.warn(`Failed to query category by slug "${slug}".`, error)
+    return null
+  }
+})
+
+async function resolveBreadcrumbCategory(
+  fromSlug: string | null,
+  productCategories: Category[],
+): Promise<Category | null> {
+  if (fromSlug) {
+    const fromCat = await queryCategoryBySlug(fromSlug)
+    if (fromCat) return fromCat
+  }
+  // Fallback: first category attached to the product. depth=2 on the product
+  // query already populates parents on these.
+  return productCategories[0] ?? null
+}
+
+function Breadcrumbs({
+  category,
+  productTitle,
+  categoryHref,
+}: {
+  category: Category | null
+  productTitle: string
+  categoryHref: (slug: string) => string
+}) {
+  const parent =
+    category && typeof category.parent === 'object' && category.parent ? category.parent : null
+
+  return (
+    <nav
+      aria-label="Breadcrumbs"
+      className="flex flex-wrap items-center gap-1.5 text-sm text-[#1F2A24]/60"
+    >
+      <Link href="/" className="transition-colors hover:text-[#007D41]">
+        Početna
+      </Link>
+      {parent && parent.slug && (
+        <>
+          <ChevronRight className="h-3.5 w-3.5 text-[#1F2A24]/30" />
+          <Link
+            href={`/kategorije/${parent.slug}`}
+            className="transition-colors hover:text-[#007D41]"
+          >
+            {parent.title}
+          </Link>
+        </>
+      )}
+      {category && category.slug && (
+        <>
+          <ChevronRight className="h-3.5 w-3.5 text-[#1F2A24]/30" />
+          <Link
+            href={categoryHref(category.slug)}
+            className="transition-colors hover:text-[#007D41]"
+          >
+            {category.title}
+          </Link>
+        </>
+      )}
+      <ChevronRight className="h-3.5 w-3.5 text-[#1F2A24]/30" />
+      <span className="font-medium text-[#1F2A24] line-clamp-1">{productTitle}</span>
+    </nav>
+  )
+}

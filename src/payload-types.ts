@@ -222,6 +222,9 @@ export interface Page {
     | MediaBlock
     | ProtectionPlansBlock
     | RichTextImageBlock
+    | TextImageBlock
+    | FeatureGridBlock
+    | InteractiveSplitBlock
     | MapEmbedBlock
     | OfficeLocationsBlock
     | LogoTickerBlock
@@ -732,6 +735,294 @@ export interface RichTextImageBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TextImageBlock".
+ */
+export interface TextImageBlock {
+  text: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  image: number | Media;
+  /**
+   * Strana na kojoj se prikazuje slika u odnosu na tekst.
+   */
+  imagePosition?: ('left' | 'right') | null;
+  /**
+   * Udeo širine koji slika zauzima u odnosu na tekst.
+   */
+  imageSize?: ('small' | 'medium' | 'large') | null;
+  /**
+   * Vertikalno poravnanje teksta u odnosu na sliku.
+   */
+  verticalAlignment?: ('top' | 'center' | 'bottom') | null;
+  /**
+   * Opcionalno — ograničava visinu slike. Ako je prazno, koristi se podrazumevani odnos 4:3.
+   */
+  imageMaxHeight?: number | null;
+  /**
+   * Hex boja (npr. #F4F8F6, #E6EFEA). Ostavite prazno za bez pozadine.
+   */
+  backgroundColor?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'textImage';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeatureGridBlock".
+ */
+export interface FeatureGridBlock {
+  /**
+   * Mali tekst iznad naslova (npr. "Zašto baš mi").
+   */
+  eyebrow?: string | null;
+  heading?: string | null;
+  lead?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  columns?: ('2' | '3' | '4') | null;
+  cardStyle?: ('soft' | 'outline' | 'plain') | null;
+  items?:
+    | {
+        icon?:
+          | (
+              | 'leaf'
+              | 'sprout'
+              | 'flask'
+              | 'shield'
+              | 'badgeCheck'
+              | 'award'
+              | 'users'
+              | 'handshake'
+              | 'truck'
+              | 'sun'
+              | 'droplet'
+              | 'book'
+              | 'phone'
+              | 'tractor'
+              | 'clock'
+              | 'compass'
+              | 'mapPin'
+              | 'target'
+              | 'zap'
+              | 'trophy'
+            )
+          | null;
+        title: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'featureGrid';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "InteractiveSplitBlock".
+ */
+export interface InteractiveSplitBlock {
+  eyebrow?: string | null;
+  heading?: string | null;
+  subheading?: string | null;
+  cards?:
+    | {
+        icon?:
+          | (
+              | 'leaf'
+              | 'sprout'
+              | 'shield'
+              | 'flask'
+              | 'badgeCheck'
+              | 'droplet'
+              | 'sun'
+              | 'zap'
+              | 'target'
+              | 'award'
+              | 'users'
+              | 'handshake'
+            )
+          | null;
+        theme?: ('emerald' | 'amber' | 'sky' | 'rose' | 'violet') | null;
+        title: string;
+        description?: string | null;
+        /**
+         * Npr. "120+", "5", "Top 3"
+         */
+        statValue?: string | null;
+        /**
+         * Npr. "proizvoda u ponudi", "podkategorija"
+         */
+        statLabel?: string | null;
+        primaryLink: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null)
+            | ({
+                relationTo: 'products';
+                value: number | Product;
+              } | null)
+            | ({
+                relationTo: 'categories';
+                value: number | Category;
+              } | null);
+          url?: string | null;
+          label: string;
+        };
+        /**
+         * Pojavljuju se na hover sa staggered animacijom.
+         */
+        chips?:
+          | {
+              link: {
+                type?: ('reference' | 'custom') | null;
+                newTab?: boolean | null;
+                reference?:
+                  | ({
+                      relationTo: 'pages';
+                      value: number | Page;
+                    } | null)
+                  | ({
+                      relationTo: 'posts';
+                      value: number | Post;
+                    } | null)
+                  | ({
+                      relationTo: 'products';
+                      value: number | Product;
+                    } | null)
+                  | ({
+                      relationTo: 'categories';
+                      value: number | Category;
+                    } | null);
+                url?: string | null;
+                label: string;
+              };
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'interactiveSplit';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: number;
+  title: string;
+  image: number | Media;
+  shortDescription?: string | null;
+  activeMaterial?: string | null;
+  /**
+   * Dinamički atributi koji se prikazuju kao tabela na stranici proizvoda.
+   */
+  attributes?:
+    | {
+        label: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  documents?:
+    | {
+        title?: string | null;
+        file: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  categories?: (number | Category)[] | null;
+  culture?: (number | Culture)[] | null;
+  cultureGroup?: (number | null) | CultureGroup;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cultures".
+ */
+export interface Culture {
+  id: number;
+  title: string;
+  image?: (number | null) | Media;
+  icon?: (number | null) | Media;
+  cultureGroup: number | CultureGroup;
+  keywordAliases?:
+    | {
+        keyword: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "culture-groups".
+ */
+export interface CultureGroup {
+  id: number;
+  title: string;
+  description?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "MapEmbedBlock".
  */
 export interface MapEmbedBlock {
@@ -810,89 +1101,6 @@ export interface FeaturedProductsBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'featuredProducts';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "products".
- */
-export interface Product {
-  id: number;
-  title: string;
-  image: number | Media;
-  shortDescription?: string | null;
-  activeMaterial?: string | null;
-  /**
-   * Dinamički atributi koji se prikazuju kao tabela na stranici proizvoda.
-   */
-  attributes?:
-    | {
-        label: string;
-        value: string;
-        id?: string | null;
-      }[]
-    | null;
-  content?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  documents?:
-    | {
-        title?: string | null;
-        file: number | Media;
-        id?: string | null;
-      }[]
-    | null;
-  categories?: (number | Category)[] | null;
-  culture?: (number | null) | Culture;
-  cultureGroup?: (number | null) | CultureGroup;
-  /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "cultures".
- */
-export interface Culture {
-  id: number;
-  title: string;
-  image: number | Media;
-  icon?: (number | null) | Media;
-  cultureGroup: number | CultureGroup;
-  keywordAliases?:
-    | {
-        keyword: string;
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "culture-groups".
- */
-export interface CultureGroup {
-  id: number;
-  title: string;
-  description?: string | null;
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1516,6 +1724,9 @@ export interface PagesSelect<T extends boolean = true> {
         mediaBlock?: T | MediaBlockSelect<T>;
         protectionPlans?: T | ProtectionPlansBlockSelect<T>;
         richTextImage?: T | RichTextImageBlockSelect<T>;
+        textImage?: T | TextImageBlockSelect<T>;
+        featureGrid?: T | FeatureGridBlockSelect<T>;
+        interactiveSplit?: T | InteractiveSplitBlockSelect<T>;
         mapEmbed?: T | MapEmbedBlockSelect<T>;
         officeLocations?: T | OfficeLocationsBlockSelect<T>;
         logoTicker?: T | LogoTickerBlockSelect<T>;
@@ -1678,6 +1889,87 @@ export interface RichTextImageBlockSelect<T extends boolean = true> {
   image?: T;
   imagePosition?: T;
   backgroundColor?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TextImageBlock_select".
+ */
+export interface TextImageBlockSelect<T extends boolean = true> {
+  text?: T;
+  image?: T;
+  imagePosition?: T;
+  imageSize?: T;
+  verticalAlignment?: T;
+  imageMaxHeight?: T;
+  backgroundColor?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeatureGridBlock_select".
+ */
+export interface FeatureGridBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  lead?: T;
+  columns?: T;
+  cardStyle?: T;
+  items?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "InteractiveSplitBlock_select".
+ */
+export interface InteractiveSplitBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  subheading?: T;
+  cards?:
+    | T
+    | {
+        icon?: T;
+        theme?: T;
+        title?: T;
+        description?: T;
+        statValue?: T;
+        statLabel?: T;
+        primaryLink?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+        chips?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    url?: T;
+                    label?: T;
+                  };
+              id?: T;
+            };
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }

@@ -17,10 +17,15 @@ type ProductCardProps = {
     image: MediaLike | unknown
     categories?: (number | CategoryLike)[] | null
   }
+  /** Query string (without leading `?`) appended to the product link so the
+   * product page can render contextual breadcrumbs and a back-link with
+   * filter state preserved. */
+  linkSearchParams?: string
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({ product, linkSearchParams }) => {
   const { title, shortDescription, activeMaterial, image, slug, categories } = product
+  const href = `/proizvodi/${slug || ''}${linkSearchParams ? `?${linkSearchParams}` : ''}`
   const imageObj = image as MediaLike | null | undefined
   const imageUrl =
     imageObj && typeof imageObj === 'object' && imageObj.url
@@ -33,7 +38,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   return (
     <Link
-      href={`/proizvodi/${slug || ''}`}
+      href={href}
       className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007D41] focus-visible:ring-offset-2"
     >
       {/* Image */}

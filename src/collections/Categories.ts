@@ -13,6 +13,10 @@ export const Categories: CollectionConfig = {
     read: anyone,
     update: authenticated,
   },
+  defaultPopulate: {
+    title: true,
+    slug: true,
+  },
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'slug', 'order', 'updatedAt'],

@@ -15,6 +15,7 @@ import { authenticated } from '../access/authenticated'
 import { Banner } from '../blocks/Banner/config'
 import { Code } from '../blocks/Code/config'
 import { MediaBlock } from '../blocks/MediaBlock/config'
+import { TextImage } from '../blocks/TextImage/config'
 import { slugField } from 'payload'
 import { serbianSlugify } from '@/utilities/serbianSlugify'
 
@@ -29,6 +30,10 @@ export const Products: CollectionConfig = {
     delete: authenticated,
     read: anyone,
     update: authenticated,
+  },
+  defaultPopulate: {
+    title: true,
+    slug: true,
   },
   admin: {
     useAsTitle: 'title',
@@ -97,7 +102,7 @@ export const Products: CollectionConfig = {
                   return [
                     ...rootFeatures,
                     HeadingFeature({ enabledHeadingSizes: ['h2', 'h3', 'h4'] }),
-                    BlocksFeature({ blocks: [Banner, Code, MediaBlock] }),
+                    BlocksFeature({ blocks: [Banner, Code, MediaBlock, TextImage] }),
                     FixedToolbarFeature(),
                     InlineToolbarFeature(),
                     HorizontalRuleFeature(),
@@ -153,7 +158,8 @@ export const Products: CollectionConfig = {
               name: 'culture',
               type: 'relationship',
               relationTo: 'cultures',
-              label: 'Kultura',
+              hasMany: true,
+              label: 'Kulture',
             },
             {
               name: 'cultureGroup',

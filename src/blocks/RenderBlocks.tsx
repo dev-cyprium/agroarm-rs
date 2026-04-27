@@ -11,6 +11,9 @@ import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { PlansSplitBlock } from '@/blocks/PlansSplitBlock/Component'
 import { ProtectionPlansBlock } from '@/blocks/ProtectionPlansBlock/Component'
 import { RichTextImageBlock } from '@/blocks/RichTextImage/Component'
+import { TextImageBlock } from '@/blocks/TextImage/Component'
+import { FeatureGridBlock } from '@/blocks/FeatureGrid/Component'
+import { InteractiveSplitBlock } from '@/blocks/InteractiveSplit/Component'
 import { MapEmbedBlock } from '@/blocks/MapEmbed/Component'
 import { OfficeLocationsBlock } from '@/blocks/OfficeLocations/Component'
 import { LogoTickerBlock } from '@/blocks/LogoTicker/Component'
@@ -30,6 +33,9 @@ const blockComponents = {
   plansSplit: PlansSplitBlock,
   protectionPlans: ProtectionPlansBlock,
   richTextImage: RichTextImageBlock,
+  textImage: TextImageBlock,
+  featureGrid: FeatureGridBlock,
+  interactiveSplit: InteractiveSplitBlock,
 }
 
 export const RenderBlocks: React.FC<{

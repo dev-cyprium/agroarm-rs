@@ -215,6 +215,24 @@
 }
 
 
+/* ── Rich-text inline link styling ── */
+.prose a {
+  color: #007D41;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+.prose a:hover {
+  color: #009F54;
+}
+[data-theme='dark'] .prose a {
+  color: #4ade80;
+}
+[data-theme='dark'] .prose a:hover {
+  color: #6ee7a3;
+}
+
 /* ── Rich-text table styling ── */
 .prose table {
   border-collapse: collapse;

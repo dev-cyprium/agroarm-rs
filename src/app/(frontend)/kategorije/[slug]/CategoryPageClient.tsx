@@ -1,11 +1,15 @@
 'use client'
 
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Search, X, SlidersHorizontal, Leaf, Package, ChevronRight, ArrowRight } from 'lucide-react'
 import { ProductCard } from './ProductCard'
 
 import type { Category, Product } from '@/payload-types'
+
+const CULTURE_PARAM = 'culture'
+const QUERY_PARAM = 'q'
 
 type CultureOption = { id: number; title: string }
 type CultureFilterGroup = {
@@ -97,19 +101,72 @@ function LeafCategoryView({
   cultureFilterGroups,
   ungroupedCultures,
 }: LeafProps) {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedCultures, setSelectedCultures] = useState<Set<number>>(new Set())
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
   const [showMobileFilters, setShowMobileFilters] = useState(false)
 
+  const urlSearchQuery = searchParams.get(QUERY_PARAM) ?? ''
+  // Local state mirrors the URL but updates immediately on keystroke; the
+  // URL (and thus the filter) sync on a debounce to avoid re-rendering on
+  // every character.
+  const [searchQuery, setSearchQueryState] = useState(urlSearchQuery)
+  const lastUrlSearchQueryRef = useRef(urlSearchQuery)
+  useEffect(() => {
+    // Re-sync local state when the URL changes from outside (back/forward,
+    // breadcrumb, clear filters), but never clobber the user's in-progress typing.
+    if (urlSearchQuery !== lastUrlSearchQueryRef.current) {
+      lastUrlSearchQueryRef.current = urlSearchQuery
+      setSearchQueryState(urlSearchQuery)
+    }
+  }, [urlSearchQuery])
+
+  const selectedCultures = useMemo(() => {
+    const raw = searchParams.get(CULTURE_PARAM)
+    if (!raw) return new Set<number>()
+    return new Set(
+      raw
+        .split(',')
+        .map((s) => Number(s))
+        .filter((n) => Number.isFinite(n)),
+    )
+  }, [searchParams])
+
+  const updateParams = useCallback(
+    (mutate: (params: URLSearchParams) => void) => {
+      const next = new URLSearchParams(searchParams.toString())
+      mutate(next)
+      const qs = next.toString()
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
+    },
+    [pathname, router, searchParams],
+  )
+
+  const setSearchQuery = (value: string) => {
+    setSearchQueryState(value)
+  }
+
+  // Debounce URL sync for the search query so typing doesn't trigger a
+  // route update + re-render on every character.
+  useEffect(() => {
+    if (searchQuery === urlSearchQuery) return
+    const handle = setTimeout(() => {
+      lastUrlSearchQueryRef.current = searchQuery
+      updateParams((p) => {
+        if (searchQuery) p.set(QUERY_PARAM, searchQuery)
+        else p.delete(QUERY_PARAM)
+      })
+    }, 250)
+    return () => clearTimeout(handle)
+  }, [searchQuery, urlSearchQuery, updateParams])
+
   const toggleCulture = (id: number) => {
-    setSelectedCultures((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) {
-        next.delete(id)
-      } else {
-        next.add(id)
-      }
-      return next
+    updateParams((p) => {
+      const next = new Set(selectedCultures)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      if (next.size === 0) p.delete(CULTURE_PARAM)
+      else p.set(CULTURE_PARAM, Array.from(next).join(','))
     })
   }
 
@@ -128,8 +185,10 @@ function LeafCategoryView({
 
     if (selectedCultures.size > 0) {
       result = result.filter((p) => {
-        const culture = typeof p.culture === 'object' ? p.culture : null
-        return culture ? selectedCultures.has(culture.id) : false
+        const productCultures = (p.culture ?? []).filter(
+          (c): c is Exclude<typeof c, number> => typeof c === 'object',
+        )
+        return productCultures.some((c) => selectedCultures.has(c.id))
       })
     }
 
@@ -139,9 +198,28 @@ function LeafCategoryView({
   const hasActiveFilters = searchQuery.trim() || selectedCultures.size > 0
 
   const clearFilters = () => {
-    setSearchQuery('')
-    setSelectedCultures(new Set())
+    // Reset local search immediately so the pending debounced URL update
+    // doesn't undo the clear.
+    setSearchQueryState('')
+    lastUrlSearchQueryRef.current = ''
+    updateParams((p) => {
+      p.delete(QUERY_PARAM)
+      p.delete(CULTURE_PARAM)
+    })
   }
+
+  const clearCultures = () => {
+    updateParams((p) => p.delete(CULTURE_PARAM))
+  }
+
+  // Params we round-trip through the product page so back/breadcrumbs restore filters.
+  const productLinkParams = useMemo(() => {
+    const p = new URLSearchParams()
+    p.set('from', category.slug ?? '')
+    if (searchQuery) p.set(QUERY_PARAM, searchQuery)
+    if (selectedCultures.size > 0) p.set(CULTURE_PARAM, Array.from(selectedCultures).join(','))
+    return p.toString()
+  }, [category.slug, searchQuery, selectedCultures])
 
   const hasFilters = siblings.length > 1 || cultureFilterGroups.length > 0 || ungroupedCultures.length > 0
 
@@ -257,7 +335,7 @@ function LeafCategoryView({
           {selectedCultures.size > 0 && (
             <button
               type="button"
-              onClick={() => setSelectedCultures(new Set())}
+              onClick={clearCultures}
               className="mt-2 text-xs font-medium text-[#007D41] hover:underline"
             >
               Poništi izbor kultura
@@ -385,7 +463,11 @@ function LeafCategoryView({
             ) : (
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
                 {filteredProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    linkSearchParams={productLinkParams}
+                  />
                 ))}
               </div>
             )}
