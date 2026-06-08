@@ -1,4 +1,4 @@
-const charMap: Record<string, string> = {
+export const charMap: Record<string, string> = {
   č: 'c', ć: 'c', š: 's', đ: 'd', ž: 'z',
   Č: 'c', Ć: 'c', Š: 's', Đ: 'd', Ž: 'z',
 }

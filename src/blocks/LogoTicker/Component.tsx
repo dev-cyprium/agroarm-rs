@@ -21,15 +21,39 @@ export const LogoTickerBlock: React.FC<LogoTickerBlockType> = ({ heading, logos,
       const media = typeof logo.image === 'object' ? (logo.image as Media) : null
       if (!media?.url) return null
 
+      const img = (
+        <img
+          src={media.url}
+          alt={logo.name || ''}
+          className="max-h-full max-w-full object-contain opacity-50 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0"
+          loading="lazy"
+          decoding="async"
+        />
+      )
+
+      // Spacing lives on each item (mx-*) — not on the track — so the gap is
+      // uniform everywhere, including the seam where the loop repeats.
+      const wrapperClass =
+        'flex h-8 w-24 shrink-0 items-center justify-center mx-4 sm:h-9 sm:w-28 sm:mx-6'
+
+      if (logo.url) {
+        return (
+          <a
+            key={`${keyPrefix}-${i}`}
+            href={logo.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={logo.name || undefined}
+            className={wrapperClass}
+          >
+            {img}
+          </a>
+        )
+      }
+
       return (
-        <div key={`${keyPrefix}-${i}`} className="flex h-9 w-28 shrink-0 items-center justify-center px-2">
-          <img
-            src={media.url}
-            alt={logo.name || ''}
-            className="max-h-full max-w-full object-contain opacity-40 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0"
-            loading="lazy"
-            decoding="async"
-          />
+        <div key={`${keyPrefix}-${i}`} className={wrapperClass}>
+          {img}
         </div>
       )
     })
@@ -43,20 +67,25 @@ export const LogoTickerBlock: React.FC<LogoTickerBlockType> = ({ heading, logos,
       )}
 
       <div className="container">
-      <div
-        className="relative flex overflow-hidden"
-        style={{
-          maskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
-          WebkitMaskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
-        }}
-      >
-        <div className="flex shrink-0 items-center gap-12 animate-ticker" style={{ animationDuration: duration }}>
-          {renderLogos('a')}
+        <div
+          className="relative flex overflow-hidden"
+          style={{
+            maskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
+            WebkitMaskImage:
+              'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
+          }}
+        >
+          <div className="flex shrink-0 items-center animate-ticker" style={{ animationDuration: duration }}>
+            {renderLogos('a')}
+          </div>
+          <div
+            className="flex shrink-0 items-center animate-ticker"
+            aria-hidden="true"
+            style={{ animationDuration: duration }}
+          >
+            {renderLogos('b')}
+          </div>
         </div>
-        <div className="flex shrink-0 items-center gap-12 animate-ticker" aria-hidden="true" style={{ animationDuration: duration }}>
-          {renderLogos('b')}
-        </div>
-      </div>
       </div>
 
       <style>{`
@@ -66,6 +95,14 @@ export const LogoTickerBlock: React.FC<LogoTickerBlockType> = ({ heading, logos,
         }
         .animate-ticker {
           animation: ticker linear infinite;
+          will-change: transform;
+          transform: translateZ(0);
+          backface-visibility: hidden;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .animate-ticker {
+            animation: none;
+          }
         }
       `}</style>
     </div>

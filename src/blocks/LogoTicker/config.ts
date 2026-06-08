@@ -38,6 +38,14 @@ export const LogoTicker: Block = {
             description: 'Koristi se za alt tekst slike',
           },
         },
+        {
+          name: 'url',
+          type: 'text',
+          label: 'Link (opciono)',
+          admin: {
+            description: 'Opcioni link koji se otvara klikom na logo (npr. https://partner.rs).',
+          },
+        },
       ],
     },
     {

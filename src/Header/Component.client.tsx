@@ -9,6 +9,7 @@ import type { NavItemWithChildren, NavItemLink } from './Component'
 import { CMSLink } from '@/components/Link'
 import { Logo } from '@/components/Logo/Logo'
 import { cn } from '@/utilities/ui'
+import { useSpotlight } from '@/components/Spotlight/useSpotlight'
 import { ChevronDown, Menu, SearchIcon, X } from 'lucide-react'
 
 interface HeaderClientProps {
@@ -20,6 +21,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, resolvedNavIte
   const [mobileOpen, setMobileOpen] = useState(false)
   const [expandedMobileCategory, setExpandedMobileCategory] = useState<string | null>(null)
   const pathname = usePathname()
+  const { toggle: toggleSpotlight, setOpen: setSpotlightOpen } = useSpotlight()
 
   useEffect(() => {
     setMobileOpen(false)
@@ -78,13 +80,14 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, resolvedNavIte
               />
             )
           })}
-          <Link
-            href="/search"
+          <button
+            type="button"
+            onClick={toggleSpotlight}
             className="ml-1 rounded-md p-2 text-white/80 transition-colors hover:bg-white/15 hover:text-white"
             aria-label="Pretraga"
           >
             <SearchIcon className="h-5 w-5" />
-          </Link>
+          </button>
         </nav>
 
         {/* Mobile toggle */}
@@ -169,14 +172,17 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, resolvedNavIte
               )
             })}
             <li>
-              <Link
-                href="/search"
+              <button
+                type="button"
                 className="inline-flex w-full items-center gap-2 rounded-md px-3 py-2.5 text-base font-medium text-white/90 transition-colors hover:bg-white/15 hover:text-white"
-                onClick={() => setMobileOpen(false)}
+                onClick={() => {
+                  setMobileOpen(false)
+                  setSpotlightOpen(true)
+                }}
               >
                 <SearchIcon className="h-4 w-4" />
                 Pretraga
-              </Link>
+              </button>
             </li>
           </ul>
         </nav>

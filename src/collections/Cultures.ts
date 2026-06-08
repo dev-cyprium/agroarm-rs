@@ -5,6 +5,10 @@ import { authenticated } from '../access/authenticated'
 import { link } from '../fields/link'
 import { planContentLexical } from '../fields/planContentLexical'
 import { revalidatePlansAfterChange, revalidatePlansAfterDelete } from '../hooks/revalidatePlans'
+import {
+  revalidateSpotlightAfterChange,
+  revalidateSpotlightAfterDelete,
+} from '../hooks/revalidateSpotlight'
 import { slugField } from 'payload'
 import { serbianSlugify } from '@/utilities/serbianSlugify'
 
@@ -68,8 +72,8 @@ export const Cultures: CollectionConfig = {
     defaultColumns: ['title', 'cultureGroup', 'slug', 'updatedAt'],
   },
   hooks: {
-    afterChange: [revalidatePlansAfterChange],
-    afterDelete: [revalidatePlansAfterDelete],
+    afterChange: [revalidatePlansAfterChange, revalidateSpotlightAfterChange],
+    afterDelete: [revalidatePlansAfterDelete, revalidateSpotlightAfterDelete],
   },
   fields: [
     {
