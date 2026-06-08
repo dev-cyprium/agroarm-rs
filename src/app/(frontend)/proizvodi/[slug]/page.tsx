@@ -74,12 +74,14 @@ export default async function ProductPage({ params, searchParams }: Args) {
   const fromSlug = pickString(sp.from)
   const breadcrumbCategory = await resolveBreadcrumbCategory(fromSlug, categories)
 
-  // Filter params we round-trip back to the originating category page.
+  // Filter params we round-trip back to the originating catalog page.
   const restoreParams = new URLSearchParams()
   const q = pickString(sp.q)
   const culture = pickString(sp.culture)
+  const sub = pickString(sp.sub)
   if (q) restoreParams.set('q', q)
   if (culture) restoreParams.set('culture', culture)
+  if (sub) restoreParams.set('sub', sub)
   const restoreQs = restoreParams.toString()
   const categoryHref = (slug: string) =>
     `/kategorije/${slug}${restoreQs ? `?${restoreQs}` : ''}`

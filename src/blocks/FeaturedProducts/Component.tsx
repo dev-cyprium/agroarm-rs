@@ -4,7 +4,7 @@ import { getPayload } from 'payload'
 
 import type { FeaturedProductsBlock as FeaturedProductsBlockType } from '@/payload-types'
 
-import { ProductCard } from '@/app/(frontend)/kategorije/[slug]/ProductCard'
+import { ProductCard } from '@/app/(frontend)/kategorije/ProductCard'
 
 export const FeaturedProductsBlock: React.FC<FeaturedProductsBlockType> = async ({
   heading,

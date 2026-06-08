@@ -144,7 +144,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, resolvedNavIte
                         {navItem.children.map((child) => (
                           <li key={child.id}>
                             <Link
-                              href={`/kategorije/${child.slug}`}
+                              href={`/kategorije/${navItem.category.slug}?sub=${encodeURIComponent(child.slug)}`}
                               className="block rounded-md px-3 py-2 text-sm text-white/75 transition-colors hover:bg-white/15 hover:text-white"
                               onClick={() => setMobileOpen(false)}
                             >
@@ -220,7 +220,7 @@ function DesktopDropdown({
           {navItem.children.map((child) => (
             <Link
               key={child.id}
-              href={`/kategorije/${child.slug}`}
+              href={`/kategorije/${navItem.category.slug}?sub=${encodeURIComponent(child.slug)}`}
               className="block px-4 py-2 text-sm text-popover-foreground transition-colors hover:bg-accent"
               onClick={() => setOpen(false)}
             >
