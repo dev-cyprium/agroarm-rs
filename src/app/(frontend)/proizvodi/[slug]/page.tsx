@@ -5,9 +5,10 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 import Link from 'next/link'
-import { ChevronRight, FileText, TriangleAlert, Leaf, FlaskConical, Tag } from 'lucide-react'
+import { ChevronRight, FileText, TriangleAlert, Leaf, Tag } from 'lucide-react'
 import RichText from '@/components/RichText'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
+import { getProductDescriptor } from '@/utilities/productDescriptor'
 
 import type { Category } from '@/payload-types'
 
@@ -62,7 +63,9 @@ export default async function ProductPage({ params, searchParams }: Args) {
   const cultures = (product.culture ?? []).filter(
     (c): c is Exclude<typeof c, number> => typeof c === 'object',
   )
-  const cultureGroup = typeof product.cultureGroup === 'object' ? product.cultureGroup : null
+  const cultureGroups = (product.cultureGroup ?? []).filter(
+    (c): c is Exclude<typeof c, number> => typeof c === 'object',
+  )
   const documents = product.documents ?? []
   const attributes = product.attributes ?? []
 
@@ -135,12 +138,15 @@ export default async function ProductPage({ params, searchParams }: Args) {
                       {culture.title}
                     </span>
                   ))}
-                  {cultureGroup && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E6EFEA] px-3 py-1 text-xs font-semibold text-[#024E29]">
+                  {cultureGroups.map((group) => (
+                    <span
+                      key={group.id}
+                      className="inline-flex items-center gap-1.5 rounded-full bg-[#E6EFEA] px-3 py-1 text-xs font-semibold text-[#024E29]"
+                    >
                       <Leaf className="h-3 w-3" />
-                      {cultureGroup.title}
+                      {group.title}
                     </span>
-                  )}
+                  ))}
                 </div>
 
                 <h1 className="text-3xl font-bold text-[#1F2A24] sm:text-4xl">
@@ -151,13 +157,16 @@ export default async function ProductPage({ params, searchParams }: Args) {
                   <p className="text-base leading-relaxed text-[#1F2A24]/70">{product.shortDescription}</p>
                 )}
 
-                {product.activeMaterial && (
-                  <div className="inline-flex items-center gap-2 text-sm">
-                    <FlaskConical className="h-4 w-4 text-[#007D41]" />
-                    <span className="font-medium text-[#1F2A24]/50">Aktivna materija:</span>
-                    <span className="text-[#1F2A24]">{product.activeMaterial}</span>
-                  </div>
-                )}
+                {product.activeMaterial && (() => {
+                  const { label, Icon } = getProductDescriptor(product.descriptorType)
+                  return (
+                    <div className="inline-flex items-center gap-2 text-sm">
+                      <Icon className="h-4 w-4 text-[#007D41]" />
+                      <span className="font-medium text-[#1F2A24]/50">{label}:</span>
+                      <span className="text-[#1F2A24]">{product.activeMaterial}</span>
+                    </div>
+                  )
+                })()}
 
                 {/* Attributes table */}
                 {attributes.length > 0 && (

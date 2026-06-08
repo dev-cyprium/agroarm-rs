@@ -57,9 +57,34 @@ export const Products: CollectionConfig = {
       label: 'Short Description',
     },
     {
-      name: 'activeMaterial',
-      type: 'text',
-      label: 'Aktivna materija',
+      type: 'row',
+      fields: [
+        {
+          name: 'descriptorType',
+          type: 'select',
+          label: 'Tip oznake',
+          defaultValue: 'activeMaterial',
+          options: [
+            { label: 'Aktivna materija', value: 'activeMaterial' },
+            { label: 'Tip proizvoda', value: 'productType' },
+            { label: 'Namena proizvoda', value: 'productPurpose' },
+          ],
+          admin: {
+            width: '40%',
+            description: 'Vrsta oznake koja se prikazuje uz proizvod (svaka ima svoju ikonu).',
+          },
+        },
+        {
+          name: 'activeMaterial',
+          type: 'text',
+          label: 'Vrednost oznake',
+          admin: {
+            width: '60%',
+            description:
+              'Tekst koji se prikazuje uz izabranu oznaku (npr. naziv aktivne materije, tip ili namena proizvoda).',
+          },
+        },
+      ],
     },
     {
       name: 'attributes',
@@ -165,6 +190,7 @@ export const Products: CollectionConfig = {
               name: 'cultureGroup',
               type: 'relationship',
               relationTo: 'culture-groups',
+              hasMany: true,
               label: 'Grupe Kultura',
             },
           ],

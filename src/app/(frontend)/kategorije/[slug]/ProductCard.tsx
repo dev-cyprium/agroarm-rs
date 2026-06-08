@@ -1,7 +1,8 @@
 import React from 'react'
 import Link from 'next/link'
-import { FlaskConical, Tag } from 'lucide-react'
+import { Tag } from 'lucide-react'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
+import { getProductDescriptor } from '@/utilities/productDescriptor'
 
 type MediaLike = { url?: string | null; alt?: string | null; updatedAt?: string | null }
 
@@ -14,6 +15,7 @@ type ProductCardProps = {
     slug?: string | null
     shortDescription?: string | null
     activeMaterial?: string | null
+    descriptorType?: string | null
     image: MediaLike | unknown
     categories?: (number | CategoryLike)[] | null
   }
@@ -24,7 +26,9 @@ type ProductCardProps = {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, linkSearchParams }) => {
-  const { title, shortDescription, activeMaterial, image, slug, categories } = product
+  const { title, shortDescription, activeMaterial, descriptorType, image, slug, categories } =
+    product
+  const { Icon: DescriptorIcon } = getProductDescriptor(descriptorType)
   const href = `/proizvodi/${slug || ''}${linkSearchParams ? `?${linkSearchParams}` : ''}`
   const imageObj = image as MediaLike | null | undefined
   const imageUrl =
@@ -85,7 +89,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, linkSearchPar
 
         {activeMaterial && (
           <div className="mt-auto flex items-center gap-1.5 pt-2 text-xs text-[#1F2A24]/40">
-            <FlaskConical className="h-3 w-3" />
+            <DescriptorIcon className="h-3 w-3" />
             <span>{activeMaterial}</span>
           </div>
         )}

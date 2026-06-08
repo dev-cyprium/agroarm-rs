@@ -46,7 +46,14 @@ export const r2FileHandler = async (
   },
 ): Promise<Response | void> => {
   const { doc, params } = args
-  if (!r2Enabled || !doc || !params?.filename) {
+  // NOTE: `doc` is undefined when the collection's read access returns a boolean
+  // (e.g. `anyone` → true) instead of a query constraint — Payload's
+  // checkFileAccess only resolves the doc for object/query access results. We
+  // must not gate on `doc`, or every /api/media/file request would fall through
+  // to Payload's local-disk handler and 500 ("missing on the disk") even though
+  // the file is on R2. The prefix defaults to 'media' (the plugin's configured
+  // prefix) when `doc` is absent.
+  if (!r2Enabled || !params?.filename) {
     return
   }
 

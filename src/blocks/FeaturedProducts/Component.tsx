@@ -17,14 +17,19 @@ export const FeaturedProductsBlock: React.FC<FeaturedProductsBlockType> = async 
   const ids = productRefs.map((p) => (typeof p === 'object' ? p.id : p))
 
   const payload = await getPayload({ config: configPromise })
-  const { docs: products } = await payload.find({
+  const { docs } = await payload.find({
     collection: 'products',
     where: { id: { in: ids } },
     depth: 1,
     limit: ids.length,
   })
 
-  if (products.length === 0) return null
+  if (docs.length === 0) return null
+
+  // `where: { id: { in } }` returns rows in database (id) order, not the order
+  // the editor declared in the relationship field. Re-sort to match `ids`.
+  const productsById = new Map(docs.map((doc) => [doc.id, doc]))
+  const products = ids.map((id) => productsById.get(id)).filter((p) => p != null)
 
   return (
     <div className="container">

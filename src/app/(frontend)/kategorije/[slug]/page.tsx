@@ -133,17 +133,21 @@ export default async function CategoryPage({ params }: Args) {
     const productCultures = (product.culture ?? []).filter(
       (c): c is Exclude<typeof c, number> => typeof c === 'object',
     )
-    const cultureGroup = typeof product.cultureGroup === 'object' ? product.cultureGroup : null
+    const cultureGroups = (product.cultureGroup ?? []).filter(
+      (c): c is Exclude<typeof c, number> => typeof c === 'object',
+    )
 
     for (const culture of productCultures) {
-      if (cultureGroup) {
-        if (!groupsMap.has(cultureGroup.id)) {
-          groupsMap.set(cultureGroup.id, {
-            group: { id: cultureGroup.id, title: cultureGroup.title },
-            cultures: new Map(),
-          })
+      if (cultureGroups.length > 0) {
+        for (const cultureGroup of cultureGroups) {
+          if (!groupsMap.has(cultureGroup.id)) {
+            groupsMap.set(cultureGroup.id, {
+              group: { id: cultureGroup.id, title: cultureGroup.title },
+              cultures: new Map(),
+            })
+          }
+          groupsMap.get(cultureGroup.id)!.cultures.set(culture.id, { id: culture.id, title: culture.title })
         }
-        groupsMap.get(cultureGroup.id)!.cultures.set(culture.id, { id: culture.id, title: culture.title })
       } else {
         ungroupedCultures.set(culture.id, { id: culture.id, title: culture.title })
       }

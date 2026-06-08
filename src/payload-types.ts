@@ -943,6 +943,13 @@ export interface Product {
   title: string;
   image: number | Media;
   shortDescription?: string | null;
+  /**
+   * Vrsta oznake koja se prikazuje uz proizvod (svaka ima svoju ikonu).
+   */
+  descriptorType?: ('activeMaterial' | 'productType' | 'productPurpose') | null;
+  /**
+   * Tekst koji se prikazuje uz izabranu oznaku (npr. naziv aktivne materije, tip ili namena proizvoda).
+   */
   activeMaterial?: string | null;
   /**
    * Dinamički atributi koji se prikazuju kao tabela na stranici proizvoda.
@@ -978,7 +985,7 @@ export interface Product {
     | null;
   categories?: (number | Category)[] | null;
   culture?: (number | Culture)[] | null;
-  cultureGroup?: (number | null) | CultureGroup;
+  cultureGroup?: (number | CultureGroup)[] | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
@@ -2301,6 +2308,7 @@ export interface ProductsSelect<T extends boolean = true> {
   title?: T;
   image?: T;
   shortDescription?: T;
+  descriptorType?: T;
   activeMaterial?: T;
   attributes?:
     | T
