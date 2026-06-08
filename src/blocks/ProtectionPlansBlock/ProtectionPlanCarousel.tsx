@@ -3,15 +3,19 @@
 import useEmblaCarousel from 'embla-carousel-react'
 import React, { useCallback, useEffect, useState } from 'react'
 
-import type { ProtectionPlan } from '@/payload-types'
-
 import { ProtectionPlanCard } from './ProtectionPlanCard'
 
+type PlanCard = React.ComponentProps<typeof ProtectionPlanCard>['plan']
+
 type ProtectionPlanCarouselProps = {
-  plans: ProtectionPlan[]
+  plans: PlanCard[]
+  basePath?: string
 }
 
-export const ProtectionPlanCarousel: React.FC<ProtectionPlanCarouselProps> = ({ plans }) => {
+export const ProtectionPlanCarousel: React.FC<ProtectionPlanCarouselProps> = ({
+  plans,
+  basePath,
+}) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: 'start',
     containScroll: 'trimSnaps',
@@ -48,7 +52,7 @@ export const ProtectionPlanCarousel: React.FC<ProtectionPlanCarouselProps> = ({ 
               key={plan.id}
               className="min-w-0 flex-[0_0_48%] sm:flex-[0_0_32%]"
             >
-              <ProtectionPlanCard plan={plan} />
+              <ProtectionPlanCard plan={plan} basePath={basePath} />
             </div>
           ))}
         </div>

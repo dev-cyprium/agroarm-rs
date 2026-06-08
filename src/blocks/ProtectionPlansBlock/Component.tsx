@@ -7,19 +7,22 @@ import { getPayload } from 'payload'
 
 import { ProtectionPlanCard } from './ProtectionPlanCard'
 import { ProtectionPlanCarousel } from './ProtectionPlanCarousel'
+import { PLAN_CONFIG, cultureHasPlan, cultureToPlanCard } from '@/utilities/plans'
 
 const BRAND_GREEN = '#007D41'
+const PLAN_TYPE = 'protection' as const
 
 export const ProtectionPlansBlock: React.FC<{
   blockTitle?: string | null
   blockSubtitle?: string | null
 }> = async (props) => {
   const { blockTitle, blockSubtitle } = props
+  const cfg = PLAN_CONFIG[PLAN_TYPE]
 
   const payload = await getPayload({ config: configPromise })
 
   const categoriesResult = await payload.find({
-    collection: 'protection-plan-categories',
+    collection: 'culture-groups',
     depth: 0,
     limit: 100,
     sort: 'order',
@@ -30,14 +33,17 @@ export const ProtectionPlansBlock: React.FC<{
 
   const categoriesWithPlans = await Promise.all(
     categories.map(async (category) => {
-      const plansResult = await payload.find({
-        collection: 'protection-plans',
+      const culturesResult = await payload.find({
+        collection: 'cultures',
         depth: 2,
-        limit: 4,
-        where: { category: { equals: category.id } },
+        limit: 100,
+        where: { cultureGroup: { equals: category.id } },
         overrideAccess: false,
       })
-      return { category, plans: plansResult.docs ?? [] }
+      const plans = (culturesResult.docs ?? [])
+        .filter((culture) => cultureHasPlan(culture, PLAN_TYPE))
+        .map((culture) => cultureToPlanCard(culture, PLAN_TYPE))
+      return { category, plans }
     }),
   )
 
@@ -56,9 +62,7 @@ export const ProtectionPlansBlock: React.FC<{
               </h2>
             )}
             {blockSubtitle && (
-              <p className="mt-4 text-lg text-muted-foreground">
-                {blockSubtitle}
-              </p>
+              <p className="mt-4 text-lg text-muted-foreground">{blockSubtitle}</p>
             )}
           </header>
         )}
@@ -69,14 +73,12 @@ export const ProtectionPlansBlock: React.FC<{
             if (plans.length === 0) return null
 
             const categorySlug = typeof category.slug === 'string' ? category.slug : ''
-            const categoryName = category.name || ''
+            const categoryName = category.title || ''
 
             return (
               <section key={category.id}>
                 {/* Section divider (skip first) */}
-                {index > 0 && (
-                  <div className="mb-12 h-px bg-border" />
-                )}
+                {index > 0 && <div className="mb-12 h-px bg-border" />}
 
                 {/* Category header */}
                 <div className="mb-8 flex items-end justify-between gap-4">
@@ -84,7 +86,7 @@ export const ProtectionPlansBlock: React.FC<{
                     {categoryName}
                   </h3>
                   <Link
-                    href={`/planovi-zastite/${categorySlug}`}
+                    href={`${cfg.basePath}/${categorySlug}`}
                     className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-foreground px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-foreground hover:text-background"
                   >
                     Vidi sve
@@ -110,13 +112,13 @@ export const ProtectionPlansBlock: React.FC<{
                 {/* Desktop: grid */}
                 <div className="hidden grid-cols-3 gap-4 md:grid lg:grid-cols-4 xl:grid-cols-5">
                   {plans.map((plan) => (
-                    <ProtectionPlanCard key={plan.id} plan={plan} />
+                    <ProtectionPlanCard key={plan.id} plan={plan} basePath={cfg.basePath} />
                   ))}
                 </div>
 
                 {/* Mobile: carousel */}
                 <div className="md:hidden">
-                  <ProtectionPlanCarousel plans={plans} />
+                  <ProtectionPlanCarousel plans={plans} basePath={cfg.basePath} />
                 </div>
               </section>
             )

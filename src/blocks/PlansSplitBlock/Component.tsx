@@ -1,6 +1,10 @@
 import React from 'react'
 
-import { CMSLink } from '@/components/Link'
+import Link from 'next/link'
+
+import configPromise from '@payload-config'
+import { getPayload } from 'payload'
+
 import type { PlansSplitBlock as BlockProps } from '@/payload-types'
 import { cn } from '@/utilities/ui'
 
@@ -17,16 +21,33 @@ const visualIdentityClasses = {
   },
 } as const
 
-export const PlansSplitBlock: React.FC<BlockProps> = ({ nutritionPlans, protectionPlans }) => {
+export const PlansSplitBlock: React.FC<BlockProps> = async ({
+  nutritionPlans,
+  protectionPlans,
+}) => {
+  const payload = await getPayload({ config: configPromise })
+
+  const categoriesResult = await payload.find({
+    collection: 'culture-groups',
+    depth: 0,
+    limit: 100,
+    sort: 'order',
+    overrideAccess: false,
+  })
+
+  const categories = categoriesResult.docs ?? []
+
   const columns = [
     {
       key: 'nutrition',
       title: 'Planovi ishrane',
+      basePath: '/planovi-ishrane',
       data: nutritionPlans,
     },
     {
       key: 'protection',
       title: 'Planovi zastite',
+      basePath: '/planovi-zastite',
       data: protectionPlans,
     },
   ] as const
@@ -58,16 +79,41 @@ export const PlansSplitBlock: React.FC<BlockProps> = ({ nutritionPlans, protecti
                   </p>
                 )}
 
-                {column.data?.link && (
-                  <CMSLink
-                    {...column.data.link}
-                    appearance="inline"
-                    label="Saznaj vise"
-                    className={cn(
-                      'mt-6 inline-flex w-fit items-center justify-center rounded-full border px-5 py-2 text-sm font-medium transition-colors',
-                      styles.button,
-                    )}
-                  />
+                {categories.length > 0 && (
+                  <ul className="mt-6 flex flex-col gap-2">
+                    {categories.map((category) => {
+                      const slug = typeof category.slug === 'string' ? category.slug : ''
+                      return (
+                        <li key={category.id}>
+                          <Link
+                            href={`${column.basePath}/${slug}`}
+                            className={cn(
+                              'flex w-full items-center justify-between rounded-xl border px-5 py-3 text-sm font-medium transition-colors',
+                              styles.button,
+                            )}
+                          >
+                            <span>{category.title}</span>
+                            <svg
+                              width="18"
+                              height="18"
+                              viewBox="0 0 20 20"
+                              fill="none"
+                              className="shrink-0"
+                              aria-hidden
+                            >
+                              <path
+                                d="M7.5 5L12.5 10L7.5 15"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                          </Link>
+                        </li>
+                      )
+                    })}
+                  </ul>
                 )}
               </article>
             )

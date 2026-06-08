@@ -1,12 +1,14 @@
 import React from 'react'
 
-import type { ProtectionPlan } from '@/payload-types'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 type MediaLike = { url?: string | null; alt?: string | null; updatedAt?: string | null }
 type LinkRef = { relationTo?: string; value?: { slug?: string | null } | string | number }
 type PlanLike = {
   slug: string | null
+  title: string | null
+  description?: string | null
+  image?: MediaLike | number | null | unknown
   link?: {
     type?: 'reference' | 'custom' | null
     url?: string | null
@@ -16,10 +18,12 @@ type PlanLike = {
 }
 
 type ProtectionPlanCardProps = {
-  plan: (PlanLike & { id: string | number; title: string | null; description?: string | null; image: MediaLike | unknown }) | ProtectionPlan
+  plan: PlanLike & { id: string | number }
+  // Where the card links to by default (e.g. /planovi-zastite or /planovi-ishrane)
+  basePath?: string
 }
 
-function getPlanHref(plan: PlanLike): string {
+function getPlanHref(plan: PlanLike, basePath: string): string {
   const { link } = plan
   if (link?.type === 'custom' && link.url) {
     return link.url
@@ -30,29 +34,28 @@ function getPlanHref(plan: PlanLike): string {
     const slug = typeof value === 'object' && value?.slug ? value.slug : null
     const relationTo = typeof ref === 'object' ? ref.relationTo : null
     if (slug) {
-      const prefix = relationTo === 'pages' ? '' : relationTo === 'protection-plans' ? '/planovi-zastite' : relationTo ? `/${relationTo}` : '/planovi-zastite'
+      const prefix = relationTo === 'pages' ? '' : relationTo ? `/${relationTo}` : basePath
       return `${prefix}/${slug}`.replace(/^\/\//, '/')
     }
   }
-  return `/planovi-zastite/${plan.slug || ''}`
+  return `${basePath}/${plan.slug || ''}`
 }
 
-function getPlanLinkProps(plan: PlanLike) {
-  const href = getPlanHref(plan)
-  const newTab = plan.link?.newTab ?? false
-  return { href, newTab }
-}
-
-export const ProtectionPlanCard: React.FC<ProtectionPlanCardProps> = ({ plan }) => {
+export const ProtectionPlanCard: React.FC<ProtectionPlanCardProps> = ({
+  plan,
+  basePath = '/planovi-zastite',
+}) => {
   const { title, description, image, link } = plan
   const imageObj = image as MediaLike | null | undefined
-  const imageUrl = imageObj && typeof imageObj === 'object' && imageObj.url
-    ? getMediaUrl(imageObj.url, imageObj.updatedAt)
-    : null
+  const imageUrl =
+    imageObj && typeof imageObj === 'object' && imageObj.url
+      ? getMediaUrl(imageObj.url, imageObj.updatedAt)
+      : null
   const isCustomUrl = link?.type === 'custom'
   const isPdf = isCustomUrl && link?.url?.toLowerCase().endsWith('.pdf')
 
-  const { href, newTab } = getPlanLinkProps(plan)
+  const href = getPlanHref(plan, basePath)
+  const newTab = plan.link?.newTab ?? false
 
   const cardContent = (
     <article className="group relative aspect-square w-full overflow-hidden rounded-xl">
@@ -63,9 +66,7 @@ export const ProtectionPlanCard: React.FC<ProtectionPlanCardProps> = ({ plan }) 
           className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
         />
       )}
-      {!imageUrl && (
-        <div className="absolute inset-0 bg-muted" />
-      )}
+      {!imageUrl && <div className="absolute inset-0 bg-muted" />}
 
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
@@ -79,13 +80,9 @@ export const ProtectionPlanCard: React.FC<ProtectionPlanCardProps> = ({ plan }) 
 
       {/* Text content inside the card */}
       <div className="absolute inset-x-0 bottom-0 flex flex-col gap-0.5 p-3.5">
-        <h3 className="text-sm font-semibold leading-snug text-white">
-          {title}
-        </h3>
+        <h3 className="text-sm font-semibold leading-snug text-white">{title}</h3>
         {description && (
-          <p className="line-clamp-2 text-xs leading-relaxed text-white/75">
-            {description}
-          </p>
+          <p className="line-clamp-2 text-xs leading-relaxed text-white/75">{description}</p>
         )}
       </div>
     </article>

@@ -2,6 +2,9 @@ import type { CollectionConfig } from 'payload'
 
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
+import { revalidatePlansAfterChange, revalidatePlansAfterDelete } from '../hooks/revalidatePlans'
+import { slugField } from 'payload'
+import { serbianSlugify } from '@/utilities/serbianSlugify'
 
 export const CultureGroups: CollectionConfig = {
   slug: 'culture-groups',
@@ -13,10 +16,15 @@ export const CultureGroups: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
+    defaultColumns: ['title', 'slug', 'order', 'updatedAt'],
   },
   labels: {
     singular: 'Grupe Kultura',
     plural: 'Grupe Kultura',
+  },
+  hooks: {
+    afterChange: [revalidatePlansAfterChange],
+    afterDelete: [revalidatePlansAfterDelete],
   },
   fields: [
     {
@@ -29,5 +37,17 @@ export const CultureGroups: CollectionConfig = {
       type: 'textarea',
       required: false,
     },
+    {
+      name: 'order',
+      type: 'number',
+      label: 'Order',
+      admin: {
+        description: 'Display order (lower numbers first)',
+      },
+    },
+    slugField({
+      fieldToUse: 'title',
+      slugify: serbianSlugify,
+    }),
   ],
 }

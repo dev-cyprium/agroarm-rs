@@ -74,8 +74,6 @@ export interface Config {
     'culture-groups': CultureGroup;
     cultures: Culture;
     products: Product;
-    'protection-plan-categories': ProtectionPlanCategory;
-    'protection-plans': ProtectionPlan;
     users: User;
     redirects: Redirect;
     forms: Form;
@@ -101,8 +99,6 @@ export interface Config {
     'culture-groups': CultureGroupsSelect<false> | CultureGroupsSelect<true>;
     cultures: CulturesSelect<false> | CulturesSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
-    'protection-plan-categories': ProtectionPlanCategoriesSelect<false> | ProtectionPlanCategoriesSelect<true>;
-    'protection-plans': ProtectionPlansSelect<false> | ProtectionPlansSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -1007,6 +1003,91 @@ export interface Culture {
         id?: string | null;
       }[]
     | null;
+  protection?: {
+    /**
+     * Postavljanje slike označava da kultura ima ovaj plan (prikazuje se u listi).
+     */
+    image?: (number | null) | Media;
+    /**
+     * Kratak tekst koji se prikazuje na kartici u listi.
+     */
+    description?: string | null;
+    /**
+     * Rich tekst za stranicu plana. Ubaci blok „Plan tretmana“ za interaktivnu tabelu/timeline tretmana.
+     */
+    content?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    /**
+     * Opcioni link ili PDF (podrazumevano vodi na detalj kulture).
+     */
+    link?: {
+      type?: ('reference' | 'custom') | null;
+      newTab?: boolean | null;
+      reference?: {
+        relationTo: 'pages';
+        value: number | Page;
+      } | null;
+      url?: string | null;
+    };
+  };
+  nutrition?: {
+    /**
+     * Postavljanje slike označava da kultura ima ovaj plan (prikazuje se u listi).
+     */
+    image?: (number | null) | Media;
+    /**
+     * Kratak tekst koji se prikazuje na kartici u listi.
+     */
+    description?: string | null;
+    /**
+     * Rich tekst za stranicu plana. Ubaci blok „Plan tretmana“ za interaktivnu tabelu/timeline tretmana.
+     */
+    content?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    /**
+     * Opcioni link ili PDF (podrazumevano vodi na detalj kulture).
+     */
+    link?: {
+      type?: ('reference' | 'custom') | null;
+      newTab?: boolean | null;
+      reference?: {
+        relationTo: 'pages';
+        value: number | Page;
+      } | null;
+      url?: string | null;
+    };
+  };
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -1018,6 +1099,15 @@ export interface CultureGroup {
   id: number;
   title: string;
   description?: string | null;
+  /**
+   * Display order (lower numbers first)
+   */
+  order?: number | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -1338,63 +1428,6 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "protection-plan-categories".
- */
-export interface ProtectionPlanCategory {
-  id: number;
-  name: string;
-  /**
-   * Display order (lower numbers first)
-   */
-  order?: number | null;
-  /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "protection-plans".
- */
-export interface ProtectionPlan {
-  id: number;
-  title: string;
-  /**
-   * Short description for the card
-   */
-  description?: string | null;
-  image: number | Media;
-  category: number | ProtectionPlanCategory;
-  /**
-   * Where the card links to (optional - defaults to plan detail page)
-   */
-  link?: {
-    type?: ('reference' | 'custom') | null;
-    newTab?: boolean | null;
-    reference?:
-      | ({
-          relationTo: 'pages';
-          value: number | Page;
-        } | null)
-      | ({
-          relationTo: 'protection-plans';
-          value: number | ProtectionPlan;
-        } | null);
-    url?: string | null;
-  };
-  /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1610,14 +1643,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'products';
         value: number | Product;
-      } | null)
-    | ({
-        relationTo: 'protection-plan-categories';
-        value: number | ProtectionPlanCategory;
-      } | null)
-    | ({
-        relationTo: 'protection-plans';
-        value: number | ProtectionPlan;
       } | null)
     | ({
         relationTo: 'users';
@@ -2212,6 +2237,9 @@ export interface CategoriesSelect<T extends boolean = true> {
 export interface CultureGroupsSelect<T extends boolean = true> {
   title?: T;
   description?: T;
+  order?: T;
+  generateSlug?: T;
+  slug?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2230,6 +2258,38 @@ export interface CulturesSelect<T extends boolean = true> {
         keyword?: T;
         id?: T;
       };
+  protection?:
+    | T
+    | {
+        image?: T;
+        description?: T;
+        content?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+            };
+      };
+  nutrition?:
+    | T
+    | {
+        image?: T;
+        description?: T;
+        content?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+            };
+      };
+  generateSlug?: T;
+  slug?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2260,40 +2320,6 @@ export interface ProductsSelect<T extends boolean = true> {
   categories?: T;
   culture?: T;
   cultureGroup?: T;
-  generateSlug?: T;
-  slug?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "protection-plan-categories_select".
- */
-export interface ProtectionPlanCategoriesSelect<T extends boolean = true> {
-  name?: T;
-  order?: T;
-  generateSlug?: T;
-  slug?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "protection-plans_select".
- */
-export interface ProtectionPlansSelect<T extends boolean = true> {
-  title?: T;
-  description?: T;
-  image?: T;
-  category?: T;
-  link?:
-    | T
-    | {
-        type?: T;
-        newTab?: T;
-        reference?: T;
-        url?: T;
-      };
   generateSlug?: T;
   slug?: T;
   updatedAt?: T;
@@ -2980,6 +3006,51 @@ export interface CodeBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'code';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TreatmentScheduleBlock".
+ */
+export interface TreatmentScheduleBlock {
+  /**
+   * Npr. „Program zaštite suncokreta“.
+   */
+  title?: string | null;
+  /**
+   * Svaka faza je jedan korak u sezoni (po redosledu primene).
+   */
+  stages?:
+    | {
+        stage: string;
+        target?: string | null;
+        /**
+         * Određuje boju i ikonu na timeline-u.
+         */
+        targetType?: ('herbicid' | 'fungicid' | 'insekticid' | 'ostalo') | null;
+        products?:
+          | {
+              product?: (number | null) | Product;
+              productName?: string | null;
+              dose?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Npr. oznaka fusnote „***“ ili kratko pojašnjenje.
+         */
+        note?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  footnotes?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'treatmentSchedule';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

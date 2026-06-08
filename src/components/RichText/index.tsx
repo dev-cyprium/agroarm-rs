@@ -19,15 +19,22 @@ import type {
   CallToActionBlock as CTABlockProps,
   MediaBlock as MediaBlockProps,
   TextImageBlock as TextImageBlockProps,
+  TreatmentScheduleBlock as TreatmentScheduleBlockProps,
 } from '@/payload-types'
 import { BannerBlock } from '@/blocks/Banner/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
+import { TreatmentScheduleBlock } from '@/blocks/TreatmentSchedule/Component'
 import { cn } from '@/utilities/ui'
 
 type NodeTypes =
   | DefaultNodeTypes
   | SerializedBlockNode<
-      CTABlockProps | MediaBlockProps | BannerBlockProps | CodeBlockProps | TextImageBlockProps
+      | CTABlockProps
+      | MediaBlockProps
+      | BannerBlockProps
+      | CodeBlockProps
+      | TextImageBlockProps
+      | TreatmentScheduleBlockProps
     >
 
 const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
@@ -64,6 +71,7 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
     code: ({ node }) => <CodeBlock className="col-start-2" {...node.fields} />,
     cta: ({ node }) => <CallToActionBlock {...node.fields} />,
     textImage: ({ node }) => <TextImageBlock {...node.fields} enableGutter={false} />,
+    treatmentSchedule: ({ node }) => <TreatmentScheduleBlock {...node.fields} />,
   },
 })
 

@@ -8,10 +8,10 @@ type Args = {
 
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { slug } = await params
-  return getPlanSlugMetadata({ slug, planType: 'protection' })
+  return getPlanSlugMetadata({ slug, planType: 'nutrition' })
 }
 
-export default async function PlanoviZastiteSlugPage({ params }: Args) {
+export default async function PlanoviIshraneSlugPage({ params }: Args) {
   const { slug } = await params
-  return <PlanSlugPage slug={slug} planType="protection" />
+  return <PlanSlugPage slug={slug} planType="nutrition" />
 }

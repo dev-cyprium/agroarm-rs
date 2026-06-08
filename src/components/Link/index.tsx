@@ -19,7 +19,6 @@ const liquidTintClasses: Record<LiquidTintColor, string> = {
 const collectionToUrlPrefix: Record<string, string> = {
   pages: '',
   posts: '/posts',
-  'protection-plans': '/planovi-zastite',
   products: '/proizvodi',
   cultures: '/kulture',
   'culture-groups': '/grupe-kultura',
@@ -32,7 +31,7 @@ type CMSLinkType = {
   label?: string | null
   newTab?: boolean | null
   reference?: {
-    relationTo: 'pages' | 'posts' | 'protection-plans'
+    relationTo: 'pages' | 'posts'
     value: Page | Post | { slug?: string | null } | string | number
   } | null
   size?: ButtonProps['size'] | null
