@@ -123,6 +123,15 @@
   --success: oklch(78% 0.08 200deg);
   --warning: oklch(89% 0.1 75deg);
   --error: oklch(75% 0.15 25deg);
+
+  /* AGROARM brand tokens (theme-aware). Header/footer chrome greens stay literal. */
+  --surface: #f4f8f6;
+  --surface-raised: #ffffff;
+  --hairline: #e6efea;
+  --ink: #1f2a24;
+  --brand: #007d41;
+  --brand-strong: #024e29;
+  --brand-hover: #009f54;
 }
 
 [data-theme='dark'] {
@@ -161,6 +170,15 @@
   --success: oklch(28% 0.1 200deg);
   --warning: oklch(35% 0.08 70deg);
   --error: oklch(45% 0.1 25deg);
+
+  /* AGROARM brand tokens — dark surfaces + lightened accent greens (AA on dark). */
+  --surface: #0e1411;
+  --surface-raised: #161d18;
+  --hairline: #243029;
+  --ink: #e6ede8;
+  --brand: #2fae68;
+  --brand-strong: #1e8a50;
+  --brand-hover: #46c98a;
 }
 
 @theme inline {
@@ -203,6 +221,13 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-error: var(--error);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-hairline: var(--hairline);
+  --color-ink: var(--ink);
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-hover: var(--brand-hover);
 }
 
 @layer base {
@@ -217,20 +242,14 @@
 
 /* ── Rich-text inline link styling ── */
 .prose a {
-  color: #007D41;
+  color: var(--brand);
   text-decoration: underline;
   text-underline-offset: 2px;
   font-weight: 500;
   transition: color 0.15s ease;
 }
 .prose a:hover {
-  color: #009F54;
-}
-[data-theme='dark'] .prose a {
-  color: #4ade80;
-}
-[data-theme='dark'] .prose a:hover {
-  color: #6ee7a3;
+  color: var(--brand-hover);
 }
 
 /* ── Rich-text table styling ── */
@@ -242,14 +261,14 @@
 }
 
 .prose thead th {
-  color: #007D41;
+  color: var(--brand);
   font-weight: 600;
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   padding: 0.5rem 0.75rem;
   border-top: none;
-  border-bottom: 2px solid #007D41;
+  border-bottom: 2px solid var(--brand);
   border-left: none;
   border-right: none;
   text-align: left;
@@ -257,38 +276,19 @@
 
 .prose tbody td {
   padding: 0.45rem 0.75rem;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--hairline);
   border-bottom: none;
   border-left: none;
   border-right: none;
-  color: #374151;
+  color: color-mix(in oklab, var(--ink) 80%, transparent);
 }
 
 .prose tbody tr:last-child td {
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--hairline);
 }
 
 .prose tbody tr:nth-child(even) {
-  background: #f8faf9;
-}
-
-/* Dark mode */
-[data-theme='dark'] .prose thead th {
-  color: #4ade80;
-  border-bottom-color: #4ade80;
-}
-
-[data-theme='dark'] .prose tbody td {
-  color: #d1d5db;
-  border-top-color: #374151;
-}
-
-[data-theme='dark'] .prose tbody tr:last-child td {
-  border-bottom-color: #374151;
-}
-
-[data-theme='dark'] .prose tbody tr:nth-child(even) {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--surface);
 }
 
 html {

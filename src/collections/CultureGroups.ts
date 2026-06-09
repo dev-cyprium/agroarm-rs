@@ -3,6 +3,10 @@ import type { CollectionConfig } from 'payload'
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 import { revalidatePlansAfterChange, revalidatePlansAfterDelete } from '../hooks/revalidatePlans'
+import {
+  revalidateSpotlightAfterChange,
+  revalidateSpotlightAfterDelete,
+} from '../hooks/revalidateSpotlight'
 import { slugField } from 'payload'
 import { serbianSlugify } from '@/utilities/serbianSlugify'
 
@@ -23,8 +27,8 @@ export const CultureGroups: CollectionConfig = {
     plural: 'Grupe Kultura',
   },
   hooks: {
-    afterChange: [revalidatePlansAfterChange],
-    afterDelete: [revalidatePlansAfterDelete],
+    afterChange: [revalidatePlansAfterChange, revalidateSpotlightAfterChange],
+    afterDelete: [revalidatePlansAfterDelete, revalidateSpotlightAfterDelete],
   },
   fields: [
     {

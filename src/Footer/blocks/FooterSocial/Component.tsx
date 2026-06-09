@@ -58,7 +58,7 @@ export const FooterSocialBlock: React.FC<Props> = ({ title, siteSettings }) => {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={item.platform}
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-white/25 text-white/80 transition-colors hover:border-[#007D41] hover:bg-[#007D41]/20 hover:text-white"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-white/25 text-white/80 transition-colors hover:border-brand hover:bg-[#007D41]/20 hover:text-white"
             >
               <Icon className="h-4 w-4" />
             </a>

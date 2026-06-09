@@ -216,7 +216,7 @@ export const CatalogClient: React.FC<CatalogClientProps> = ({
     <>
       {hasSubFacet && (
         <div>
-          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-[#1F2A24]/40">
+          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-ink/40">
             Kategorija
           </h3>
           <ul className="flex flex-col gap-0.5">
@@ -229,21 +229,21 @@ export const CatalogClient: React.FC<CatalogClientProps> = ({
                     onClick={() => toggleSub(sub.slug)}
                     className={`flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-left text-sm transition-colors ${
                       isActive
-                        ? 'bg-[#007D41] font-medium text-white'
-                        : 'text-[#1F2A24]/70 hover:bg-[#E6EFEA] hover:text-[#1F2A24]'
+                        ? 'bg-brand font-medium text-white'
+                        : 'text-ink/70 hover:bg-hairline hover:text-ink'
                     }`}
                   >
                     <span
                       className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border text-[10px] ${
                         isActive
                           ? 'border-white/30 bg-white/20 text-white'
-                          : 'border-[#E6EFEA] bg-white text-transparent'
+                          : 'border-hairline bg-surface-raised text-transparent'
                       }`}
                     >
                       {isActive && '✓'}
                     </span>
                     <span className="flex-1">{sub.title}</span>
-                    <span className={isActive ? 'text-white/70' : 'text-[#1F2A24]/35'}>
+                    <span className={isActive ? 'text-white/70' : 'text-ink/35'}>
                       {sub.count}
                     </span>
                   </button>
@@ -256,13 +256,13 @@ export const CatalogClient: React.FC<CatalogClientProps> = ({
 
       {hasCultureFacet && (
         <div>
-          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-[#1F2A24]/40">
+          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-ink/40">
             Kultura
           </h3>
           <div className="flex max-h-80 flex-col gap-3 overflow-y-auto">
             {cultureFilterGroups.map(({ group, cultures }) => (
               <div key={group.id}>
-                <span className="flex items-center gap-1.5 px-1 pb-1.5 text-xs font-semibold text-[#024E29]/60">
+                <span className="flex items-center gap-1.5 px-1 pb-1.5 text-xs font-semibold text-brand-strong/60">
                   <Leaf className="h-3 w-3" />
                   {group.title}
                 </span>
@@ -296,7 +296,7 @@ export const CatalogClient: React.FC<CatalogClientProps> = ({
       )}
 
       {!hasSubFacet && !hasCultureFacet && (
-        <p className="text-sm text-[#1F2A24]/40">Nema dostupnih filtera.</p>
+        <p className="text-sm text-ink/40">Nema dostupnih filtera.</p>
       )}
     </>
   )
@@ -306,7 +306,7 @@ export const CatalogClient: React.FC<CatalogClientProps> = ({
   const pageTitle = scope?.title ?? 'Svi proizvodi'
 
   return (
-    <article className="min-h-screen bg-[#F4F8F6]">
+    <article className="min-h-screen bg-surface">
       {/* Header banner with scope tabs */}
       <div className="bg-[#024E29]">
         <div className="container py-9 md:py-12">
@@ -342,14 +342,14 @@ export const CatalogClient: React.FC<CatalogClientProps> = ({
         <div className="flex flex-col gap-8 lg:flex-row">
           {/* Desktop sidebar — always rendered */}
           <aside className="hidden w-64 shrink-0 lg:block">
-            <div className="sticky top-24 flex flex-col gap-6 rounded-2xl bg-white p-5 shadow-sm">
+            <div className="sticky top-24 flex flex-col gap-6 rounded-2xl bg-surface-raised p-5 shadow-sm">
               <div className="flex items-center justify-between">
-                <h2 className="text-sm font-bold text-[#1F2A24]">Filteri</h2>
+                <h2 className="text-sm font-bold text-ink">Filteri</h2>
                 {hasActiveFilters && (
                   <button
                     type="button"
                     onClick={clearAllFilters}
-                    className="text-xs font-medium text-[#007D41] hover:underline"
+                    className="text-xs font-medium text-brand hover:underline"
                   >
                     Obriši sve
                   </button>
@@ -364,19 +364,19 @@ export const CatalogClient: React.FC<CatalogClientProps> = ({
             {/* Search + mobile filter toggle */}
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#1F2A24]/30" />
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/30" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQueryState(e.target.value)}
                   placeholder="Pretražite proizvode..."
-                  className="w-full rounded-xl border border-[#E6EFEA] bg-white py-2.5 pl-10 pr-10 text-sm text-[#1F2A24] placeholder-[#1F2A24]/30 shadow-sm transition-colors focus:border-[#007D41] focus:outline-none focus:ring-2 focus:ring-[#007D41]/20"
+                  className="w-full rounded-xl border border-hairline bg-surface-raised py-2.5 pl-10 pr-10 text-sm text-ink placeholder-ink/30 shadow-sm transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
                 />
                 {searchQuery && (
                   <button
                     type="button"
                     onClick={() => setSearchQueryState('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-0.5 text-[#1F2A24]/30 hover:text-[#1F2A24]/60"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-0.5 text-ink/30 hover:text-ink/60"
                     aria-label="Obriši pretragu"
                   >
                     <X className="h-4 w-4" />
@@ -388,12 +388,12 @@ export const CatalogClient: React.FC<CatalogClientProps> = ({
               <button
                 type="button"
                 onClick={() => setShowMobileFilters((o) => !o)}
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#E6EFEA] bg-white px-4 py-2.5 text-sm font-medium text-[#1F2A24]/70 shadow-sm transition-colors hover:border-[#007D41]/30 hover:text-[#007D41] lg:hidden"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-hairline bg-surface-raised px-4 py-2.5 text-sm font-medium text-ink/70 shadow-sm transition-colors hover:border-brand/30 hover:text-brand lg:hidden"
               >
                 <SlidersHorizontal className="h-4 w-4" />
                 Filteri
                 {activeFilterCount > 0 && (
-                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#007D41] px-1.5 text-[10px] font-bold text-white">
+                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-brand px-1.5 text-[10px] font-bold text-white">
                     {activeFilterCount}
                   </span>
                 )}
@@ -402,7 +402,7 @@ export const CatalogClient: React.FC<CatalogClientProps> = ({
 
             {/* Mobile filters panel */}
             {showMobileFilters && (
-              <div className="mb-6 flex flex-col gap-5 rounded-2xl bg-white p-5 shadow-sm lg:hidden">
+              <div className="mb-6 flex flex-col gap-5 rounded-2xl bg-surface-raised p-5 shadow-sm lg:hidden">
                 {filterContent}
               </div>
             )}
@@ -430,7 +430,7 @@ export const CatalogClient: React.FC<CatalogClientProps> = ({
                 <button
                   type="button"
                   onClick={clearAllFilters}
-                  className="text-xs font-medium text-[#007D41] hover:underline"
+                  className="text-xs font-medium text-brand hover:underline"
                 >
                   Obriši sve filtere
                 </button>
@@ -438,7 +438,7 @@ export const CatalogClient: React.FC<CatalogClientProps> = ({
             )}
 
             {/* Result count — always shown */}
-            <p className="mb-4 text-sm text-[#1F2A24]/50">
+            <p className="mb-4 text-sm text-ink/50">
               {hasActiveFilters
                 ? filteredProducts.length === 0
                   ? 'Nema rezultata za zadate filtere'
@@ -448,9 +448,9 @@ export const CatalogClient: React.FC<CatalogClientProps> = ({
 
             {/* Product grid */}
             {filteredProducts.length === 0 ? (
-              <div className="flex flex-col items-center justify-center rounded-2xl bg-white py-20 shadow-sm">
-                <Package className="h-12 w-12 text-[#E6EFEA]" />
-                <p className="mt-4 text-base font-medium text-[#1F2A24]/50">
+              <div className="flex flex-col items-center justify-center rounded-2xl bg-surface-raised py-20 shadow-sm">
+                <Package className="h-12 w-12 text-hairline" />
+                <p className="mt-4 text-base font-medium text-ink/50">
                   {hasActiveFilters
                     ? 'Nema proizvoda koji odgovaraju filterima.'
                     : 'Trenutno nema proizvoda.'}
@@ -459,7 +459,7 @@ export const CatalogClient: React.FC<CatalogClientProps> = ({
                   <button
                     type="button"
                     onClick={clearAllFilters}
-                    className="mt-3 text-sm font-medium text-[#007D41] hover:underline"
+                    className="mt-3 text-sm font-medium text-brand hover:underline"
                   >
                     Obriši sve filtere
                   </button>
@@ -482,7 +482,7 @@ export const CatalogClient: React.FC<CatalogClientProps> = ({
                     <button
                       type="button"
                       onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
-                      className="rounded-xl border border-[#007D41] bg-white px-6 py-2.5 text-sm font-semibold text-[#007D41] shadow-sm transition-colors hover:bg-[#007D41] hover:text-white"
+                      className="rounded-xl border border-brand bg-surface-raised px-6 py-2.5 text-sm font-semibold text-brand shadow-sm transition-colors hover:bg-brand hover:text-white"
                     >
                       Učitaj još
                     </button>
@@ -505,7 +505,7 @@ function ScopeTab({ href, label, active }: { href: string; label: string; active
       href={href}
       className={`rounded-full px-4 py-2 text-sm font-semibold no-underline transition-colors ${
         active
-          ? 'bg-white text-[#024E29]'
+          ? 'bg-white text-brand-strong'
           : 'bg-white/10 text-white hover:bg-white/20 hover:text-white'
       }`}
     >
@@ -531,14 +531,14 @@ function CultureRow({
         className={`flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-left text-sm transition-colors ${
           isActive
             ? 'bg-[#024E29] font-medium text-white'
-            : 'text-[#1F2A24]/70 hover:bg-[#E6EFEA] hover:text-[#1F2A24]'
+            : 'text-ink/70 hover:bg-hairline hover:text-ink'
         }`}
       >
         <span
           className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border text-[10px] ${
             isActive
               ? 'border-white/30 bg-white/20 text-white'
-              : 'border-[#E6EFEA] bg-white text-transparent'
+              : 'border-hairline bg-surface-raised text-transparent'
           }`}
         >
           {isActive && '✓'}
@@ -551,12 +551,12 @@ function CultureRow({
 
 function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#007D41]/10 px-3 py-1.5 text-xs font-semibold text-[#007D41]">
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-brand/10 px-3 py-1.5 text-xs font-semibold text-brand">
       {label}
       <button
         type="button"
         onClick={onRemove}
-        className="rounded-full transition-colors hover:text-[#009F54]"
+        className="rounded-full transition-colors hover:text-brand-hover"
         aria-label={`Ukloni filter ${label}`}
       >
         <X className="h-3 w-3" />

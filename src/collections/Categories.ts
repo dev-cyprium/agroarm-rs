@@ -4,6 +4,10 @@ import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 import { slugField } from 'payload'
 import { serbianSlugify } from '@/utilities/serbianSlugify'
+import {
+  revalidateSpotlightAfterChange,
+  revalidateSpotlightAfterDelete,
+} from '../hooks/revalidateSpotlight'
 
 export const Categories: CollectionConfig = {
   slug: 'categories',
@@ -16,6 +20,10 @@ export const Categories: CollectionConfig = {
   defaultPopulate: {
     title: true,
     slug: true,
+  },
+  hooks: {
+    afterChange: [revalidateSpotlightAfterChange],
+    afterDelete: [revalidateSpotlightAfterDelete],
   },
   admin: {
     useAsTitle: 'title',

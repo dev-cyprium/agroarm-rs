@@ -14,15 +14,20 @@ type Args = {
 }
 
 export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const categories = await payload.find({
-    collection: 'categories',
-    limit: 1000,
-    overrideAccess: false,
-    select: { slug: true },
-  })
+  try {
+    const payload = await getPayload({ config: configPromise })
+    const categories = await payload.find({
+      collection: 'categories',
+      limit: 1000,
+      overrideAccess: false,
+      select: { slug: true },
+    })
 
-  return categories.docs.filter((cat) => cat.slug).map((cat) => ({ slug: cat.slug }))
+    return categories.docs.filter((cat) => cat.slug).map((cat) => ({ slug: cat.slug }))
+  } catch {
+    // DB may be unreachable at build time (e.g. DATABASE_URL absent) — generate on demand.
+    return []
+  }
 }
 
 export async function generateMetadata({ params }: Args): Promise<Metadata> {

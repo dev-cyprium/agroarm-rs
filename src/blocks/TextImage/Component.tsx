@@ -56,7 +56,7 @@ export const TextImageBlock: React.FC<Props> = (props) => {
   const isImageLeft = position === 'left'
 
   const textBlock = (
-    <div className="[&_h1]:text-[#024E29] [&_h2]:text-[#024E29] [&_h3]:text-[#024E29] [&_h4]:text-[#024E29] [&_>*:first-child]:mt-0 [&_>*:last-child]:mb-0">
+    <div className="[&_h1]:text-brand-strong [&_h2]:text-brand-strong [&_h3]:text-brand-strong [&_h4]:text-brand-strong [&_>*:first-child]:mt-0 [&_>*:last-child]:mb-0">
       {text && <RichText data={text} enableGutter={false} />}
     </div>
   )

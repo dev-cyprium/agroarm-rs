@@ -25,16 +25,21 @@ const pickString = (v: string | string[] | undefined): string | null => {
 }
 
 export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const products = await payload.find({
-    collection: 'products',
-    limit: 1000,
-    overrideAccess: false,
-    pagination: false,
-    select: { slug: true },
-  })
+  try {
+    const payload = await getPayload({ config: configPromise })
+    const products = await payload.find({
+      collection: 'products',
+      limit: 1000,
+      overrideAccess: false,
+      pagination: false,
+      select: { slug: true },
+    })
 
-  return products.docs.filter((p) => p.slug).map((p) => ({ slug: p.slug }))
+    return products.docs.filter((p) => p.slug).map((p) => ({ slug: p.slug }))
+  } catch {
+    // DB may be unreachable at build time (e.g. DATABASE_URL absent) — generate on demand.
+    return []
+  }
 }
 
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
@@ -87,7 +92,7 @@ export default async function ProductPage({ params, searchParams }: Args) {
     `/kategorije/${slug}${restoreQs ? `?${restoreQs}` : ''}`
 
   return (
-    <article className="bg-[#F4F8F6]">
+    <article className="bg-surface">
       <div className="container pt-6 md:pt-8">
         <div className="mx-auto max-w-5xl">
           <Breadcrumbs
@@ -101,14 +106,14 @@ export default async function ProductPage({ params, searchParams }: Args) {
         <div className="mx-auto max-w-5xl">
 
           {/* Product hero card */}
-          <div className="overflow-hidden bg-white shadow-sm rounded-b-2xl">
+          <div className="overflow-hidden bg-surface-raised shadow-sm rounded-b-2xl">
             {/* Green top accent */}
-            <div className="h-2 bg-[#007D41]" />
+            <div className="h-2 bg-brand" />
 
             <div className="flex flex-col gap-8 p-6 md:flex-row md:items-start md:p-10">
               {/* Product image */}
               {imageUrl && (
-                <div className="relative w-full shrink-0 overflow-hidden rounded-xl bg-[#F4F8F6] md:w-80 lg:w-96">
+                <div className="relative w-full shrink-0 overflow-hidden rounded-xl bg-surface md:w-80 lg:w-96">
                   <img
                     src={imageUrl}
                     alt={image?.alt || product.title}
@@ -125,7 +130,7 @@ export default async function ProductPage({ params, searchParams }: Args) {
                     <Link
                       key={cat.id}
                       href={`/kategorije/${cat.slug}`}
-                      className="inline-flex items-center gap-1.5 rounded-full bg-[#007D41]/10 px-3 py-1 text-xs font-semibold text-[#007D41] transition-colors hover:bg-[#007D41]/20"
+                      className="inline-flex items-center gap-1.5 rounded-full bg-brand/10 px-3 py-1 text-xs font-semibold text-brand transition-colors hover:bg-brand/20"
                     >
                       <Tag className="h-3 w-3" />
                       {cat.title}
@@ -134,7 +139,7 @@ export default async function ProductPage({ params, searchParams }: Args) {
                   {cultures.map((culture) => (
                     <span
                       key={culture.id}
-                      className="inline-flex items-center gap-1.5 rounded-full bg-[#E6EFEA] px-3 py-1 text-xs font-semibold text-[#024E29]"
+                      className="inline-flex items-center gap-1.5 rounded-full bg-hairline px-3 py-1 text-xs font-semibold text-brand-strong"
                     >
                       <Leaf className="h-3 w-3" />
                       {culture.title}
@@ -143,7 +148,7 @@ export default async function ProductPage({ params, searchParams }: Args) {
                   {cultureGroups.map((group) => (
                     <span
                       key={group.id}
-                      className="inline-flex items-center gap-1.5 rounded-full bg-[#E6EFEA] px-3 py-1 text-xs font-semibold text-[#024E29]"
+                      className="inline-flex items-center gap-1.5 rounded-full bg-hairline px-3 py-1 text-xs font-semibold text-brand-strong"
                     >
                       <Leaf className="h-3 w-3" />
                       {group.title}
@@ -151,37 +156,37 @@ export default async function ProductPage({ params, searchParams }: Args) {
                   ))}
                 </div>
 
-                <h1 className="text-3xl font-bold text-[#1F2A24] sm:text-4xl">
+                <h1 className="text-3xl font-bold text-ink sm:text-4xl">
                   {product.title}
                 </h1>
 
                 {product.shortDescription && (
-                  <p className="text-base leading-relaxed text-[#1F2A24]/70">{product.shortDescription}</p>
+                  <p className="text-base leading-relaxed text-ink/70">{product.shortDescription}</p>
                 )}
 
                 {product.activeMaterial && (() => {
                   const { label, Icon } = getProductDescriptor(product.descriptorType)
                   return (
                     <div className="inline-flex items-center gap-2 text-sm">
-                      <Icon className="h-4 w-4 text-[#007D41]" />
-                      <span className="font-medium text-[#1F2A24]/50">{label}:</span>
-                      <span className="text-[#1F2A24]">{product.activeMaterial}</span>
+                      <Icon className="h-4 w-4 text-brand" />
+                      <span className="font-medium text-ink/50">{label}:</span>
+                      <span className="text-ink">{product.activeMaterial}</span>
                     </div>
                   )
                 })()}
 
                 {/* Attributes table */}
                 {attributes.length > 0 && (
-                  <div className="mt-2 rounded-xl bg-[#F4F8F6] p-4">
+                  <div className="mt-2 rounded-xl bg-surface p-4">
                     <table className="w-full text-sm">
                       <tbody>
                         {attributes.map((attr, i) => (
                           <tr
                             key={attr.id || i}
-                            className="border-b border-[#E6EFEA] last:border-b-0"
+                            className="border-b border-hairline last:border-b-0"
                           >
-                            <td className="py-2.5 pr-4 font-medium text-[#1F2A24]/50">{attr.label}</td>
-                            <td className="py-2.5 text-[#1F2A24]">{attr.value}</td>
+                            <td className="py-2.5 pr-4 font-medium text-ink/50">{attr.label}</td>
+                            <td className="py-2.5 text-ink">{attr.value}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -194,7 +199,7 @@ export default async function ProductPage({ params, searchParams }: Args) {
 
           {/* Rich text content */}
           {product.content && (
-            <div className="mt-8 rounded-2xl bg-white p-6 shadow-sm md:p-10">
+            <div className="mt-8 rounded-2xl bg-surface-raised p-6 shadow-sm md:p-10">
               <RichText data={product.content} enableGutter={false} />
             </div>
           )}
@@ -202,7 +207,7 @@ export default async function ProductPage({ params, searchParams }: Args) {
           {/* PDF Documents */}
           {documents.length > 0 && (
             <section className="mt-8">
-              <h2 className="mb-4 text-xl font-semibold text-[#024E29]">
+              <h2 className="mb-4 text-xl font-semibold text-brand-strong">
                 Dokumentacija
               </h2>
               <div className="grid gap-3 sm:grid-cols-2">
@@ -217,7 +222,7 @@ export default async function ProductPage({ params, searchParams }: Args) {
                       href={fileUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-3 rounded-xl border border-[#E6EFEA] bg-white px-5 py-4 text-sm text-[#1F2A24] shadow-sm transition-all hover:border-[#007D41]/30 hover:shadow-md"
+                      className="inline-flex items-center gap-3 rounded-xl border border-hairline bg-surface-raised px-5 py-4 text-sm text-ink shadow-sm transition-all hover:border-brand/30 hover:shadow-md"
                     >
                       <FileText className="h-5 w-5 shrink-0 text-red-500" />
                       <span className="font-medium">{doc.title || 'Dokument'}</span>
@@ -312,17 +317,17 @@ function Breadcrumbs({
   return (
     <nav
       aria-label="Breadcrumbs"
-      className="flex flex-wrap items-center gap-1.5 text-sm text-[#1F2A24]/60"
+      className="flex flex-wrap items-center gap-1.5 text-sm text-ink/60"
     >
-      <Link href="/" className="transition-colors hover:text-[#007D41]">
+      <Link href="/" className="transition-colors hover:text-brand">
         Početna
       </Link>
       {parent && parent.slug && (
         <>
-          <ChevronRight className="h-3.5 w-3.5 text-[#1F2A24]/30" />
+          <ChevronRight className="h-3.5 w-3.5 text-ink/30" />
           <Link
             href={`/kategorije/${parent.slug}`}
-            className="transition-colors hover:text-[#007D41]"
+            className="transition-colors hover:text-brand"
           >
             {parent.title}
           </Link>
@@ -330,17 +335,17 @@ function Breadcrumbs({
       )}
       {category && category.slug && (
         <>
-          <ChevronRight className="h-3.5 w-3.5 text-[#1F2A24]/30" />
+          <ChevronRight className="h-3.5 w-3.5 text-ink/30" />
           <Link
             href={categoryHref(category.slug)}
-            className="transition-colors hover:text-[#007D41]"
+            className="transition-colors hover:text-brand"
           >
             {category.title}
           </Link>
         </>
       )}
-      <ChevronRight className="h-3.5 w-3.5 text-[#1F2A24]/30" />
-      <span className="font-medium text-[#1F2A24] line-clamp-1">{productTitle}</span>
+      <ChevronRight className="h-3.5 w-3.5 text-ink/30" />
+      <span className="font-medium text-ink line-clamp-1">{productTitle}</span>
     </nav>
   )
 }

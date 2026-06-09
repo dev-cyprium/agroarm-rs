@@ -9,7 +9,7 @@ import { ProtectionPlanCard } from './ProtectionPlanCard'
 import { ProtectionPlanCarousel } from './ProtectionPlanCarousel'
 import { PLAN_CONFIG, cultureHasPlan, cultureToPlanCard } from '@/utilities/plans'
 
-const BRAND_GREEN = '#007D41'
+const BRAND_GREEN = 'var(--brand)'
 const PLAN_TYPE = 'protection' as const
 
 export const ProtectionPlansBlock: React.FC<{
@@ -48,7 +48,7 @@ export const ProtectionPlansBlock: React.FC<{
   )
 
   return (
-    <div className="bg-white py-20 sm:py-28">
+    <div className="bg-surface-raised py-20 sm:py-28">
       <div className="container">
         {/* Block header */}
         {(blockTitle || blockSubtitle) && (

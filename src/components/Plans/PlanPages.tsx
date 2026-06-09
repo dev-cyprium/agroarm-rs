@@ -18,7 +18,7 @@ import {
   type PlanType,
 } from '@/utilities/plans'
 
-const BRAND_GREEN = '#007D41'
+const BRAND_GREEN = 'var(--brand)'
 
 // ── Category list page (e.g. /planovi-zastite) ─────────────────────────────
 
@@ -53,7 +53,7 @@ export async function PlansListPage({ planType }: { planType: PlanType }) {
               key={category.id}
               href={`${cfg.basePath}/${slug}`}
               className="flex items-center justify-between rounded-xl border border-border bg-card p-6 transition-colors hover:bg-muted/50"
-              style={{ borderColor: 'color-mix(in srgb, #007D41 25%)' }}
+              style={{ borderColor: 'color-mix(in srgb, var(--brand) 25%)' }}
             >
               <span className="font-medium" style={{ color: BRAND_GREEN }}>
                 {category.title}

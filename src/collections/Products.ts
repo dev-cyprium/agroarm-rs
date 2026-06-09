@@ -18,6 +18,10 @@ import { MediaBlock } from '../blocks/MediaBlock/config'
 import { TextImage } from '../blocks/TextImage/config'
 import { slugField } from 'payload'
 import { serbianSlugify } from '@/utilities/serbianSlugify'
+import {
+  revalidateSpotlightAfterChange,
+  revalidateSpotlightAfterDelete,
+} from '../hooks/revalidateSpotlight'
 
 export const Products: CollectionConfig = {
   slug: 'products',
@@ -34,6 +38,10 @@ export const Products: CollectionConfig = {
   defaultPopulate: {
     title: true,
     slug: true,
+  },
+  hooks: {
+    afterChange: [revalidateSpotlightAfterChange],
+    afterDelete: [revalidateSpotlightAfterDelete],
   },
   admin: {
     useAsTitle: 'title',

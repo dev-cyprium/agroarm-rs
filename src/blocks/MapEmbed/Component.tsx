@@ -10,7 +10,7 @@ export const MapEmbedBlock: React.FC<MapEmbedBlockType> = ({ address, height }) 
 
   return (
     <div className="container">
-      <div className="overflow-hidden rounded-lg border border-[#E6EFEA]">
+      <div className="overflow-hidden rounded-lg border border-hairline">
         <iframe
           src={`https://www.google.com/maps?q=${query}&output=embed`}
           width="100%"

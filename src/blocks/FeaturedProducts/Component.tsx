@@ -36,10 +36,10 @@ export const FeaturedProductsBlock: React.FC<FeaturedProductsBlockType> = async 
       {(heading || subheading) && (
         <div className="mb-10 text-center">
           {heading && (
-            <h2 className="text-3xl font-bold text-[#1F2A24] md:text-4xl">{heading}</h2>
+            <h2 className="text-3xl font-bold text-ink md:text-4xl">{heading}</h2>
           )}
           {subheading && (
-            <p className="mt-3 text-lg text-[#1F2A24]/70">{subheading}</p>
+            <p className="mt-3 text-lg text-ink/70">{subheading}</p>
           )}
         </div>
       )}

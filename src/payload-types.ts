@@ -1177,6 +1177,10 @@ export interface LogoTickerBlock {
      * Koristi se za alt tekst slike
      */
     name?: string | null;
+    /**
+     * Opcioni link koji se otvara klikom na logo (npr. https://partner.rs).
+     */
+    url?: string | null;
     id?: string | null;
   }[];
   speed?: ('slow' | 'normal' | 'fast') | null;
@@ -2048,6 +2052,7 @@ export interface LogoTickerBlockSelect<T extends boolean = true> {
     | {
         image?: T;
         name?: T;
+        url?: T;
         id?: T;
       };
   speed?: T;
