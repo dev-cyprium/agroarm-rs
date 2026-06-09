@@ -9,6 +9,10 @@ import { cultureHasPlan } from '@/utilities/plans'
 import { PLAN_CONFIG } from '@/utilities/plans'
 import { SPOTLIGHT_TAG, type SpotlightRecord } from '@/components/Spotlight/types'
 
+// Served at request time (results are cached via unstable_cache + tag revalidation);
+// must not require a DB connection during the build.
+export const dynamic = 'force-dynamic'
+
 // Resolve a relationship field that may be an id or a populated object.
 function relTitle(rel: unknown): string | undefined {
   if (rel && typeof rel === 'object' && 'title' in rel) {

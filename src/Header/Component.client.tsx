@@ -10,6 +10,7 @@ import { CMSLink } from '@/components/Link'
 import { Logo } from '@/components/Logo/Logo'
 import { cn } from '@/utilities/ui'
 import { useSpotlight } from '@/components/Spotlight/useSpotlight'
+import { ThemeToggle } from '@/components/ThemeToggle'
 import { ChevronDown, Menu, SearchIcon, X } from 'lucide-react'
 
 interface HeaderClientProps {
@@ -88,6 +89,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, resolvedNavIte
           >
             <SearchIcon className="h-5 w-5" />
           </button>
+          <ThemeToggle className="rounded-md p-2 text-white/80 transition-colors hover:bg-white/15 hover:text-white" />
         </nav>
 
         {/* Mobile toggle */}
@@ -183,6 +185,12 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, resolvedNavIte
                 <SearchIcon className="h-4 w-4" />
                 Pretraga
               </button>
+            </li>
+            <li>
+              <ThemeToggle
+                showLabel
+                className="inline-flex w-full items-center gap-2 rounded-md px-3 py-2.5 text-base font-medium text-white/90 transition-colors hover:bg-white/15 hover:text-white [&>svg]:h-4 [&>svg]:w-4"
+              />
             </li>
           </ul>
         </nav>

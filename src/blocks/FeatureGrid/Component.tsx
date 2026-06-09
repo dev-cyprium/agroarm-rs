@@ -60,17 +60,17 @@ const columnsClass: Record<Columns, string> = {
 }
 
 const cardClass: Record<CardStyle, string> = {
-  soft: 'rounded-2xl bg-white p-6 shadow-sm transition-shadow hover:shadow-md',
+  soft: 'rounded-2xl bg-surface-raised p-6 shadow-sm transition-shadow hover:shadow-md',
   outline:
-    'rounded-2xl border border-[#E6EFEA] bg-white p-6 transition-colors hover:border-[#007D41]/40',
+    'rounded-2xl border border-hairline bg-surface-raised p-6 transition-colors hover:border-brand/40',
   plain: 'p-2',
 }
 
 const iconWrapperClass: Record<CardStyle, string> = {
-  soft: 'mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[#007D41]/10 text-[#007D41]',
+  soft: 'mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand/10 text-brand',
   outline:
-    'mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[#F4F8F6] text-[#007D41]',
-  plain: 'mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[#007D41]/10 text-[#007D41]',
+    'mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-surface text-brand',
+  plain: 'mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand/10 text-brand',
 }
 
 export const FeatureGridBlock: React.FC<FeatureGridBlockProps> = (props) => {
@@ -91,15 +91,15 @@ export const FeatureGridBlock: React.FC<FeatureGridBlockProps> = (props) => {
       {(eyebrow || heading || lead) && (
         <div className="mx-auto mb-10 max-w-3xl text-center">
           {eyebrow && (
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-[#007D41]">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-brand">
               {eyebrow}
             </p>
           )}
           {heading && (
-            <h2 className="text-3xl font-bold text-[#024E29] sm:text-4xl">{heading}</h2>
+            <h2 className="text-3xl font-bold text-brand-strong sm:text-4xl">{heading}</h2>
           )}
           {lead && (
-            <div className="mt-4 text-base leading-relaxed text-[#1F2A24]/70 [&_p]:m-0">
+            <div className="mt-4 text-base leading-relaxed text-ink/70 [&_p]:m-0">
               <RichText data={lead} enableGutter={false} enableProse={false} />
             </div>
           )}
@@ -117,10 +117,10 @@ export const FeatureGridBlock: React.FC<FeatureGridBlockProps> = (props) => {
                 </span>
               )}
               {item?.title && (
-                <h3 className="mb-2 text-lg font-semibold text-[#024E29]">{item.title}</h3>
+                <h3 className="mb-2 text-lg font-semibold text-brand-strong">{item.title}</h3>
               )}
               {item?.description && (
-                <p className="text-sm leading-relaxed text-[#1F2A24]/70">{item.description}</p>
+                <p className="text-sm leading-relaxed text-ink/70">{item.description}</p>
               )}
             </div>
           )

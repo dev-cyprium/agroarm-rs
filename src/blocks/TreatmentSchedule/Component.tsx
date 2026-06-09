@@ -42,9 +42,9 @@ const TARGET: Record<
   herbicid: {
     label: 'Korov',
     Icon: Sprout,
-    accent: '#007D41',
-    dot: 'bg-[#007D41]',
-    chip: 'bg-[#007D41]/10 text-[#024E29]',
+    accent: 'var(--brand)',
+    dot: 'bg-brand',
+    chip: 'bg-brand/10 text-brand-strong',
   },
   fungicid: {
     label: 'Bolest',
@@ -63,9 +63,9 @@ const TARGET: Record<
   ostalo: {
     label: 'Tretman',
     Icon: Sparkles,
-    accent: '#1F2A24',
+    accent: 'var(--ink)',
     dot: 'bg-[#1F2A24]',
-    chip: 'bg-[#E6EFEA] text-[#1F2A24]',
+    chip: 'bg-hairline text-ink',
   },
 }
 
@@ -83,19 +83,19 @@ function ProductPill({ row }: { row: ProductRow }) {
   const inner = (
     <span
       className={[
-        'inline-flex items-center gap-1.5 rounded-full border border-[#E6EFEA] bg-[#F4F8F6] px-3 py-1.5 text-sm transition-colors',
-        slug ? 'group-hover/pill:border-[#007D41]/40 group-hover/pill:bg-[#007D41]/5' : '',
+        'inline-flex items-center gap-1.5 rounded-full border border-hairline bg-surface px-3 py-1.5 text-sm transition-colors',
+        slug ? 'group-hover/pill:border-brand/40 group-hover/pill:bg-brand/5' : '',
       ].join(' ')}
     >
-      {name && <span className="font-medium text-[#024E29]">{name}</span>}
+      {name && <span className="font-medium text-brand-strong">{name}</span>}
       {row.dose && (
-        <span className="text-[#1F2A24]/55">
+        <span className="text-ink/55">
           {name ? '· ' : ''}
           {row.dose}
         </span>
       )}
       {slug && (
-        <ArrowUpRight className="h-3.5 w-3.5 text-[#007D41]/70 transition-transform group-hover/pill:-translate-y-0.5 group-hover/pill:translate-x-0.5" />
+        <ArrowUpRight className="h-3.5 w-3.5 text-brand/70 transition-transform group-hover/pill:-translate-y-0.5 group-hover/pill:translate-x-0.5" />
       )}
     </span>
   )
@@ -133,12 +133,12 @@ function StageRow({ stage, index }: { stage: Stage; index: number }) {
         initial={{ opacity: 0, y: 18 }}
         animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
         transition={{ duration: 0.5, delay: index * 0.04, ease: [0.22, 1, 0.36, 1] }}
-        className="overflow-hidden rounded-2xl border border-[#E6EFEA] bg-white shadow-sm"
+        className="overflow-hidden rounded-2xl border border-hairline bg-surface-raised shadow-sm"
         style={{ borderLeft: `3px solid ${t.accent}` }}
       >
         <div className="p-5 sm:p-6">
           <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
-            <h4 className="whitespace-pre-line text-base font-semibold leading-snug text-[#1F2A24]">
+            <h4 className="whitespace-pre-line text-base font-semibold leading-snug text-ink">
               {stage.stage}
             </h4>
             {stage.targetType && (
@@ -152,7 +152,7 @@ function StageRow({ stage, index }: { stage: Stage; index: number }) {
           </div>
 
           {stage.target && (
-            <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-[#1F2A24]/70">
+            <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-ink/70">
               {stage.target}
             </p>
           )}
@@ -166,7 +166,7 @@ function StageRow({ stage, index }: { stage: Stage; index: number }) {
           )}
 
           {stage.note && (
-            <p className="mt-3 text-xs italic text-[#1F2A24]/50">{stage.note}</p>
+            <p className="mt-3 text-xs italic text-ink/50">{stage.note}</p>
           )}
         </div>
       </motion.div>
@@ -193,10 +193,10 @@ export const TreatmentScheduleBlock: React.FC<TreatmentScheduleProps> = ({
     <section className="not-prose my-10">
       {title && (
         <header className="mb-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#007D41]">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand">
             Program tretmana
           </p>
-          <h3 className="mt-1 text-2xl font-bold text-[#024E29] sm:text-3xl">{title}</h3>
+          <h3 className="mt-1 text-2xl font-bold text-brand-strong sm:text-3xl">{title}</h3>
         </header>
       )}
 
@@ -224,7 +224,7 @@ export const TreatmentScheduleBlock: React.FC<TreatmentScheduleProps> = ({
         {/* Spine */}
         <span
           aria-hidden
-          className="absolute bottom-2 left-[21px] top-2 w-0.5 rounded-full bg-gradient-to-b from-[#007D41]/15 via-[#007D41]/30 to-[#007D41]/10"
+          className="absolute bottom-2 left-[21px] top-2 w-0.5 rounded-full bg-gradient-to-b from-brand/15 via-brand/30 to-brand/10"
         />
         {items.map((stage, i) => (
           <StageRow key={stage.id ?? i} stage={stage} index={i} />
@@ -233,7 +233,7 @@ export const TreatmentScheduleBlock: React.FC<TreatmentScheduleProps> = ({
 
       {/* Footnotes */}
       {notes.length > 0 && (
-        <div className="mt-6 space-y-1 rounded-xl bg-[#F4F8F6] p-4 text-xs leading-relaxed text-[#1F2A24]/60">
+        <div className="mt-6 space-y-1 rounded-xl bg-surface p-4 text-xs leading-relaxed text-ink/60">
           {notes.map((f, i) => (
             <p key={i}>{f.text}</p>
           ))}

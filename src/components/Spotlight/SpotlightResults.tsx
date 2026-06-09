@@ -62,7 +62,7 @@ export const SpotlightResults: React.FC<Props> = ({
         const SectionIcon = TYPE_ICON[group.type]
         return (
           <div key={group.type} className="mb-2 last:mb-0">
-            <div className="flex items-center gap-2 px-4 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-[#1F2A24]/50">
+            <div className="flex items-center gap-2 px-4 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-ink/50">
               <SectionIcon className="h-3.5 w-3.5" />
               {TYPE_LABELS[group.type]}
             </div>
@@ -81,15 +81,15 @@ export const SpotlightResults: React.FC<Props> = ({
                       onMouseMove={() => onHover(index)}
                       className={cn(
                         'flex items-center gap-3 px-4 py-2.5 no-underline transition-colors',
-                        isActive ? 'bg-[#F4F8F6]' : 'bg-transparent',
+                        isActive ? 'bg-surface' : 'bg-transparent',
                       )}
                     >
                       <span
                         className={cn(
                           'flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-md border',
                           isActive
-                            ? 'border-[#007D41]/30 bg-white'
-                            : 'border-[#E6EFEA] bg-[#F4F8F6]',
+                            ? 'border-brand/30 bg-surface-raised'
+                            : 'border-hairline bg-surface',
                         )}
                       >
                         {item.iconUrl ? (
@@ -102,7 +102,7 @@ export const SpotlightResults: React.FC<Props> = ({
                           />
                         ) : (
                           <ItemIcon
-                            className={cn('h-4 w-4', isActive ? 'text-[#007D41]' : 'text-[#1F2A24]/60')}
+                            className={cn('h-4 w-4', isActive ? 'text-brand' : 'text-ink/60')}
                           />
                         )}
                       </span>
@@ -110,20 +110,20 @@ export const SpotlightResults: React.FC<Props> = ({
                         <span
                           className={cn(
                             'block truncate text-sm font-medium',
-                            isActive ? 'text-[#007D41]' : 'text-[#1F2A24]',
+                            isActive ? 'text-brand' : 'text-ink',
                           )}
                         >
                           {item.title}
                         </span>
                         {item.subtitle ? (
-                          <span className="block truncate text-xs text-[#1F2A24]/55">
+                          <span className="block truncate text-xs text-ink/55">
                             {item.subtitle}
                           </span>
                         ) : null}
                       </span>
                       {cultureMatch ? (
                         <span
-                          className="ml-auto flex shrink-0 items-center gap-1 rounded-full border border-[#007D41]/20 bg-[#E6EFEA] px-2 py-0.5 text-[10px] font-medium text-[#007D41]"
+                          className="ml-auto flex shrink-0 items-center gap-1 rounded-full border border-brand/20 bg-hairline px-2 py-0.5 text-[10px] font-medium text-brand"
                           title={`Kultura: ${cultureMatch}`}
                         >
                           <Sprout className="h-3 w-3" />

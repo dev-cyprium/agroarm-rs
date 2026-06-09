@@ -59,9 +59,9 @@ export const LogoTickerBlock: React.FC<LogoTickerBlockType> = ({ heading, logos,
     })
 
   return (
-    <div className="bg-[#F4F8F6] py-6">
+    <div className="bg-surface py-6">
       {heading && (
-        <p className="mb-4 text-center text-sm font-medium uppercase tracking-widest text-[#1F2A24]/35">
+        <p className="mb-4 text-center text-sm font-medium uppercase tracking-widest text-ink/35">
           {heading}
         </p>
       )}

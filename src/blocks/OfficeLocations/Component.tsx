@@ -42,8 +42,8 @@ export const OfficeLocationsBlock: React.FC<OfficeLocationsBlockType> = ({
     <div className="container pt-16">
       {(heading || subheading) && (
         <div className="mb-14 text-center">
-          {heading && <h2 className="text-3xl font-bold text-[#1F2A24] md:text-4xl">{heading}</h2>}
-          {subheading && <p className="mt-3 text-lg text-[#1F2A24]/70">{subheading}</p>}
+          {heading && <h2 className="text-3xl font-bold text-ink md:text-4xl">{heading}</h2>}
+          {subheading && <p className="mt-3 text-lg text-ink/70">{subheading}</p>}
         </div>
       )}
 
@@ -53,11 +53,11 @@ export const OfficeLocationsBlock: React.FC<OfficeLocationsBlockType> = ({
           return (
             <div
               key={i}
-              className="group overflow-hidden rounded-xl border border-[#E6EFEA] bg-white shadow-sm transition-shadow hover:shadow-md"
+              className="group overflow-hidden rounded-xl border border-hairline bg-surface-raised shadow-sm transition-shadow hover:shadow-md"
             >
               {/* Map */}
               {mapQuery && (
-                <div className="relative h-52 w-full overflow-hidden bg-[#E6EFEA]">
+                <div className="relative h-52 w-full overflow-hidden bg-hairline">
                   <iframe
                     src={`https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`}
                     width="100%"
@@ -74,33 +74,33 @@ export const OfficeLocationsBlock: React.FC<OfficeLocationsBlockType> = ({
               {/* Info */}
               <div className="p-7">
                 <div className="mb-5 flex items-center gap-3">
-                  <h3 className="text-xl font-bold text-[#1F2A24]">{office.name}</h3>
+                  <h3 className="text-xl font-bold text-ink">{office.name}</h3>
                   {office.badge && (
-                    <span className="inline-flex items-center rounded-full bg-[#007D41]/10 px-2.5 py-0.5 text-xs font-semibold text-[#007D41]">
+                    <span className="inline-flex items-center rounded-full bg-brand/10 px-2.5 py-0.5 text-xs font-semibold text-brand">
                       {office.badge}
                     </span>
                   )}
                 </div>
 
                 <div className="flex flex-col gap-3.5">
-                  <div className="flex items-start gap-2.5 text-sm text-[#1F2A24]/80">
-                    <PinIcon className="mt-0.5 h-4 w-4 shrink-0 text-[#007D41]" />
+                  <div className="flex items-start gap-2.5 text-sm text-ink/80">
+                    <PinIcon className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
                     <span>{office.address}</span>
                   </div>
 
                   {office.phone && (
                     <a
                       href={`tel:${office.phone.split(',')[0].trim()}`}
-                      className="flex items-center gap-2.5 text-sm text-[#1F2A24]/80 transition-colors hover:text-[#007D41]"
+                      className="flex items-center gap-2.5 text-sm text-ink/80 transition-colors hover:text-brand"
                     >
-                      <PhoneIcon className="h-4 w-4 shrink-0 text-[#007D41]" />
+                      <PhoneIcon className="h-4 w-4 shrink-0 text-brand" />
                       <span>{office.phone}</span>
                     </a>
                   )}
 
                   {office.fax && (
-                    <div className="flex items-center gap-2.5 text-sm text-[#1F2A24]/80">
-                      <FaxIcon className="h-4 w-4 shrink-0 text-[#007D41]" />
+                    <div className="flex items-center gap-2.5 text-sm text-ink/80">
+                      <FaxIcon className="h-4 w-4 shrink-0 text-brand" />
                       <span>Fax: {office.fax}</span>
                     </div>
                   )}
@@ -108,9 +108,9 @@ export const OfficeLocationsBlock: React.FC<OfficeLocationsBlockType> = ({
                   {office.email && (
                     <a
                       href={`mailto:${office.email}`}
-                      className="flex items-center gap-2.5 text-sm text-[#1F2A24]/80 transition-colors hover:text-[#007D41]"
+                      className="flex items-center gap-2.5 text-sm text-ink/80 transition-colors hover:text-brand"
                     >
-                      <EmailIcon className="h-4 w-4 shrink-0 text-[#007D41]" />
+                      <EmailIcon className="h-4 w-4 shrink-0 text-brand" />
                       <span>{office.email}</span>
                     </a>
                   )}

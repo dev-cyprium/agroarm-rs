@@ -57,7 +57,7 @@ const themeStyles: Record<
     bg: 'bg-gradient-to-br from-[#024E29] via-[#007D41] to-[#009F54]',
     iconBg: 'bg-white/10',
     iconRing: 'ring-white/30',
-    chipHover: 'hover:bg-white hover:text-[#024E29]',
+    chipHover: 'hover:bg-white hover:text-brand-strong',
     accentText: 'text-white',
     glow: 'shadow-[0_24px_60px_-20px_rgba(0,125,65,0.55)]',
   },
@@ -438,15 +438,15 @@ export const InteractiveSplitBlock: React.FC<InteractiveSplitBlockProps> = ({
       {(eyebrow || heading || subheading) && (
         <div className="mx-auto mb-10 max-w-3xl text-center">
           {eyebrow && (
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-[#007D41]">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-brand">
               {eyebrow}
             </p>
           )}
           {heading && (
-            <h2 className="text-3xl font-bold text-[#024E29] sm:text-4xl">{heading}</h2>
+            <h2 className="text-3xl font-bold text-brand-strong sm:text-4xl">{heading}</h2>
           )}
           {subheading && (
-            <p className="mt-4 text-base leading-relaxed text-[#1F2A24]/70">{subheading}</p>
+            <p className="mt-4 text-base leading-relaxed text-ink/70">{subheading}</p>
           )}
         </div>
       )}

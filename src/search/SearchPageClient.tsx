@@ -34,26 +34,26 @@ export const SearchPageClient: React.FC<Props> = ({ records }) => {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <div className="mb-6 flex items-center gap-3 rounded-xl border border-[#E6EFEA] bg-white px-4 shadow-sm focus-within:border-[#007D41]">
-        <SearchIcon className="h-5 w-5 shrink-0 text-[#007D41]" />
+      <div className="mb-6 flex items-center gap-3 rounded-xl border border-hairline bg-surface-raised px-4 shadow-sm focus-within:border-brand">
+        <SearchIcon className="h-5 w-5 shrink-0 text-brand" />
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Pretražite kulture, proizvode i kategorije…"
           autoFocus
-          className="h-14 flex-1 bg-transparent text-base text-[#1F2A24] placeholder:text-[#1F2A24]/40 focus:outline-none"
+          className="h-14 flex-1 bg-transparent text-base text-ink placeholder:text-ink/40 focus:outline-none"
           autoComplete="off"
           spellCheck={false}
         />
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-[#E6EFEA] bg-white">
+      <div className="overflow-hidden rounded-xl border border-hairline bg-surface-raised">
         {!hasQuery ? (
-          <p className="px-4 py-10 text-center text-sm text-[#1F2A24]/50">
+          <p className="px-4 py-10 text-center text-sm text-ink/50">
             Unesite pojam za pretragu.
           </p>
         ) : flat.length === 0 ? (
-          <p className="px-4 py-10 text-center text-sm text-[#1F2A24]/50">
+          <p className="px-4 py-10 text-center text-sm text-ink/50">
             Nema rezultata za „{debounced.trim()}".
           </p>
         ) : (

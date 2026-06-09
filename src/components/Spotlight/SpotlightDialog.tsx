@@ -94,7 +94,7 @@ export const SpotlightDialog: React.FC<Props> = ({ open, onOpenChange, records, 
     if (showRecent) {
       return (
         <div className="flex-1 min-h-0 overflow-y-auto py-2">
-          <div className="px-4 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-[#1F2A24]/50">
+          <div className="px-4 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-ink/50">
             Nedavne pretrage
           </div>
           <ul>
@@ -106,10 +106,10 @@ export const SpotlightDialog: React.FC<Props> = ({ open, onOpenChange, records, 
                     setQuery(q)
                     inputRef.current?.focus()
                   }}
-                  className="flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-[#F4F8F6]"
+                  className="flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-surface"
                 >
-                  <Clock className="h-4 w-4 shrink-0 text-[#1F2A24]/40" />
-                  <span className="truncate text-sm text-[#1F2A24]">{q}</span>
+                  <Clock className="h-4 w-4 shrink-0 text-ink/40" />
+                  <span className="truncate text-sm text-ink">{q}</span>
                 </button>
               </li>
             ))}
@@ -118,7 +118,7 @@ export const SpotlightDialog: React.FC<Props> = ({ open, onOpenChange, records, 
       )
     }
     return (
-      <div className="px-4 py-10 text-center text-sm text-[#1F2A24]/50">
+      <div className="px-4 py-10 text-center text-sm text-ink/50">
         Pretražite kulture, proizvode i kategorije
       </div>
     )
@@ -155,24 +155,24 @@ export const SpotlightDialog: React.FC<Props> = ({ open, onOpenChange, records, 
                 transition={{ duration: 0.16, ease: 'easeOut' }}
                 onKeyDown={handleKeyDown}
               >
-                <div className="flex h-full max-h-[100dvh] flex-col border border-[#E6EFEA] bg-white shadow-2xl sm:h-auto sm:max-h-[70vh] sm:rounded-xl">
+                <div className="flex h-full max-h-[100dvh] flex-col border border-hairline bg-surface-raised shadow-2xl sm:h-auto sm:max-h-[70vh] sm:rounded-xl">
                   <Dialog.Title className="sr-only">Pretraga</Dialog.Title>
                   {/* Search input row */}
-                  <div className="flex items-center gap-3 border-b border-[#E6EFEA] px-4">
-                    <SearchIcon className="h-5 w-5 shrink-0 text-[#007D41]" />
+                  <div className="flex items-center gap-3 border-b border-hairline px-4">
+                    <SearchIcon className="h-5 w-5 shrink-0 text-brand" />
                     <input
                       ref={inputRef}
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
                       placeholder="Pretraga…"
-                      className="h-14 flex-1 bg-transparent text-base text-[#1F2A24] placeholder:text-[#1F2A24]/40 focus:outline-none"
+                      className="h-14 flex-1 bg-transparent text-base text-ink placeholder:text-ink/40 focus:outline-none"
                       autoComplete="off"
                       autoCorrect="off"
                       spellCheck={false}
                     />
                     <Dialog.Close
                       aria-label="Zatvori"
-                      className="shrink-0 rounded-md p-1.5 text-[#1F2A24]/50 transition-colors hover:bg-[#F4F8F6] hover:text-[#1F2A24]"
+                      className="shrink-0 rounded-md p-1.5 text-ink/50 transition-colors hover:bg-surface hover:text-ink"
                     >
                       <X className="h-5 w-5" />
                     </Dialog.Close>
@@ -181,7 +181,7 @@ export const SpotlightDialog: React.FC<Props> = ({ open, onOpenChange, records, 
                   {body}
 
                   {/* Footer hint */}
-                  <div className="hidden items-center gap-4 border-t border-[#E6EFEA] px-4 py-2 text-xs text-[#1F2A24]/45 sm:flex">
+                  <div className="hidden items-center gap-4 border-t border-hairline px-4 py-2 text-xs text-ink/45 sm:flex">
                     <span>
                       <Kbd>↑</Kbd>
                       <Kbd>↓</Kbd> navigacija
@@ -205,9 +205,9 @@ export const SpotlightDialog: React.FC<Props> = ({ open, onOpenChange, records, 
 
 function StatusRow({ text, spinner }: { text: string; spinner?: boolean }) {
   return (
-    <div className="flex items-center justify-center gap-2 px-4 py-10 text-sm text-[#1F2A24]/50">
+    <div className="flex items-center justify-center gap-2 px-4 py-10 text-sm text-ink/50">
       {spinner && (
-        <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#E6EFEA] border-t-[#007D41]" />
+        <span className="h-4 w-4 animate-spin rounded-full border-2 border-hairline border-t-brand" />
       )}
       {text}
     </div>
@@ -216,7 +216,7 @@ function StatusRow({ text, spinner }: { text: string; spinner?: boolean }) {
 
 function Kbd({ children }: { children: React.ReactNode }) {
   return (
-    <kbd className="mx-0.5 inline-flex h-5 min-w-5 items-center justify-center rounded border border-[#E6EFEA] bg-[#F4F8F6] px-1 font-mono text-[10px] text-[#1F2A24]/60">
+    <kbd className="mx-0.5 inline-flex h-5 min-w-5 items-center justify-center rounded border border-hairline bg-surface px-1 font-mono text-[10px] text-ink/60">
       {children}
     </kbd>
   )

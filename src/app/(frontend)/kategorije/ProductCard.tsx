@@ -43,10 +43,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, linkSearchPar
   return (
     <Link
       href={href}
-      className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007D41] focus-visible:ring-offset-2"
+      className="group flex flex-col overflow-hidden rounded-2xl bg-surface-raised shadow-sm transition-all duration-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
     >
       {/* Image */}
-      <div className="relative aspect-square w-full overflow-hidden bg-[#F4F8F6]">
+      <div className="relative aspect-square w-full overflow-hidden bg-surface">
         {imageUrl ? (
           <img
             src={imageUrl}
@@ -54,21 +54,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, linkSearchPar
             className="h-full w-full object-contain p-6 transition-transform duration-500 ease-out group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-[#1F2A24]/20">
+          <div className="flex h-full w-full items-center justify-center text-ink/20">
             <span className="text-sm">Nema slike</span>
           </div>
         )}
       </div>
 
       {/* Content */}
-      <div className="flex flex-1 flex-col gap-2 border-t border-[#E6EFEA] p-5">
+      <div className="flex flex-1 flex-col gap-2 border-t border-hairline p-5">
         {/* Category pills */}
         {resolvedCategories.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {resolvedCategories.slice(0, 2).map((cat) => (
               <span
                 key={cat.id}
-                className="inline-flex items-center gap-1 rounded-full bg-[#007D41]/10 px-2 py-0.5 text-[11px] font-semibold text-[#007D41]"
+                className="inline-flex items-center gap-1 rounded-full bg-brand/10 px-2 py-0.5 text-[11px] font-semibold text-brand"
               >
                 <Tag className="h-2.5 w-2.5" />
                 {cat.title}
@@ -77,18 +77,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, linkSearchPar
           </div>
         )}
 
-        <h3 className="text-base font-bold leading-snug text-[#1F2A24] group-hover:text-[#007D41] transition-colors">
+        <h3 className="text-base font-bold leading-snug text-ink group-hover:text-brand transition-colors">
           {title}
         </h3>
 
         {shortDescription && (
-          <p className="line-clamp-2 text-sm leading-relaxed text-[#1F2A24]/60">
+          <p className="line-clamp-2 text-sm leading-relaxed text-ink/60">
             {shortDescription}
           </p>
         )}
 
         {activeMaterial && (
-          <div className="mt-auto flex items-center gap-1.5 pt-2 text-xs text-[#1F2A24]/40">
+          <div className="mt-auto flex items-center gap-1.5 pt-2 text-xs text-ink/40">
             <DescriptorIcon className="h-3 w-3" />
             <span>{activeMaterial}</span>
           </div>

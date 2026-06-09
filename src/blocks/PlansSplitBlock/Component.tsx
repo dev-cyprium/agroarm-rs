@@ -12,12 +12,12 @@ const visualIdentityClasses = {
   primary: {
     card: 'border-transparent bg-[#007D41] text-white',
     description: 'text-white/90',
-    button: 'border-white/75 text-white hover:bg-white hover:text-[#007D41]',
+    button: 'border-white/75 text-white hover:bg-white hover:text-brand',
   },
   secondary: {
-    card: 'border-[#C8DDCF] bg-[#F3F8F5] text-[#0D5B34]',
-    description: 'text-[#2C6D4A]',
-    button: 'border-[#007D41] text-[#007D41] hover:bg-[#007D41] hover:text-white',
+    card: 'border-hairline bg-surface-raised text-brand-strong',
+    description: 'text-ink/70',
+    button: 'border-brand text-brand hover:bg-brand hover:text-white',
   },
 } as const
 

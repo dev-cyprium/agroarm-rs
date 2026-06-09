@@ -6,7 +6,7 @@ import type { Media } from '@/payload-types'
 import { CMSLink } from '@/components/Link'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 
-const BRAND_GREEN = '#007D41'
+const BRAND_GREEN = 'var(--brand)'
 
 export const LabeledCategoryCardsBlock: React.FC<BlockProps> = (props) => {
   const { smallText, heading, subheading, cards } = props
@@ -14,7 +14,7 @@ export const LabeledCategoryCardsBlock: React.FC<BlockProps> = (props) => {
   return (
     <div
       className="py-16"
-      style={{ backgroundColor: 'color-mix(in srgb, var(--color-background) 95%, #007D41)' }}
+      style={{ backgroundColor: 'color-mix(in srgb, var(--color-background) 95%, var(--brand))' }}
     >
       <div className="container">
         {/* Header */}
@@ -57,8 +57,8 @@ export const LabeledCategoryCardsBlock: React.FC<BlockProps> = (props) => {
 
             const cardContent = (
               <div
-                className="flex flex-col items-start gap-3 sm:gap-4 p-4 sm:p-6 rounded-xl border bg-white/80 hover:bg-white transition-colors h-full"
-                style={{ borderColor: 'color-mix(in srgb, #007D41 25%)' }}
+                className="flex flex-col items-start gap-3 sm:gap-4 p-4 sm:p-6 rounded-xl border bg-surface-raised/80 hover:bg-surface-raised transition-colors h-full"
+                style={{ borderColor: 'color-mix(in srgb, var(--brand) 25%)' }}
               >
                 {iconUrl && (
                   <img
@@ -78,7 +78,7 @@ export const LabeledCategoryCardsBlock: React.FC<BlockProps> = (props) => {
                   {hasLink && (
                     <span
                       className="shrink-0 w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center"
-                      style={{ backgroundColor: 'color-mix(in srgb, #007D41 15%)' }}
+                      style={{ backgroundColor: 'color-mix(in srgb, var(--brand) 15%)' }}
                       aria-hidden
                     >
                       <svg

@@ -1,10 +1,14 @@
 import type { Metadata } from 'next/types'
 
-import React from 'react'
+import React, { Suspense } from 'react'
 
 import { getSpotlightIndex } from '../api/spotlight/route'
 import { SearchPageClient } from '@/search/SearchPageClient'
 import PageClient from './page.client'
+
+// Query-driven page that reads the live search index — render at request time
+// (also keeps the build free of any DB dependency).
+export const dynamic = 'force-dynamic'
 
 export default async function Page() {
   let records: Awaited<ReturnType<typeof getSpotlightIndex>> = []
@@ -15,11 +19,13 @@ export default async function Page() {
   }
 
   return (
-    <div className="bg-[#F4F8F6] pt-24 pb-24">
+    <div className="bg-surface pt-24 pb-24">
       <PageClient />
       <div className="container">
-        <h1 className="mb-8 text-center text-3xl font-semibold text-[#1F2A24]">Pretraga</h1>
-        <SearchPageClient records={records} />
+        <h1 className="mb-8 text-center text-3xl font-semibold text-ink">Pretraga</h1>
+        <Suspense fallback={null}>
+          <SearchPageClient records={records} />
+        </Suspense>
       </div>
     </div>
   )
