@@ -46,7 +46,7 @@ export const PlansSplitBlock: React.FC<BlockProps> = async ({
     },
     {
       key: 'protection',
-      title: 'Planovi zastite',
+      title: 'Planovi zaštite',
       basePath: '/planovi-zastite',
       data: protectionPlans,
     },
@@ -57,8 +57,7 @@ export const PlansSplitBlock: React.FC<BlockProps> = async ({
       <div className="container">
         <div className="grid gap-6 md:grid-cols-2">
           {columns.map((column) => {
-            const identity =
-              column.data?.visualIdentity === 'secondary' ? 'secondary' : 'primary'
+            const identity = column.data?.visualIdentity === 'secondary' ? 'secondary' : 'primary'
             const styles = visualIdentityClasses[identity]
 
             return (

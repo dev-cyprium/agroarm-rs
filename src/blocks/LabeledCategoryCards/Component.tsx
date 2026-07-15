@@ -58,7 +58,7 @@ export const LabeledCategoryCardsBlock: React.FC<BlockProps> = (props) => {
             const cardContent = (
               <div
                 className="flex flex-col items-start gap-3 sm:gap-4 p-4 sm:p-6 rounded-xl border bg-surface-raised/80 hover:bg-surface-raised transition-colors h-full"
-                style={{ borderColor: 'color-mix(in srgb, var(--brand) 25%)' }}
+                style={{ borderColor: 'color-mix(in srgb, var(--brand) 25%, transparent)' }}
               >
                 {iconUrl && (
                   <img
@@ -78,7 +78,7 @@ export const LabeledCategoryCardsBlock: React.FC<BlockProps> = (props) => {
                   {hasLink && (
                     <span
                       className="shrink-0 w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center"
-                      style={{ backgroundColor: 'color-mix(in srgb, var(--brand) 15%)' }}
+                      style={{ backgroundColor: 'color-mix(in srgb, var(--brand) 15%, transparent)' }}
                       aria-hidden
                     >
                       <svg

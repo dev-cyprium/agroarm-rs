@@ -53,7 +53,7 @@ export async function PlansListPage({ planType }: { planType: PlanType }) {
               key={category.id}
               href={`${cfg.basePath}/${slug}`}
               className="flex items-center justify-between rounded-xl border border-border bg-card p-6 transition-colors hover:bg-muted/50"
-              style={{ borderColor: 'color-mix(in srgb, var(--brand) 25%)' }}
+              style={{ borderColor: 'color-mix(in srgb, var(--brand) 25%, transparent)' }}
             >
               <span className="font-medium" style={{ color: BRAND_GREEN }}>
                 {category.title}

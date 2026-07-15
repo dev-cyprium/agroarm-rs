@@ -33,51 +33,64 @@ export const TreatmentSchedule: Block = {
           label: 'Vreme primene / razvojni stadijum',
         },
         {
-          name: 'target',
-          type: 'textarea',
-          label: 'Patogen / štetočina / korov',
-        },
-        {
-          name: 'targetType',
-          type: 'select',
-          label: 'Tip mete',
-          defaultValue: 'ostalo',
-          admin: { description: 'Određuje boju i ikonu na timeline-u.' },
-          options: [
-            { label: 'Korov (herbicid)', value: 'herbicid' },
-            { label: 'Bolest (fungicid)', value: 'fungicid' },
-            { label: 'Štetočina (insekticid)', value: 'insekticid' },
-            { label: 'Ostalo / tretman', value: 'ostalo' },
-          ],
-        },
-        {
-          name: 'products',
+          name: 'targets',
           type: 'array',
-          label: 'Preparati',
-          labels: { singular: 'Preparat', plural: 'Preparati' },
+          label: 'Patogen i tip mete',
+          labels: { singular: 'Meta', plural: 'Mete' },
+          admin: {
+            initCollapsed: true,
+            description:
+              'Jedan razvojni stadijum može imati više meta (patogen / štetočina / korov), svaka sa svojim tipom i preparatima.',
+          },
           fields: [
             {
-              type: 'row',
-              fields: [
-                {
-                  name: 'product',
-                  type: 'relationship',
-                  relationTo: 'products',
-                  label: 'Proizvod (iz kataloga)',
-                  admin: { width: '50%' },
-                },
-                {
-                  name: 'productName',
-                  type: 'text',
-                  label: 'Naziv (ako nije u katalogu)',
-                  admin: { width: '50%' },
-                },
+              name: 'target',
+              type: 'textarea',
+              label: 'Patogen / štetočina / korov',
+            },
+            {
+              name: 'targetType',
+              type: 'select',
+              label: 'Tip mete',
+              defaultValue: 'ostalo',
+              admin: { description: 'Određuje boju i ikonu na timeline-u.' },
+              options: [
+                { label: 'Korov (herbicid)', value: 'herbicid' },
+                { label: 'Bolest (fungicid)', value: 'fungicid' },
+                { label: 'Štetočina (insekticid)', value: 'insekticid' },
+                { label: 'Ostalo / tretman', value: 'ostalo' },
               ],
             },
             {
-              name: 'dose',
-              type: 'text',
-              label: 'Doza / koncentracija',
+              name: 'products',
+              type: 'array',
+              label: 'Preparati',
+              labels: { singular: 'Preparat', plural: 'Preparati' },
+              fields: [
+                {
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'product',
+                      type: 'relationship',
+                      relationTo: 'products',
+                      label: 'Proizvod (iz kataloga)',
+                      admin: { width: '50%' },
+                    },
+                    {
+                      name: 'productName',
+                      type: 'text',
+                      label: 'Naziv (ako nije u katalogu)',
+                      admin: { width: '50%' },
+                    },
+                  ],
+                },
+                {
+                  name: 'dose',
+                  type: 'text',
+                  label: 'Doza / koncentracija',
+                },
+              ],
             },
           ],
         },

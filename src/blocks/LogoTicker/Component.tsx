@@ -25,7 +25,7 @@ export const LogoTickerBlock: React.FC<LogoTickerBlockType> = ({ heading, logos,
         <img
           src={media.url}
           alt={logo.name || ''}
-          className="max-h-full max-w-full object-contain opacity-50 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0"
+          className="max-h-full max-w-full object-contain opacity-50 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0 dark:brightness-0 dark:invert"
           loading="lazy"
           decoding="async"
         />

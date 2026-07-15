@@ -9,6 +9,7 @@ import { ChevronRight, FileText, TriangleAlert, Leaf, Tag } from 'lucide-react'
 import RichText from '@/components/RichText'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 import { getProductDescriptor } from '@/utilities/productDescriptor'
+import { ProductTagBadge } from '@/components/ProductTagBadge'
 
 import type { Category } from '@/payload-types'
 
@@ -126,6 +127,7 @@ export default async function ProductPage({ params, searchParams }: Args) {
               <div className="flex flex-1 flex-col gap-3 md:mt-4">
                 {/* Pills / meta */}
                 <div className="flex flex-wrap gap-2">
+                  <ProductTagBadge tag={product.productTag} className="text-xs" />
                   {categories.map((cat) => (
                     <Link
                       key={cat.id}

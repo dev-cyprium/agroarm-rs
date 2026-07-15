@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Tag } from 'lucide-react'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 import { getProductDescriptor } from '@/utilities/productDescriptor'
+import { ProductTagBadge } from '@/components/ProductTagBadge'
 
 type MediaLike = { url?: string | null; alt?: string | null; updatedAt?: string | null }
 
@@ -16,6 +17,7 @@ type ProductCardProps = {
     shortDescription?: string | null
     activeMaterial?: string | null
     descriptorType?: string | null
+    productTag?: string | null
     image: MediaLike | unknown
     categories?: (number | CategoryLike)[] | null
   }
@@ -26,8 +28,16 @@ type ProductCardProps = {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, linkSearchParams }) => {
-  const { title, shortDescription, activeMaterial, descriptorType, image, slug, categories } =
-    product
+  const {
+    title,
+    shortDescription,
+    activeMaterial,
+    descriptorType,
+    productTag,
+    image,
+    slug,
+    categories,
+  } = product
   const { Icon: DescriptorIcon } = getProductDescriptor(descriptorType)
   const href = `/proizvodi/${slug || ''}${linkSearchParams ? `?${linkSearchParams}` : ''}`
   const imageObj = image as MediaLike | null | undefined
@@ -47,6 +57,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, linkSearchPar
     >
       {/* Image */}
       <div className="relative aspect-square w-full overflow-hidden bg-surface">
+        <ProductTagBadge tag={productTag} className="absolute left-3 top-3 z-10" />
         {imageUrl ? (
           <img
             src={imageUrl}

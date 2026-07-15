@@ -132,6 +132,12 @@
   --brand: #007d41;
   --brand-strong: #024e29;
   --brand-hover: #009f54;
+
+  /* Product tag badges — crimson red vs light amber, matched to the brand palette depth. */
+  --tag-novo: #b3232e;
+  --tag-novo-foreground: #ffffff;
+  --tag-uskoro: #f0a11e;
+  --tag-uskoro-foreground: #3c2705;
 }
 
 [data-theme='dark'] {
@@ -179,6 +185,12 @@
   --brand: #2fae68;
   --brand-strong: #1e8a50;
   --brand-hover: #46c98a;
+
+  /* Product tag badges — lifted for dark surfaces, dark ink text (AA on dark). */
+  --tag-novo: #e4636b;
+  --tag-novo-foreground: #2a0d10;
+  --tag-uskoro: #f4b04a;
+  --tag-uskoro-foreground: #2b1c04;
 }
 
 @theme inline {
@@ -228,6 +240,10 @@
   --color-brand: var(--brand);
   --color-brand-strong: var(--brand-strong);
   --color-brand-hover: var(--brand-hover);
+  --color-tag-novo: var(--tag-novo);
+  --color-tag-novo-foreground: var(--tag-novo-foreground);
+  --color-tag-uskoro: var(--tag-uskoro);
+  --color-tag-uskoro-foreground: var(--tag-uskoro-foreground);
 }
 
 @layer base {

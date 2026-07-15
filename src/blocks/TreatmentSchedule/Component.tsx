@@ -20,8 +20,17 @@ type ProductRow = {
   id?: string | null
 }
 
+type TargetGroup = {
+  target?: string | null
+  targetType?: TargetType | null
+  products?: ProductRow[] | null
+  id?: string | null
+}
+
 type Stage = {
   stage?: string | null
+  targets?: TargetGroup[] | null
+  // Legacy flat shape (pre-multi-target): rendered via getTargetGroups() fallback.
   target?: string | null
   targetType?: TargetType | null
   products?: ProductRow[] | null
@@ -69,6 +78,28 @@ const TARGET: Record<
   },
 }
 
+// Normalize a stage into its list of target groups, tolerating the legacy flat
+// shape where target/targetType/products lived directly on the stage.
+function getTargetGroups(stage: Stage): TargetGroup[] {
+  if (stage.targets && stage.targets.length > 0) {
+    return stage.targets.filter(Boolean) as TargetGroup[]
+  }
+  if (stage.target || stage.targetType || (stage.products && stage.products.length)) {
+    return [{ target: stage.target, targetType: stage.targetType, products: stage.products }]
+  }
+  return []
+}
+
+// Distinct target types in a stage, in order of first appearance.
+function distinctTypes(groups: TargetGroup[]): TargetType[] {
+  const seen: TargetType[] = []
+  for (const g of groups) {
+    const tt = (g.targetType as TargetType) ?? 'ostalo'
+    if (!seen.includes(tt)) seen.push(tt)
+  }
+  return seen
+}
+
 function resolveProduct(row: ProductRow): { name: string | null; slug: string | null } {
   const prod = typeof row.product === 'object' && row.product ? row.product : null
   const name = prod?.title ?? row.productName ?? null
@@ -109,24 +140,83 @@ function ProductPill({ row }: { row: ProductRow }) {
   )
 }
 
+// A single (patogen + tip mete) group with its preparati pills. `boxed` wraps
+// it in a sub-card for the multi-target grid layout.
+function TargetGroupView({ group, boxed }: { group: TargetGroup; boxed: boolean }) {
+  const t = TARGET[(group.targetType as TargetType) ?? 'ostalo'] ?? TARGET.ostalo
+  const Icon = t.Icon
+  const products = (group.products ?? []).filter(Boolean)
+
+  const body = (
+    <>
+      {group.targetType && (
+        <span
+          className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${t.chip}`}
+        >
+          <Icon className="h-3.5 w-3.5" />
+          {t.label}
+        </span>
+      )}
+      {group.target && (
+        <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-ink/70">
+          {group.target}
+        </p>
+      )}
+      {products.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {products.map((row, i) => (
+            <ProductPill key={row?.id ?? i} row={row as ProductRow} />
+          ))}
+        </div>
+      )}
+    </>
+  )
+
+  if (!boxed) return <div>{body}</div>
+
+  return (
+    <div
+      className="h-full rounded-xl border border-hairline bg-surface p-4"
+      style={{ borderLeft: `3px solid ${t.accent}` }}
+    >
+      {body}
+    </div>
+  )
+}
+
 function StageRow({ stage, index }: { stage: Stage; index: number }) {
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once: true, margin: '-12% 0px' })
-  const t = TARGET[(stage.targetType as TargetType) ?? 'ostalo'] ?? TARGET.ostalo
-  const Icon = t.Icon
-  const products = (stage.products ?? []).filter(Boolean)
+
+  const groups = getTargetGroups(stage)
+  const types = distinctTypes(groups)
+  const multi = groups.length > 1
+  // Single type → its color drives the spine accent; mixed types → brand green.
+  const accent = types.length === 1 ? TARGET[types[0]].accent : 'var(--brand)'
 
   return (
     <div ref={ref} className="relative pb-8 pl-16 last:pb-0">
-      {/* Node marker on the spine */}
-      <motion.span
-        initial={{ scale: 0, opacity: 0 }}
-        animate={inView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
-        transition={{ duration: 0.4, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
-        className={`absolute left-0 top-1 flex h-11 w-11 items-center justify-center rounded-full text-white shadow-sm ${t.dot}`}
-      >
-        <Icon className="h-5 w-5" strokeWidth={2} />
-      </motion.span>
+      {/* Node marker(s) on the spine — one icon per distinct target type. */}
+      <div className="absolute left-0 top-1 flex w-11 flex-col items-center gap-1.5">
+        {types.map((type, di) => {
+          const t = TARGET[type]
+          const Icon = t.Icon
+          const lone = types.length === 1
+          return (
+            <motion.span
+              key={type}
+              initial={{ scale: 0, opacity: 0 }}
+              animate={inView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
+              transition={{ duration: 0.4, delay: 0.05 + di * 0.06, ease: [0.22, 1, 0.36, 1] }}
+              className={`flex items-center justify-center rounded-full text-white shadow-sm ${t.dot} ${
+                lone ? 'h-11 w-11' : 'h-9 w-9 ring-2 ring-surface-raised'
+              }`}
+            >
+              <Icon className={lone ? 'h-5 w-5' : 'h-4 w-4'} strokeWidth={2} />
+            </motion.span>
+          )
+        })}
+      </div>
 
       {/* Card */}
       <motion.div
@@ -134,40 +224,61 @@ function StageRow({ stage, index }: { stage: Stage; index: number }) {
         animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
         transition={{ duration: 0.5, delay: index * 0.04, ease: [0.22, 1, 0.36, 1] }}
         className="overflow-hidden rounded-2xl border border-hairline bg-surface-raised shadow-sm"
-        style={{ borderLeft: `3px solid ${t.accent}` }}
+        style={{ borderLeft: `3px solid ${accent}` }}
       >
         <div className="p-5 sm:p-6">
           <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
             <h4 className="whitespace-pre-line text-base font-semibold leading-snug text-ink">
               {stage.stage}
             </h4>
-            {stage.targetType && (
-              <span
-                className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${t.chip}`}
-              >
-                <Icon className="h-3.5 w-3.5" />
-                {t.label}
-              </span>
+            {/* Accumulated type pills for the whole stage. */}
+            {types.length > 0 && (
+              <div className="flex shrink-0 flex-wrap justify-end gap-1.5">
+                {types.map((type) => {
+                  const t = TARGET[type]
+                  const Icon = t.Icon
+                  return (
+                    <span
+                      key={type}
+                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${t.chip}`}
+                    >
+                      <Icon className="h-3.5 w-3.5" />
+                      {t.label}
+                    </span>
+                  )
+                })}
+              </div>
             )}
           </div>
 
-          {stage.target && (
-            <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-ink/70">
-              {stage.target}
-            </p>
-          )}
-
-          {products.length > 0 && (
-            <div className="mt-4 flex flex-wrap gap-2">
-              {products.map((row, i) => (
-                <ProductPill key={row?.id ?? i} row={row as ProductRow} />
+          {multi ? (
+            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {groups.map((group, i) => (
+                <TargetGroupView key={group.id ?? i} group={group} boxed />
               ))}
             </div>
+          ) : (
+            groups[0] && (
+              <div className="mt-2">
+                {/* The single type is already shown as a header pill; just the
+                    target text + preparati here to avoid a duplicate chip. */}
+                {groups[0].target && (
+                  <p className="whitespace-pre-line text-sm leading-relaxed text-ink/70">
+                    {groups[0].target}
+                  </p>
+                )}
+                {(groups[0].products ?? []).filter(Boolean).length > 0 && (
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {(groups[0].products ?? []).filter(Boolean).map((row, i) => (
+                      <ProductPill key={row?.id ?? i} row={row as ProductRow} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )
           )}
 
-          {stage.note && (
-            <p className="mt-3 text-xs italic text-ink/50">{stage.note}</p>
-          )}
+          {stage.note && <p className="mt-3 text-xs italic text-ink/50">{stage.note}</p>}
         </div>
       </motion.div>
     </div>
@@ -182,9 +293,11 @@ export const TreatmentScheduleBlock: React.FC<TreatmentScheduleProps> = ({
   const items = (stages ?? []).filter(Boolean)
   if (items.length === 0) return null
 
-  // Only show legend entries that actually appear.
+  // Only show legend entries that actually appear (across all target groups).
   const presentTypes = Array.from(
-    new Set(items.map((s) => (s.targetType as TargetType) ?? 'ostalo')),
+    new Set(
+      items.flatMap((s) => getTargetGroups(s).map((g) => (g.targetType as TargetType) ?? 'ostalo')),
+    ),
   )
 
   const notes = (footnotes ?? []).filter((f): f is { text: string } => Boolean(f?.text))

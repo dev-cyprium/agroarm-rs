@@ -45,7 +45,7 @@ export const Products: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'culture', 'cultureGroup', 'updatedAt'],
+    defaultColumns: ['title', 'productTag', 'culture', 'cultureGroup', 'updatedAt'],
   },
   fields: [
     {
@@ -63,6 +63,19 @@ export const Products: CollectionConfig = {
       name: 'shortDescription',
       type: 'textarea',
       label: 'Short Description',
+    },
+    {
+      name: 'productTag',
+      type: 'select',
+      label: 'Oznaka proizvoda',
+      options: [
+        { label: 'Novo', value: 'novo' },
+        { label: 'Uskoro', value: 'uskoro' },
+      ],
+      admin: {
+        isClearable: true,
+        description: 'Opciona oznaka koja se prikazuje na kartici proizvoda. Ostavite prazno za proizvode bez oznake.',
+      },
     },
     {
       type: 'row',

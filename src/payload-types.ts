@@ -944,6 +944,10 @@ export interface Product {
   image: number | Media;
   shortDescription?: string | null;
   /**
+   * Opciona oznaka koja se prikazuje na kartici proizvoda. Ostavite prazno za proizvode bez oznake.
+   */
+  productTag?: ('novo' | 'uskoro') | null;
+  /**
    * Vrsta oznake koja se prikazuje uz proizvod (svaka ima svoju ikonu).
    */
   descriptorType?: ('activeMaterial' | 'productType' | 'productPurpose') | null;
@@ -2313,6 +2317,7 @@ export interface ProductsSelect<T extends boolean = true> {
   title?: T;
   image?: T;
   shortDescription?: T;
+  productTag?: T;
   descriptorType?: T;
   activeMaterial?: T;
   attributes?:
@@ -3035,16 +3040,24 @@ export interface TreatmentScheduleBlock {
   stages?:
     | {
         stage: string;
-        target?: string | null;
         /**
-         * Određuje boju i ikonu na timeline-u.
+         * Jedan razvojni stadijum može imati više meta (patogen / štetočina / korov), svaka sa svojim tipom i preparatima.
          */
-        targetType?: ('herbicid' | 'fungicid' | 'insekticid' | 'ostalo') | null;
-        products?:
+        targets?:
           | {
-              product?: (number | null) | Product;
-              productName?: string | null;
-              dose?: string | null;
+              target?: string | null;
+              /**
+               * Određuje boju i ikonu na timeline-u.
+               */
+              targetType?: ('herbicid' | 'fungicid' | 'insekticid' | 'ostalo') | null;
+              products?:
+                | {
+                    product?: (number | null) | Product;
+                    productName?: string | null;
+                    dose?: string | null;
+                    id?: string | null;
+                  }[]
+                | null;
               id?: string | null;
             }[]
           | null;
