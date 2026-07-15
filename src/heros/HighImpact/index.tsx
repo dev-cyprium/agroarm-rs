@@ -62,7 +62,7 @@ export const HighImpactHero: React.FC<HighImpactHeroProps> = ({
 
   return (
     <div
-      className="relative flex min-h-[49svh] w-full flex-col items-end justify-end overflow-hidden text-white md:min-h-[52.5vh]"
+      className="hero-viewport relative flex w-full flex-col items-end justify-end overflow-hidden text-white"
       data-theme="dark"
       data-hero-root="true"
     >
@@ -80,7 +80,7 @@ export const HighImpactHero: React.FC<HighImpactHeroProps> = ({
       <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#024E29]/95 via-[#024E29]/60 to-[#024E29]/25" />
 
       {/* Content pinned to bottom-left */}
-      <div className="container relative z-10 px-6 pb-12 md:px-8 md:pb-16">
+      <div className="container relative z-10 px-6 pb-10 pt-10 md:px-8 md:pb-16 md:pt-16">
         <div className="max-w-2xl">
           {richText && (
             <RichText
