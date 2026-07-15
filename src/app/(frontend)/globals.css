@@ -48,13 +48,14 @@
 }
 
 @layer utilities {
-  /* HighImpact hero sizing. The 4rem offset is the sticky header (h-16), so
-     header + hero ≈ 90% of the viewport and the next section peeks below the
-     fold. Plain `vh` comes first as the fallback for older iOS/Android that
-     don't support `svh` (there the svh line is dropped, not the whole rule). */
+  /* HighImpact hero sizing. The offset is the sticky header — 7.5rem on
+     mobile (h-16 bar + search pill row), 4rem on md+ — so header + hero ≈ 90%
+     of the viewport and the next section peeks below the fold. Plain `vh`
+     comes first as the fallback for older iOS/Android that don't support
+     `svh` (there the svh line is dropped, not the whole rule). */
   .hero-viewport {
-    min-height: calc(90vh - 4rem);
-    min-height: calc(90svh - 4rem);
+    min-height: calc(90vh - 7.5rem);
+    min-height: calc(90svh - 7.5rem);
   }
 
   @variant md {

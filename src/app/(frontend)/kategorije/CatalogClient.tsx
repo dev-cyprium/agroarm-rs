@@ -448,20 +448,22 @@ export const CatalogClient: React.FC<CatalogClientProps> = ({
 
             {/* Product grid */}
             {filteredProducts.length === 0 ? (
-              <div className="flex flex-col items-center justify-center rounded-2xl bg-surface-raised py-20 shadow-sm">
+              <div className="flex flex-col items-center justify-center rounded-2xl bg-surface-raised px-6 py-20 text-center shadow-sm">
                 <Package className="h-12 w-12 text-hairline" />
                 <p className="mt-4 text-base font-medium text-ink/50">
                   {hasActiveFilters
-                    ? 'Nema proizvoda koji odgovaraju filterima.'
-                    : 'Trenutno nema proizvoda.'}
+                    ? 'Nemamo proizvode koji odgovaraju izabranim filterima.'
+                    : 'Trenutno nemamo proizvode u ovoj kategoriji.'}
                 </p>
                 {hasActiveFilters && (
                   <button
                     type="button"
                     onClick={clearAllFilters}
-                    className="mt-3 text-sm font-medium text-brand hover:underline"
+                    className="mt-5 rounded-xl bg-brand px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-hover"
                   >
-                    Obriši sve filtere
+                    {scope
+                      ? `Pogledaj sve iz kategorije „${scope.title}"`
+                      : 'Pogledaj sve proizvode'}
                   </button>
                 )}
               </div>

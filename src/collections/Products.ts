@@ -22,6 +22,10 @@ import {
   revalidateSpotlightAfterChange,
   revalidateSpotlightAfterDelete,
 } from '../hooks/revalidateSpotlight'
+import {
+  revalidateCatalogAfterChange,
+  revalidateCatalogAfterDelete,
+} from '../hooks/revalidateCatalog'
 
 export const Products: CollectionConfig = {
   slug: 'products',
@@ -40,8 +44,8 @@ export const Products: CollectionConfig = {
     slug: true,
   },
   hooks: {
-    afterChange: [revalidateSpotlightAfterChange],
-    afterDelete: [revalidateSpotlightAfterDelete],
+    afterChange: [revalidateCatalogAfterChange, revalidateSpotlightAfterChange],
+    afterDelete: [revalidateCatalogAfterDelete, revalidateSpotlightAfterDelete],
   },
   admin: {
     useAsTitle: 'title',

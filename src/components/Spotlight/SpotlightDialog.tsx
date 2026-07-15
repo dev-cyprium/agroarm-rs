@@ -25,6 +25,18 @@ export const SpotlightDialog: React.FC<Props> = ({ open, onOpenChange, records, 
   const [recent, setRecent] = useState<string[]>([])
   const inputRef = useRef<HTMLInputElement | null>(null)
 
+  // Below `sm` the dialog is a bottom sheet (slides up); above it, a centered
+  // spotlight panel. Drives the framer-motion variants, not the layout — that
+  // stays in CSS so there's no flash on first paint.
+  const [isDesktop, setIsDesktop] = useState(true)
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 640px)')
+    const update = () => setIsDesktop(mq.matches)
+    update()
+    mq.addEventListener('change', update)
+    return () => mq.removeEventListener('change', update)
+  }, [])
+
   const debounced = useDebounce(query, 150)
   const { groups, flat } = useSpotlightSearch(records, debounced)
 
@@ -148,14 +160,19 @@ export const SpotlightDialog: React.FC<Props> = ({ open, onOpenChange, records, 
               aria-describedby={undefined}
             >
               <motion.div
-                className="fixed z-[100] inset-0 sm:inset-auto sm:left-1/2 sm:top-[12vh] sm:w-full sm:max-w-xl sm:-translate-x-1/2 sm:px-4"
-                initial={{ opacity: 0, scale: 0.98, y: -8 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.98, y: -8 }}
-                transition={{ duration: 0.16, ease: 'easeOut' }}
+                className="fixed z-[100] inset-x-0 bottom-0 sm:inset-auto sm:left-1/2 sm:top-[12vh] sm:w-full sm:max-w-xl sm:-translate-x-1/2 sm:px-4"
+                initial={isDesktop ? { opacity: 0, scale: 0.98, y: -8 } : { y: '100%' }}
+                animate={isDesktop ? { opacity: 1, scale: 1, y: 0 } : { y: 0 }}
+                exit={isDesktop ? { opacity: 0, scale: 0.98, y: -8 } : { y: '100%' }}
+                transition={
+                  isDesktop
+                    ? { duration: 0.16, ease: 'easeOut' }
+                    : { duration: 0.3, ease: [0.32, 0.72, 0, 1] }
+                }
                 onKeyDown={handleKeyDown}
               >
-                <div className="flex h-full max-h-[100dvh] flex-col border border-hairline bg-surface-raised shadow-2xl sm:h-auto sm:max-h-[70vh] sm:rounded-xl">
+                <div className="flex h-[88dvh] flex-col rounded-t-2xl border border-hairline bg-surface-raised shadow-2xl sm:h-auto sm:max-h-[70vh] sm:rounded-xl">
+                  <div className="mx-auto mt-2 h-1 w-9 shrink-0 rounded-full bg-hairline sm:hidden" />
                   <Dialog.Title className="sr-only">Pretraga</Dialog.Title>
                   {/* Search input row */}
                   <div className="flex items-center gap-3 border-b border-hairline px-4">

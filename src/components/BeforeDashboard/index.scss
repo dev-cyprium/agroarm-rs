@@ -21,4 +21,26 @@
   & a:hover {
     opacity: 0.85;
   }
+
+  & p {
+    margin: base(0.5) 0;
+  }
+
+  .rebuildButton {
+    appearance: none;
+    background: var(--theme-elevation-150);
+    border: 1px solid var(--theme-elevation-250);
+    border-radius: 4px;
+    padding: base(0.4) base(0.8);
+    font-weight: 600;
+
+    &:hover:not(:disabled) {
+      cursor: pointer;
+      background: var(--theme-elevation-100);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+    }
+  }
 }

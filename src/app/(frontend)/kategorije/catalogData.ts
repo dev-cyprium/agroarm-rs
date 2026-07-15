@@ -78,9 +78,9 @@ export function buildCultureFacets(products: Product[]): {
 
 /**
  * Build the "Kategorija" facet — the scope's subcategories with the number of
- * products in `products` directly attached to each. Subcategories with zero
- * products are omitted (noise). Order follows the incoming `subcategories`
- * (already sorted by `order`).
+ * products in `products` directly attached to each. Zero-count subcategories
+ * are kept so every category stays discoverable; selecting one renders the
+ * catalog's empty state instead of silently hiding the category.
  */
 export function buildSubcategoryFacet(
   subcategories: Category[],
@@ -100,12 +100,10 @@ export function buildSubcategoryFacet(
     }
   }
 
-  return subcategories
-    .map((sub) => ({
-      id: sub.id,
-      slug: sub.slug,
-      title: sub.title,
-      count: counts.get(sub.id) ?? 0,
-    }))
-    .filter((opt) => opt.count > 0)
+  return subcategories.map((sub) => ({
+    id: sub.id,
+    slug: sub.slug,
+    title: sub.title,
+    count: counts.get(sub.id) ?? 0,
+  }))
 }

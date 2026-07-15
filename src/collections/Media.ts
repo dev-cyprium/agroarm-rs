@@ -11,6 +11,10 @@ import { fileURLToPath } from 'url'
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 import { r2FileHandler } from '@/upload/r2FileHandler'
+import {
+  revalidateCatalogAfterChange,
+  revalidateCatalogAfterDelete,
+} from '../hooks/revalidateCatalog'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -23,6 +27,10 @@ export const Media: CollectionConfig = {
     delete: authenticated,
     read: anyone,
     update: authenticated,
+  },
+  hooks: {
+    afterChange: [revalidateCatalogAfterChange],
+    afterDelete: [revalidateCatalogAfterDelete],
   },
   fields: [
     {

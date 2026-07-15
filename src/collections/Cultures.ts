@@ -9,6 +9,10 @@ import {
   revalidateSpotlightAfterChange,
   revalidateSpotlightAfterDelete,
 } from '../hooks/revalidateSpotlight'
+import {
+  revalidateCatalogAfterChange,
+  revalidateCatalogAfterDelete,
+} from '../hooks/revalidateCatalog'
 import { slugField } from 'payload'
 import { serbianSlugify } from '@/utilities/serbianSlugify'
 
@@ -72,8 +76,16 @@ export const Cultures: CollectionConfig = {
     defaultColumns: ['title', 'cultureGroup', 'slug', 'updatedAt'],
   },
   hooks: {
-    afterChange: [revalidatePlansAfterChange, revalidateSpotlightAfterChange],
-    afterDelete: [revalidatePlansAfterDelete, revalidateSpotlightAfterDelete],
+    afterChange: [
+      revalidatePlansAfterChange,
+      revalidateCatalogAfterChange,
+      revalidateSpotlightAfterChange,
+    ],
+    afterDelete: [
+      revalidatePlansAfterDelete,
+      revalidateCatalogAfterDelete,
+      revalidateSpotlightAfterDelete,
+    ],
   },
   fields: [
     {

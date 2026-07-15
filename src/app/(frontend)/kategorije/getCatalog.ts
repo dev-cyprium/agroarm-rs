@@ -37,7 +37,13 @@ export async function loadCatalog(scope: Category | null, maps: CategoryMaps): P
       ? { where: { categories: { in: collectDescendantIds(scope.id, maps.childrenByParent) } } }
       : {}),
   })
-  const products = productsResult.docs
+  // Tagged products first (novo, then uskoro), then untagged; A–Z by title
+  // within each group, with Serbian collation (č/ć/đ/š/ž) — the DB's default
+  // sort (newest first) and its collation can't be trusted for Latin Serbian.
+  const tagRank = (p: Product) => (p.productTag === 'novo' ? 0 : p.productTag === 'uskoro' ? 1 : 2)
+  const products = [...productsResult.docs].sort(
+    (a, b) => tagRank(a) - tagRank(b) || a.title.localeCompare(b.title, 'sr'),
+  )
 
   const subcategories = scope ? (maps.childrenByParent.get(scope.id) ?? []) : []
   const { cultureFilterGroups, ungroupedCultures } = buildCultureFacets(products)

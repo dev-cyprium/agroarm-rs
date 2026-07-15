@@ -16,6 +16,7 @@ import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { SiteSettings } from './SiteSettings/config'
 import { plugins } from './plugins'
+import { forceRebuildEndpoint } from './endpoints/forceRebuild'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
 
@@ -71,6 +72,7 @@ export default buildConfig({
     },
   }),
   collections: [Pages, Posts, Media, Categories, CultureGroups, Cultures, Products, Users],
+  endpoints: [forceRebuildEndpoint],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer, SiteSettings],
   plugins,
