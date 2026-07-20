@@ -1,18 +1,19 @@
-import Link from 'next/link'
+import type { Metadata } from 'next'
+
 import React from 'react'
 
-import { Button } from '@/components/ui/button'
+import { ErrorLanding } from '@/components/ErrorLanding'
+
+export const metadata: Metadata = {
+  title: 'Stranica nije pronađena | AGROARM',
+}
 
 export default function NotFound() {
   return (
-    <div className="container py-28">
-      <div className="prose max-w-none">
-        <h1 style={{ marginBottom: 0 }}>404</h1>
-        <p className="mb-4">This page could not be found.</p>
-      </div>
-      <Button asChild variant="default">
-        <Link href="/">Go home</Link>
-      </Button>
-    </div>
+    <ErrorLanding
+      badge="404 — stranica nije pronađena"
+      title="Ova stranica ne postoji"
+      description="Stranica koju tražite je možda premeštena, preimenovana ili nikada nije postojala."
+    />
   )
 }
