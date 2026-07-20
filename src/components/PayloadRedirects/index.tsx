@@ -3,6 +3,7 @@ import type { Page, Post } from '@/payload-types'
 
 import { getCachedDocument } from '@/utilities/getDocument'
 import { getCachedRedirects } from '@/utilities/getRedirects'
+import { docUrl } from '@/utilities/collectionRoutes'
 import { notFound, redirect } from 'next/navigation'
 
 interface Props {
@@ -31,20 +32,16 @@ export const PayloadRedirects: React.FC<Props> = async ({ disableNotFound, url }
     let redirectUrl = ''
 
     try {
-      if (typeof redirectItem.to?.reference?.value === 'string') {
-        const collection = redirectItem.to?.reference?.relationTo
-        const id = redirectItem.to?.reference?.value
+      const collection = redirectItem.to?.reference?.relationTo
+      const value = redirectItem.to?.reference?.value
 
-        const document = (await getCachedDocument(collection, id)()) as Page | Post
-        redirectUrl = `${redirectItem.to?.reference?.relationTo !== 'pages' ? `/${redirectItem.to?.reference?.relationTo}` : ''}/${
-          document?.slug
-        }`
-      } else {
-        redirectUrl = `${redirectItem.to?.reference?.relationTo !== 'pages' ? `/${redirectItem.to?.reference?.relationTo}` : ''}/${
-          typeof redirectItem.to?.reference?.value === 'object'
-            ? redirectItem.to?.reference?.value?.slug
-            : ''
-        }`
+      if (typeof value === 'string') {
+        // Reference stored by id — fetch the doc to read its slug.
+        const document = (await getCachedDocument(collection, value)()) as Page | Post
+        redirectUrl = docUrl(collection, document?.slug)
+      } else if (value && typeof value === 'object') {
+        // Reference already populated with the doc.
+        redirectUrl = docUrl(collection, (value as { slug?: string })?.slug)
       }
     } catch (error) {
       console.warn('Failed to resolve redirect target document from Payload.', error)

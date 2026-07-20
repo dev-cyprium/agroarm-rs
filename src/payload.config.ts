@@ -12,11 +12,16 @@ import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import { Users } from './collections/Users'
+import { GoneUrls } from './collections/GoneUrls'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { SiteSettings } from './SiteSettings/config'
 import { plugins } from './plugins'
 import { forceRebuildEndpoint } from './endpoints/forceRebuild'
+import { discoverEndpoint } from './endpoints/redirectImport/discover'
+import { commitEndpoint } from './endpoints/redirectImport/commit'
+import { commitGoneEndpoint } from './endpoints/redirectImport/commitGone'
+import { redirectMapEndpoint } from './endpoints/redirectMap'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
 
@@ -36,6 +41,14 @@ export default buildConfig({
       // The `BeforeDashboard` component renders the 'welcome' block that you see after logging into your admin panel.
       // Feel free to delete this at any time. Simply remove the line below.
       beforeDashboard: ['@/components/BeforeDashboard'],
+      // Nav entry for the custom Redirect Importer view.
+      afterNavLinks: ['@/components/RedirectImporter/NavLink'],
+      views: {
+        redirectImporter: {
+          Component: '@/components/RedirectImporter/View',
+          path: '/redirect-importer',
+        },
+      },
     },
     importMap: {
       baseDir: path.resolve(dirname),
@@ -71,8 +84,14 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URL || '',
     },
   }),
-  collections: [Pages, Posts, Media, Categories, CultureGroups, Cultures, Products, Users],
-  endpoints: [forceRebuildEndpoint],
+  collections: [Pages, Posts, Media, Categories, CultureGroups, Cultures, Products, GoneUrls, Users],
+  endpoints: [
+    forceRebuildEndpoint,
+    discoverEndpoint,
+    commitEndpoint,
+    commitGoneEndpoint,
+    redirectMapEndpoint,
+  ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer, SiteSettings],
   plugins,

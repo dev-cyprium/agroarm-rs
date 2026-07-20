@@ -71,11 +71,17 @@ export const plugins: Plugin[] = [
       ]
     : []),
   redirectsPlugin({
-    collections: ['pages', 'posts'],
+    // All routable collections so a redirect can point at any new content type.
+    // `cultures` is intentionally excluded — plan redirects use custom URLs
+    // (a culture is served at both /planovi-zastite and /planovi-ishrane).
+    collections: ['pages', 'posts', 'products', 'categories'],
     overrides: {
+      admin: {
+        defaultColumns: ['from', 'to.type', 'importStatus', 'importConfidence', 'updatedAt'],
+      },
       // @ts-expect-error - This is a valid override, mapped fields don't resolve to the same type
       fields: ({ defaultFields }) => {
-        return defaultFields.map((field) => {
+        const mapped = defaultFields.map((field) => {
           if ('name' in field && field.name === 'from') {
             return {
               ...field,
@@ -86,6 +92,54 @@ export const plugins: Plugin[] = [
           }
           return field
         })
+
+        // Extra columns populated by the Redirect Importer so the client can
+        // finish the migration from the normal Redirects table.
+        return [
+          ...mapped,
+          {
+            name: 'importStatus',
+            type: 'select',
+            label: 'Status migracije',
+            admin: {
+              position: 'sidebar',
+              description: 'Status preslikavanja starog URL-a na novi.',
+            },
+            options: [
+              { label: 'Automatski povezano', value: 'auto-matched' },
+              { label: 'Za proveru', value: 'needs-review' },
+              { label: 'Bez poklapanja', value: 'no-match' },
+              { label: 'Potvrđeno', value: 'confirmed' },
+              { label: 'Ignorisano', value: 'ignored' },
+              { label: 'Preskočeno', value: 'skip' },
+            ],
+          },
+          {
+            name: 'importConfidence',
+            type: 'number',
+            label: 'Pouzdanost',
+            admin: {
+              position: 'sidebar',
+              readOnly: true,
+              description: 'Pouzdanost automatskog poklapanja (0–100).',
+            },
+          },
+          {
+            name: 'importNote',
+            type: 'textarea',
+            label: 'Napomena migracije',
+            admin: { readOnly: true },
+          },
+          {
+            name: 'importSuggestions',
+            type: 'json',
+            label: 'Alternativni predlozi',
+            admin: {
+              readOnly: true,
+              description: 'Drugi mogući ciljevi koje je predložio uvoznik.',
+            },
+          },
+        ]
       },
       hooks: {
         afterChange: [revalidateRedirects],

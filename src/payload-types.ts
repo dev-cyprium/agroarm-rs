@@ -74,6 +74,7 @@ export interface Config {
     'culture-groups': CultureGroup;
     cultures: Culture;
     products: Product;
+    'gone-urls': GoneUrl;
     users: User;
     redirects: Redirect;
     forms: Form;
@@ -99,6 +100,7 @@ export interface Config {
     'culture-groups': CultureGroupsSelect<false> | CultureGroupsSelect<true>;
     cultures: CulturesSelect<false> | CulturesSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
+    'gone-urls': GoneUrlsSelect<false> | GoneUrlsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -1442,6 +1444,25 @@ export interface Form {
   createdAt: string;
 }
 /**
+ * Stare rute koje vraćaju 410 (trajno uklonjeno) i izlaze iz indeksa.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "gone-urls".
+ */
+export interface GoneUrl {
+  id: number;
+  /**
+   * Putanja stare rute, npr. /herbicidi/staro (bez domena).
+   */
+  path: string;
+  /**
+   * Opciono: razlog uklanjanja.
+   */
+  note?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
@@ -1461,9 +1482,38 @@ export interface Redirect {
       | ({
           relationTo: 'posts';
           value: number | Post;
+        } | null)
+      | ({
+          relationTo: 'products';
+          value: number | Product;
+        } | null)
+      | ({
+          relationTo: 'categories';
+          value: number | Category;
         } | null);
     url?: string | null;
   };
+  /**
+   * Status preslikavanja starog URL-a na novi.
+   */
+  importStatus?: ('auto-matched' | 'needs-review' | 'no-match' | 'confirmed' | 'ignored' | 'skip') | null;
+  /**
+   * Pouzdanost automatskog poklapanja (0–100).
+   */
+  importConfidence?: number | null;
+  importNote?: string | null;
+  /**
+   * Drugi mogući ciljevi koje je predložio uvoznik.
+   */
+  importSuggestions?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1658,6 +1708,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'products';
         value: number | Product;
+      } | null)
+    | ({
+        relationTo: 'gone-urls';
+        value: number | GoneUrl;
       } | null)
     | ({
         relationTo: 'users';
@@ -2345,6 +2399,16 @@ export interface ProductsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "gone-urls_select".
+ */
+export interface GoneUrlsSelect<T extends boolean = true> {
+  path?: T;
+  note?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
@@ -2379,6 +2443,10 @@ export interface RedirectsSelect<T extends boolean = true> {
         reference?: T;
         url?: T;
       };
+  importStatus?: T;
+  importConfidence?: T;
+  importNote?: T;
+  importSuggestions?: T;
   updatedAt?: T;
   createdAt?: T;
 }
