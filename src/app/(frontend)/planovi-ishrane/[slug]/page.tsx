@@ -1,17 +1,15 @@
 import type { Metadata } from 'next'
 
-import { PlanSlugPage, getPlanSlugMetadata } from '@/components/Plans/PlanPages'
+import { NutritionComingSoon } from '@/components/Plans/NutritionComingSoon'
 
-type Args = {
-  params: Promise<{ slug: string }>
+// Every nutrition-plan URL (group archives and culture details) shows the
+// coming-soon page until the programs are ready.
+export const metadata: Metadata = {
+  title: 'Planovi ishrane — uskoro',
+  description:
+    'Planovi ishrane za voćarstvo, ratarstvo i povrtarstvo su u pripremi. U međuvremenu pogledajte naše planove zaštite.',
 }
 
-export async function generateMetadata({ params }: Args): Promise<Metadata> {
-  const { slug } = await params
-  return getPlanSlugMetadata({ slug, planType: 'nutrition' })
-}
-
-export default async function PlanoviIshraneSlugPage({ params }: Args) {
-  const { slug } = await params
-  return <PlanSlugPage slug={slug} planType="nutrition" />
+export default function PlanoviIshraneSlugPage() {
+  return <NutritionComingSoon />
 }

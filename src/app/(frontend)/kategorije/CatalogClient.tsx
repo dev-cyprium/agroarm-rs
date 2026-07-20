@@ -1,9 +1,9 @@
 'use client'
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Search, X, SlidersHorizontal, Leaf, Package } from 'lucide-react'
+import { Search, X, SlidersHorizontal, Leaf, Loader2, Package } from 'lucide-react'
 import { ProductCard } from './ProductCard'
 
 import type { Product } from '@/payload-types'
@@ -75,14 +75,31 @@ export const CatalogClient: React.FC<CatalogClientProps> = ({
     )
   }, [searchParams])
 
+  // Filtering is fully client-side, so URL sync must NOT go through the router:
+  // router.replace() triggers an RSC server round-trip (slow on prod) before
+  // useSearchParams() updates. Native replaceState is synced by Next into
+  // useSearchParams() instantly, with zero server requests.
   const updateParams = useCallback(
     (mutate: (params: URLSearchParams) => void) => {
-      const next = new URLSearchParams(searchParams.toString())
+      const next = new URLSearchParams(window.location.search)
       mutate(next)
       const qs = next.toString()
-      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
+      window.history.replaceState(null, '', qs ? `${pathname}?${qs}` : pathname)
     },
-    [pathname, router, searchParams],
+    [pathname],
+  )
+
+  /* ── Scope-tab navigation (the only real server navigation here) ──
+     Optimistic: the clicked tab activates immediately with a spinner while the
+     new category's data streams in; the stale grid dims meanwhile. */
+  const [isScopePending, startScopeTransition] = useTransition()
+  const [pendingScopeHref, setPendingScopeHref] = useState<string | null>(null)
+  const navigateToScope = useCallback(
+    (href: string) => {
+      setPendingScopeHref(href)
+      startScopeTransition(() => router.push(href))
+    },
+    [router],
   )
 
   useEffect(() => {
@@ -325,20 +342,36 @@ export const CatalogClient: React.FC<CatalogClientProps> = ({
 
           {/* Scope tabs */}
           <div className="mt-6 flex flex-wrap gap-2">
-            <ScopeTab href="/kategorije" label="Svi proizvodi" active={scope == null} />
-            {topLevelCategories.map((cat) => (
-              <ScopeTab
-                key={cat.id}
-                href={`/kategorije/${cat.slug}`}
-                label={cat.title}
-                active={scope?.id === cat.id}
-              />
-            ))}
+            <ScopeTab
+              href="/kategorije"
+              label="Svi proizvodi"
+              active={pendingScopeHref ? pendingScopeHref === '/kategorije' : scope == null}
+              pending={isScopePending && pendingScopeHref === '/kategorije'}
+              onNavigate={navigateToScope}
+            />
+            {topLevelCategories.map((cat) => {
+              const href = `/kategorije/${cat.slug}`
+              return (
+                <ScopeTab
+                  key={cat.id}
+                  href={href}
+                  label={cat.title}
+                  active={pendingScopeHref ? pendingScopeHref === href : scope?.id === cat.id}
+                  pending={isScopePending && pendingScopeHref === href}
+                  onNavigate={navigateToScope}
+                />
+              )
+            })}
           </div>
         </div>
       </div>
 
-      <div className="container py-8 md:py-12">
+      <div
+        aria-busy={isScopePending}
+        className={`container py-8 transition-opacity duration-200 md:py-12 ${
+          isScopePending ? 'pointer-events-none opacity-50' : ''
+        }`}
+      >
         <div className="flex flex-col gap-8 lg:flex-row">
           {/* Desktop sidebar — always rendered */}
           <aside className="hidden w-64 shrink-0 lg:block">
@@ -501,17 +534,37 @@ export const CatalogClient: React.FC<CatalogClientProps> = ({
 
 /* ── Subcomponents ── */
 
-function ScopeTab({ href, label, active }: { href: string; label: string; active: boolean }) {
+function ScopeTab({
+  href,
+  label,
+  active,
+  pending,
+  onNavigate,
+}: {
+  href: string
+  label: string
+  active: boolean
+  pending: boolean
+  onNavigate: (href: string) => void
+}) {
   return (
     <Link
       href={href}
-      className={`rounded-full px-4 py-2 text-sm font-semibold no-underline transition-colors ${
+      onClick={(e) => {
+        // Let cmd/ctrl/shift/middle clicks open in a new tab natively.
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return
+        e.preventDefault()
+        onNavigate(href)
+      }}
+      aria-current={active ? 'page' : undefined}
+      className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold no-underline transition-colors ${
         active
           ? 'bg-white text-brand-strong'
           : 'bg-white/10 text-white hover:bg-white/20 hover:text-white'
       }`}
     >
       {label}
+      {pending && <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />}
     </Link>
   )
 }
