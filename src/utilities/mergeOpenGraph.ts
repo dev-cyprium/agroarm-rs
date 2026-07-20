@@ -3,10 +3,13 @@ import { getServerSideURL } from './getURL'
 
 const defaultOpenGraph: Metadata['openGraph'] = {
   type: 'website',
+  locale: 'sr_RS',
   description: 'AGROARM — zaštita i ishrana bilja.',
   images: [
     {
-      url: `${getServerSideURL()}/website-template-OG.webp`,
+      url: `${getServerSideURL()}/agroarm-og.png`,
+      width: 1200,
+      height: 630,
     },
   ],
   siteName: 'AGROARM',
