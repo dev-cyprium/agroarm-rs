@@ -273,15 +273,17 @@
 }
 
 
-/* ── Rich-text inline link styling ── */
-.prose a {
+/* ── Rich-text inline link styling ──
+   Scoped away from `.not-prose` islands (e.g. the treatment-schedule block),
+   matching how the typography plugin itself respects not-prose. */
+.prose a:not(:where(.not-prose, .not-prose *)) {
   color: var(--brand);
   text-decoration: underline;
   text-underline-offset: 2px;
   font-weight: 500;
   transition: color 0.15s ease;
 }
-.prose a:hover {
+.prose a:hover:not(:where(.not-prose, .not-prose *)) {
   color: var(--brand-hover);
 }
 

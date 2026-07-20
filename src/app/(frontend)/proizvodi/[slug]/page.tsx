@@ -5,8 +5,9 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 import Link from 'next/link'
-import { ChevronRight, FileText, TriangleAlert, Leaf, Tag } from 'lucide-react'
+import { ChevronRight, FileText, Leaf, Tag } from 'lucide-react'
 import RichText from '@/components/RichText'
+import { PesticideDisclaimer } from '@/components/PesticideDisclaimer'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 import { getProductDescriptor } from '@/utilities/productDescriptor'
 import { ProductTagBadge } from '@/components/ProductTagBadge'
@@ -236,17 +237,7 @@ export default async function ProductPage({ params, searchParams }: Args) {
           )}
 
           {/* Disclaimer */}
-          <div className="mt-10 rounded-xl border-2 border-amber-400 bg-amber-50 px-5 py-5">
-            <div className="flex gap-4">
-              <TriangleAlert className="mt-0.5 h-6 w-6 shrink-0 text-amber-500" />
-              <p className="text-sm leading-relaxed text-amber-900">
-                Informacije na ovom sajtu su informativnog karaktera. Pre primene sredstva za
-                zaštitu bilja obavezno pročitati i pridržavati se pratećeg uputstva i etikete, kako
-                bi se izbegli rizici po zdravlje ljudi i životnu sredinu. Koristite proizvode za
-                zaštitu bilja bezbedno i odgovorno.
-              </p>
-            </div>
-          </div>
+          <PesticideDisclaimer className="mt-10" />
 
         </div>
       </div>

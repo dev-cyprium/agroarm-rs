@@ -3117,12 +3117,23 @@ export interface TreatmentScheduleBlock {
               /**
                * Određuje boju i ikonu na timeline-u.
                */
-              targetType?: ('herbicid' | 'fungicid' | 'insekticid' | 'ostalo') | null;
+              targetType?: ('herbicid' | 'fungicid' | 'insekticid' | 'akaricid' | 'biostimulator' | 'ostalo') | null;
               products?:
                 | {
                     product?: (number | null) | Product;
+                    /**
+                     * Ako je unet, prikazuje se umesto naziva iz kataloga (npr. pun naziv sa formulacijom „Futocis 2.5 EC“). Obavezan ako preparat nije u katalogu.
+                     */
                     productName?: string | null;
                     dose?: string | null;
+                    /**
+                     * Npr. „samo u zatvorenom prostoru“ ili „imuno biostimulator“.
+                     */
+                    note?: string | null;
+                    /**
+                     * Označi ako se ovaj preparat meša sa prethodnim u istoj primeni (u tabeli povezano znakom „+“).
+                     */
+                    combineWithPrevious?: boolean | null;
                     id?: string | null;
                   }[]
                 | null;

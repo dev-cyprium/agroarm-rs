@@ -17,6 +17,8 @@ import {
   getCulturePlan,
   type PlanType,
 } from '@/utilities/plans'
+import { populateTreatmentProducts } from '@/utilities/populateTreatmentProducts'
+import { PesticideDisclaimer } from '@/components/PesticideDisclaimer'
 
 const BRAND_GREEN = 'var(--brand)'
 
@@ -137,10 +139,18 @@ export async function PlanSlugPage({ slug, planType }: { slug: string; planType:
   notFound()
 }
 
-function PlanDetail({ culture, planType }: { culture: Culture; planType: PlanType }) {
+async function PlanDetail({ culture, planType }: { culture: Culture; planType: PlanType }) {
   const plan = getCulturePlan(culture, planType)
   const image = plan?.image as { url?: string; alt?: string; updatedAt?: string } | null | undefined
   const imageUrl = image?.url ? getMediaUrl(image.url, image.updatedAt) : null
+
+  // Product relationships inside treatmentSchedule blocks don't populate via
+  // depth — resolve them here so pills get names + catalog links.
+  let content = plan?.content ?? null
+  if (content) {
+    const payload = await getPayload({ config: configPromise })
+    content = await populateTreatmentProducts(payload, content)
+  }
 
   return (
     <article className="container py-16">
@@ -157,8 +167,8 @@ function PlanDetail({ culture, planType }: { culture: Culture; planType: PlanTyp
         <h1 className="text-3xl font-semibold sm:text-4xl" style={{ color: BRAND_GREEN }}>
           {culture.title}
         </h1>
-        {plan?.content ? (
-          <RichText className="mt-8" data={plan.content} enableGutter={false} />
+        {content ? (
+          <RichText className="mt-8" data={content} enableGutter={false} />
         ) : (
           plan?.description && (
             <div className="mt-6 prose prose-lg">
@@ -166,6 +176,8 @@ function PlanDetail({ culture, planType }: { culture: Culture; planType: PlanTyp
             </div>
           )
         )}
+        {/* Safe-use disclaimer on every protection plan (doses/preparations shown). */}
+        {planType === 'protection' && <PesticideDisclaimer className="mt-10" />}
       </div>
     </article>
   )

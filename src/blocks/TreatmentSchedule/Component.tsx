@@ -3,9 +3,14 @@
 import React, { useRef } from 'react'
 import Link from 'next/link'
 import { motion, useInView } from 'framer-motion'
-import { ArrowUpRight, Bug, Droplets, Sparkles, Sprout, type LucideIcon } from 'lucide-react'
+import { ArrowUpRight, Leaf, Sparkles, Sprout } from 'lucide-react'
 
-type TargetType = 'herbicid' | 'fungicid' | 'insekticid' | 'ostalo'
+import { CaterpillarIcon, MiteIcon, SporeIcon } from './icons'
+
+// Lucide components and the custom SVG icons share this surface.
+type TargetIcon = React.ComponentType<{ className?: string; strokeWidth?: number | string }>
+
+type TargetType = 'herbicid' | 'fungicid' | 'insekticid' | 'akaricid' | 'biostimulator' | 'ostalo'
 
 type ProductRef =
   | number
@@ -17,6 +22,8 @@ type ProductRow = {
   product?: ProductRef
   productName?: string | null
   dose?: string | null
+  note?: string | null
+  combineWithPrevious?: boolean | null
   id?: string | null
 }
 
@@ -46,7 +53,7 @@ type TreatmentScheduleProps = {
 
 const TARGET: Record<
   TargetType,
-  { label: string; Icon: LucideIcon; accent: string; dot: string; chip: string }
+  { label: string; Icon: TargetIcon; accent: string; dot: string; chip: string }
 > = {
   herbicid: {
     label: 'Korov',
@@ -57,17 +64,31 @@ const TARGET: Record<
   },
   fungicid: {
     label: 'Bolest',
-    Icon: Droplets,
+    Icon: SporeIcon,
     accent: '#0284c7',
     dot: 'bg-sky-600',
     chip: 'bg-sky-50 text-sky-700',
   },
   insekticid: {
     label: 'Štetočina',
-    Icon: Bug,
+    Icon: CaterpillarIcon,
     accent: '#e11d48',
     dot: 'bg-rose-600',
     chip: 'bg-rose-50 text-rose-700',
+  },
+  akaricid: {
+    label: 'Grinje',
+    Icon: MiteIcon,
+    accent: '#d97706',
+    dot: 'bg-amber-600',
+    chip: 'bg-amber-50 text-amber-700',
+  },
+  biostimulator: {
+    label: 'Biostimulator',
+    Icon: Leaf,
+    accent: '#0d9488',
+    dot: 'bg-teal-600',
+    chip: 'bg-teal-50 text-teal-700',
   },
   ostalo: {
     label: 'Tretman',
@@ -76,6 +97,11 @@ const TARGET: Record<
     dot: 'bg-[#1F2A24]',
     chip: 'bg-hairline text-ink',
   },
+}
+
+// Unknown/legacy values fall back to 'ostalo' so a stray targetType can't crash the page.
+function normalizeType(value: unknown): TargetType {
+  return typeof value === 'string' && value in TARGET ? (value as TargetType) : 'ostalo'
 }
 
 // Normalize a stage into its list of target groups, tolerating the legacy flat
@@ -94,7 +120,7 @@ function getTargetGroups(stage: Stage): TargetGroup[] {
 function distinctTypes(groups: TargetGroup[]): TargetType[] {
   const seen: TargetType[] = []
   for (const g of groups) {
-    const tt = (g.targetType as TargetType) ?? 'ostalo'
+    const tt = normalizeType(g.targetType)
     if (!seen.includes(tt)) seen.push(tt)
   }
   return seen
@@ -102,9 +128,25 @@ function distinctTypes(groups: TargetGroup[]): TargetType[] {
 
 function resolveProduct(row: ProductRow): { name: string | null; slug: string | null } {
   const prod = typeof row.product === 'object' && row.product ? row.product : null
-  const name = prod?.title ?? row.productName ?? null
+  // Explicit display name wins (keeps brochure formulation names, e.g. „Futocis 2.5 EC“),
+  // catalog title is the fallback when the row is only linked.
+  const name = row.productName ?? prod?.title ?? null
   const slug = typeof prod?.slug === 'string' ? prod.slug : null
   return { name, slug }
+}
+
+// Group product rows into applications: a row with `combineWithPrevious` is
+// tank-mixed with the row(s) before it and rendered as one "+"-joined unit.
+function groupApplications(products: ProductRow[]): ProductRow[][] {
+  const apps: ProductRow[][] = []
+  for (const row of products) {
+    if (row.combineWithPrevious && apps.length > 0) {
+      apps[apps.length - 1].push(row)
+    } else {
+      apps.push([row])
+    }
+  }
+  return apps
 }
 
 function ProductPill({ row }: { row: ProductRow }) {
@@ -114,25 +156,29 @@ function ProductPill({ row }: { row: ProductRow }) {
   const inner = (
     <span
       className={[
-        'inline-flex items-center gap-1.5 rounded-full border border-hairline bg-surface px-3 py-1.5 text-sm transition-colors',
+        'inline-flex flex-col items-start border border-hairline bg-surface px-3 py-1.5 text-sm transition-colors',
+        row.note ? 'rounded-xl' : 'rounded-full',
         slug ? 'group-hover/pill:border-brand/40 group-hover/pill:bg-brand/5' : '',
       ].join(' ')}
     >
-      {name && <span className="font-medium text-brand-strong">{name}</span>}
-      {row.dose && (
-        <span className="text-ink/55">
-          {name ? '· ' : ''}
-          {row.dose}
-        </span>
-      )}
-      {slug && (
-        <ArrowUpRight className="h-3.5 w-3.5 text-brand/70 transition-transform group-hover/pill:-translate-y-0.5 group-hover/pill:translate-x-0.5" />
-      )}
+      <span className="inline-flex items-center gap-1.5">
+        {name && <span className="font-medium text-brand-strong">{name}</span>}
+        {row.dose && (
+          <span className="text-ink/55">
+            {name ? '· ' : ''}
+            {row.dose}
+          </span>
+        )}
+        {slug && (
+          <ArrowUpRight className="h-3.5 w-3.5 text-brand/70 transition-transform group-hover/pill:-translate-y-0.5 group-hover/pill:translate-x-0.5" />
+        )}
+      </span>
+      {row.note && <span className="mt-0.5 text-xs italic text-ink/50">{row.note}</span>}
     </span>
   )
 
   return slug ? (
-    <Link href={`/proizvodi/${slug}`} className="group/pill inline-flex">
+    <Link href={`/proizvodi/${slug}`} className="group/pill inline-flex no-underline">
       {inner}
     </Link>
   ) : (
@@ -140,12 +186,44 @@ function ProductPill({ row }: { row: ProductRow }) {
   )
 }
 
+// One application: either a lone preparation or a "+"-joined tank mix.
+function ApplicationUnit({ rows }: { rows: ProductRow[] }) {
+  if (rows.length === 1) return <ProductPill row={rows[0]} />
+  return (
+    <span className="inline-flex flex-wrap items-center gap-1 rounded-2xl border border-dashed border-hairline bg-hairline/30 p-1">
+      {rows.map((row, i) => (
+        <React.Fragment key={row.id ?? i}>
+          {i > 0 && (
+            <span aria-label="u kombinaciji sa" className="px-0.5 text-sm font-semibold text-ink/60">
+              +
+            </span>
+          )}
+          <ProductPill row={row} />
+        </React.Fragment>
+      ))}
+    </span>
+  )
+}
+
+// Render a target group's products as application units.
+function ProductList({ products }: { products: ProductRow[] }) {
+  const apps = groupApplications(products)
+  if (apps.length === 0) return null
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      {apps.map((rows, i) => (
+        <ApplicationUnit key={rows[0]?.id ?? i} rows={rows} />
+      ))}
+    </div>
+  )
+}
+
 // A single (patogen + tip mete) group with its preparati pills. `boxed` wraps
 // it in a sub-card for the multi-target grid layout.
 function TargetGroupView({ group, boxed }: { group: TargetGroup; boxed: boolean }) {
-  const t = TARGET[(group.targetType as TargetType) ?? 'ostalo'] ?? TARGET.ostalo
+  const t = TARGET[normalizeType(group.targetType)]
   const Icon = t.Icon
-  const products = (group.products ?? []).filter(Boolean)
+  const products = (group.products ?? []).filter(Boolean) as ProductRow[]
 
   const body = (
     <>
@@ -163,10 +241,8 @@ function TargetGroupView({ group, boxed }: { group: TargetGroup; boxed: boolean 
         </p>
       )}
       {products.length > 0 && (
-        <div className="mt-3 flex flex-wrap gap-2">
-          {products.map((row, i) => (
-            <ProductPill key={row?.id ?? i} row={row as ProductRow} />
-          ))}
+        <div className="mt-3">
+          <ProductList products={products} />
         </div>
       )}
     </>
@@ -268,10 +344,8 @@ function StageRow({ stage, index }: { stage: Stage; index: number }) {
                   </p>
                 )}
                 {(groups[0].products ?? []).filter(Boolean).length > 0 && (
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {(groups[0].products ?? []).filter(Boolean).map((row, i) => (
-                      <ProductPill key={row?.id ?? i} row={row as ProductRow} />
-                    ))}
+                  <div className="mt-4">
+                    <ProductList products={(groups[0].products ?? []).filter(Boolean) as ProductRow[]} />
                   </div>
                 )}
               </div>
@@ -295,9 +369,7 @@ export const TreatmentScheduleBlock: React.FC<TreatmentScheduleProps> = ({
 
   // Only show legend entries that actually appear (across all target groups).
   const presentTypes = Array.from(
-    new Set(
-      items.flatMap((s) => getTargetGroups(s).map((g) => (g.targetType as TargetType) ?? 'ostalo')),
-    ),
+    new Set(items.flatMap((s) => getTargetGroups(s).map((g) => normalizeType(g.targetType)))),
   )
 
   const notes = (footnotes ?? []).filter((f): f is { text: string } => Boolean(f?.text))

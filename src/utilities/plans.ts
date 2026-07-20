@@ -45,6 +45,8 @@ export function cultureHasPlan(culture: Culture, planType: PlanType): boolean {
 }
 
 // Shape the card component understands, derived from a culture + plan type.
+// The plan's own image wins; the culture image is the fallback so cards never
+// render as an empty gray tile.
 export function cultureToPlanCard(culture: Culture, planType: PlanType) {
   const plan = getCulturePlan(culture, planType)
   return {
@@ -52,7 +54,7 @@ export function cultureToPlanCard(culture: Culture, planType: PlanType) {
     slug: culture.slug ?? null,
     title: culture.title ?? null,
     description: plan?.description ?? null,
-    image: plan?.image ?? null,
+    image: plan?.image ?? culture.image ?? null,
     link: plan?.link ?? null,
   }
 }
