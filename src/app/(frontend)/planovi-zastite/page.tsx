@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 
 import { PlansListPage } from '@/components/Plans/PlanPages'
 
-// Render at request time — plans reflect live CMS data and must not require a
-// DB connection during the build.
-export const dynamic = 'force-dynamic'
+// ISR: serve cached HTML instantly, re-render in the background at most every
+// 5 min. CMS edits invalidate immediately via the revalidatePlans hooks.
+export const revalidate = 300
 
 export const metadata: Metadata = {
   title: 'Planovi zaštite',

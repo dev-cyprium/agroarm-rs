@@ -25,11 +25,10 @@ file tracks the bigger or blocked items. (Last review: 2026-07-20)
 
 ## Performance
 
-- [ ] **ISR instead of `force-dynamic`** for `/kategorije`, `/planovi-zastite/*`, and product
-  pages. Every request currently hits Postgres, so prod TTFB is slow. The revalidation
-  hooks (`revalidatePlans`, `revalidateCatalog`) already exist — switch pages to
-  `export const revalidate = 300` (or tag-based revalidation) and first paint becomes
-  near-instant. Biggest remaining prod-perf win.
+- [x] **ISR instead of `force-dynamic`** — done 2026-07-20 for `/kategorije`,
+  `/kategorije/[slug]`, `/planovi-zastite`, `/planovi-zastite/[slug]`
+  (`revalidate = 300` + existing CMS revalidation hooks). Verify TTFB on prod after
+  deploy; `/search` and `/gone` intentionally stay dynamic.
 - [ ] **Media domain** — media files are served from `m.sagamasine.rs`. Consider moving to
   a first-party domain / R2 bucket (the R2 plugin config already exists in
   `src/plugins/index.ts`) for branding, cache control, and to avoid a third-party

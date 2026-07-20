@@ -8,9 +8,9 @@ import { CatalogClient } from './CatalogClient'
 import { loadCatalog } from './getCatalog'
 import { fetchAllCategories, buildCategoryMaps } from '@/utilities/categoryTree'
 
-// Render at request time — this catalog reflects live CMS data and must not
-// require a DB connection during the build.
-export const dynamic = 'force-dynamic'
+// ISR: serve cached HTML instantly, re-render in the background at most every
+// 5 min. CMS edits invalidate immediately via the revalidateCatalog hooks.
+export const revalidate = 300
 
 export const metadata: Metadata = {
   title: 'Svi proizvodi - AGROARM',

@@ -13,6 +13,10 @@ type Args = {
   params: Promise<{ slug: string }>
 }
 
+// ISR safety net: even without a CMS-triggered revalidation, scopes refresh
+// within 5 min.
+export const revalidate = 300
+
 export async function generateStaticParams() {
   try {
     const payload = await getPayload({ config: configPromise })
