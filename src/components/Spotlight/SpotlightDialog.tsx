@@ -57,6 +57,33 @@ export const SpotlightDialog: React.FC<Props> = ({ open, onOpenChange, records, 
     }
   }, [open])
 
+  // Keep the mobile bottom sheet above the software keyboard. iOS Safari (and
+  // any browser that ignores `interactive-widget`) overlays the keyboard on top
+  // of fixed elements without resizing the layout viewport, so `bottom: 0` /
+  // `dvh` don't move. We read the real visible area from visualViewport and
+  // expose it as CSS vars the sheet is sized/anchored against.
+  //   --spotlight-vvh: height of the visible viewport (caps the sheet height)
+  //   --spotlight-kb:  keyboard overlap, used as the sheet's bottom offset
+  useEffect(() => {
+    const vv = window.visualViewport
+    if (!open || !vv) return
+    const root = document.documentElement
+    const update = () => {
+      const keyboard = Math.max(0, window.innerHeight - vv.height - vv.offsetTop)
+      root.style.setProperty('--spotlight-vvh', `${vv.height}px`)
+      root.style.setProperty('--spotlight-kb', `${keyboard}px`)
+    }
+    update()
+    vv.addEventListener('resize', update)
+    vv.addEventListener('scroll', update)
+    return () => {
+      vv.removeEventListener('resize', update)
+      vv.removeEventListener('scroll', update)
+      root.style.removeProperty('--spotlight-vvh')
+      root.style.removeProperty('--spotlight-kb')
+    }
+  }, [open])
+
   const commit = useCallback(
     (record: SpotlightRecord, navigate: boolean) => {
       pushRecent(query)
@@ -160,7 +187,7 @@ export const SpotlightDialog: React.FC<Props> = ({ open, onOpenChange, records, 
               aria-describedby={undefined}
             >
               <motion.div
-                className="fixed z-[100] inset-x-0 bottom-0 sm:inset-auto sm:left-1/2 sm:top-[12vh] sm:w-full sm:max-w-xl sm:-translate-x-1/2 sm:px-4"
+                className="fixed z-[100] inset-x-0 bottom-[var(--spotlight-kb,0px)] sm:inset-auto sm:bottom-auto sm:left-1/2 sm:top-[12vh] sm:w-full sm:max-w-xl sm:-translate-x-1/2 sm:px-4"
                 initial={isDesktop ? { opacity: 0, scale: 0.98, y: -8 } : { y: '100%' }}
                 animate={isDesktop ? { opacity: 1, scale: 1, y: 0 } : { y: 0 }}
                 exit={isDesktop ? { opacity: 0, scale: 0.98, y: -8 } : { y: '100%' }}
@@ -171,7 +198,7 @@ export const SpotlightDialog: React.FC<Props> = ({ open, onOpenChange, records, 
                 }
                 onKeyDown={handleKeyDown}
               >
-                <div className="flex h-[88dvh] flex-col rounded-t-2xl border border-hairline bg-surface-raised shadow-2xl sm:h-auto sm:max-h-[70vh] sm:rounded-xl">
+                <div className="flex h-[88dvh] max-h-[var(--spotlight-vvh,100dvh)] flex-col rounded-t-2xl border border-hairline bg-surface-raised shadow-2xl sm:h-auto sm:max-h-[70vh] sm:rounded-xl">
                   <div className="mx-auto mt-2 h-1 w-9 shrink-0 rounded-full bg-hairline sm:hidden" />
                   <Dialog.Title className="sr-only">Pretraga</Dialog.Title>
                   {/* Search input row */}

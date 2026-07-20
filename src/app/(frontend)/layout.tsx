@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 
 import { cn } from '@/utilities/ui'
 import { Analytics } from '@vercel/analytics/next'
@@ -51,6 +51,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </body>
     </html>
   )
+}
+
+// `resizes-content` makes the browser shrink the layout viewport (and dvh /
+// visualViewport) when the software keyboard opens, so bottom-anchored sheets
+// like the Spotlight search track the keyboard instead of hiding behind it.
+// Honoured by Chrome/Android; iOS Safari ignores it (handled via visualViewport
+// in SpotlightDialog).
+export const viewport: Viewport = {
+  interactiveWidget: 'resizes-content',
 }
 
 export const metadata: Metadata = {
